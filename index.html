@@ -1,0 +1,4182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#2a1810">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="The Chronicle">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' fill='%232a1810'/><text x='50%25' y='58%25' font-family='serif' font-size='110' fill='%23d4af37' text-anchor='middle'>⚔</text></svg>">
+<title>The Chronicle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   THE CHRONICLE — Phase 1
+   ============================================================ */
+
+:root {
+  --parchment: #f4e8d0;
+  --parchment-dark: #e8d8b8;
+  --parchment-deeper: #d9c498;
+  --ink: #2a1810;
+  --ink-soft: #4a2f1f;
+  --ink-faded: #6b4a32;
+  --gold: #b8893a;
+  --gold-bright: #d4af37;
+  --gold-deep: #8b6420;
+  --crimson: #7a2828;
+  --forest: #3a5a3a;
+  --shadow: rgba(42, 24, 16, 0.18);
+  --shadow-deep: rgba(42, 24, 16, 0.4);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  background: var(--parchment);
+  color: var(--ink);
+  font-family: 'Inter', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+body {
+  background-image:
+    radial-gradient(ellipse at top left, rgba(184, 137, 58, 0.08), transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(122, 40, 40, 0.06), transparent 50%),
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(42, 24, 16, 0.012) 2px, rgba(42, 24, 16, 0.012) 4px);
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* Parchment grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(139, 100, 32, 0.04) 0, transparent 2px),
+    radial-gradient(circle at 70% 80%, rgba(139, 100, 32, 0.04) 0, transparent 2px),
+    radial-gradient(circle at 40% 60%, rgba(139, 100, 32, 0.03) 0, transparent 1.5px),
+    radial-gradient(circle at 85% 15%, rgba(139, 100, 32, 0.04) 0, transparent 2px);
+  background-size: 80px 80px, 120px 120px, 60px 60px, 100px 100px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.7;
+}
+
+#app { position: relative; z-index: 2; max-width: 560px; margin: 0 auto; min-height: 100vh; min-height: 100dvh; }
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+.display { font-family: 'Cinzel', serif; letter-spacing: 0.04em; }
+.narration { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; line-height: 1.65; }
+.body-serif { font-family: 'Cormorant Garamond', serif; }
+
+/* ============================================================
+   SCREENS
+   ============================================================ */
+.screen { display: none; padding: 1.25rem 1.25rem 5rem; animation: fadeIn 0.4s ease-out; }
+.screen.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ============================================================
+   CHARACTER CREATION
+   ============================================================ */
+#screen-create { display: none; min-height: 100vh; min-height: 100dvh; padding: 2rem 1.5rem; flex-direction: column; justify-content: center; }
+#screen-create.active { display: flex; }
+
+.create-flourish {
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  color: var(--gold);
+  letter-spacing: 0.5em;
+  font-size: 0.7rem;
+  margin-bottom: 0.6rem;
+  opacity: 0.7;
+}
+
+.create-title {
+  font-family: 'Cinzel', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.08em;
+}
+.create-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  text-align: center;
+  color: var(--ink-faded);
+  margin-bottom: 2rem;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+.create-footnote {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  text-align: center;
+  color: var(--ink-faded);
+  font-size: 0.9rem;
+  margin-top: 1.25rem;
+  line-height: 1.45;
+}
+
+.create-card {
+  background: var(--parchment-dark);
+  border: 1px solid var(--gold);
+  padding: 1.5rem 1.25rem;
+  border-radius: 4px;
+  box-shadow: 0 4px 20px var(--shadow);
+  position: relative;
+}
+.create-card::before, .create-card::after {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--gold);
+}
+.create-card::before { top: -8px; left: -8px; border-right: none; border-bottom: none; }
+.create-card::after { bottom: -8px; right: -8px; border-left: none; border-top: none; }
+
+/* ============================================================
+   PROLOGUE
+   ============================================================ */
+#screen-prologue { padding: 1.5rem 1.25rem 6rem; }
+
+.prologue-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+.prologue-counter {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-faded);
+  text-transform: uppercase;
+  border: 1px solid var(--ink-faded);
+  padding: 0.2rem 0.6rem;
+  border-radius: 2px;
+}
+
+.prologue-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--gold-deep);
+  text-align: center;
+  margin: 0.5rem 0 1.5rem;
+  text-transform: uppercase;
+  position: relative;
+}
+.prologue-title::before, .prologue-title::after {
+  content: '✦';
+  color: var(--gold);
+  margin: 0 0.8rem;
+  font-size: 0.7rem;
+  opacity: 0.7;
+  vertical-align: middle;
+}
+
+.prologue-body {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.18rem;
+  line-height: 1.7;
+  color: var(--ink);
+  margin-bottom: 1.5rem;
+}
+.prologue-body p { margin-bottom: 0.95rem; }
+.prologue-body p:last-child { margin-bottom: 0; }
+.prologue-body p:first-child::first-letter {
+  font-family: 'Cinzel', serif;
+  font-size: 2.6rem;
+  float: left;
+  line-height: 1;
+  padding: 0.2rem 0.5rem 0 0;
+  color: var(--gold-deep);
+  font-weight: 700;
+}
+
+.prologue-choices {
+  display: none;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 1.5rem 0;
+}
+
+.prologue-choice-btn {
+  background: var(--parchment-dark);
+  border: 1px solid var(--gold-deep);
+  border-left: 3px solid var(--gold);
+  padding: 1rem 1.1rem;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.08rem;
+  line-height: 1.5;
+  color: var(--ink);
+  position: relative;
+}
+.prologue-choice-btn:hover { background: var(--parchment-deeper); border-left-color: var(--gold-bright); }
+.prologue-choice-btn:active { transform: scale(0.99); }
+.prologue-choice-btn .choice-label {
+  display: block;
+  font-style: italic;
+  color: var(--ink);
+}
+.prologue-choice-btn::before {
+  content: '❖';
+  position: absolute;
+  left: -0.05rem;
+  top: 1rem;
+  color: var(--gold);
+  font-size: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.prologue-choice-btn:hover::before { opacity: 1; }
+
+.prologue-continue-btn {
+  margin-top: 1rem;
+  display: none;
+}
+
+.field-label { font-family: 'Cinzel', serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--ink-faded); margin-bottom: 0.4rem; display: block; }
+.field {
+  width: 100%;
+  background: var(--parchment);
+  border: 1px solid var(--ink-faded);
+  padding: 0.7rem 0.85rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  color: var(--ink);
+  border-radius: 2px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.field:focus { border-color: var(--gold); }
+textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
+
+.create-row { margin-bottom: 1rem; }
+.create-readonly {
+  background: var(--parchment);
+  padding: 0.6rem 0.85rem;
+  border-left: 3px solid var(--gold);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: var(--ink-soft);
+}
+
+/* ============================================================
+   HOME / SCENE PANEL
+   ============================================================ */
+.scene-panel {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(180deg, #3a2818 0%, #1f1209 100%);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  box-shadow: 0 6px 24px var(--shadow-deep), inset 0 0 30px rgba(0,0,0,0.4);
+  border: 1px solid var(--gold-deep);
+}
+.scene-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.04) 1px, rgba(0,0,0,0.04) 2px);
+  pointer-events: none;
+}
+.scene-svg { width: 100%; height: 100%; display: block; }
+.scene-caption {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--parchment);
+  font-size: 0.85rem;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+  letter-spacing: 0.05em;
+  z-index: 2;
+}
+
+/* ============================================================
+   CHARACTER HEADER
+   ============================================================ */
+.char-header {
+  background: var(--parchment-dark);
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  padding: 1rem 1rem 0.85rem;
+  margin-bottom: 1rem;
+  position: relative;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+.char-name {
+  font-family: 'Cinzel', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  margin-bottom: 0.1rem;
+}
+.char-class {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--gold-deep);
+  font-size: 1rem;
+  margin-bottom: 0.7rem;
+}
+.char-class .level-badge {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--gold-bright);
+  font-family: 'Cinzel', serif;
+  font-style: normal;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 2px;
+  letter-spacing: 0.1em;
+  margin-left: 0.4rem;
+  vertical-align: middle;
+}
+
+.xp-bar-wrap {
+  margin-top: 0.4rem;
+}
+.xp-bar-track {
+  width: 100%;
+  height: 8px;
+  background: var(--parchment);
+  border: 1px solid var(--ink-faded);
+  border-radius: 1px;
+  overflow: hidden;
+  position: relative;
+}
+.xp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright));
+  transition: width 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+  box-shadow: 0 0 6px rgba(212, 175, 55, 0.5);
+}
+.xp-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-faded);
+  margin-top: 0.25rem;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   STATS GRID
+   ============================================================ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.stat-cell {
+  background: var(--parchment-dark);
+  border: 1px solid var(--ink-faded);
+  border-radius: 3px;
+  padding: 0.55rem 0.4rem 0.5rem;
+  text-align: center;
+  position: relative;
+}
+.stat-cell .stat-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  color: var(--ink-faded);
+  display: block;
+}
+.stat-cell .stat-value {
+  font-family: 'Cinzel', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+  margin-top: 0.1rem;
+}
+.stat-cell .stat-mini {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.6rem;
+  color: var(--gold-deep);
+  margin-top: 0.1rem;
+  height: 0.7rem;
+}
+.stat-cell.bumped { animation: statBump 0.8s ease-out; }
+@keyframes statBump {
+  0% { background: var(--parchment-dark); }
+  30% { background: rgba(212, 175, 55, 0.4); transform: scale(1.05); }
+  100% { background: var(--parchment-dark); transform: scale(1); }
+}
+
+/* ============================================================
+   RIVAL STRIP
+   ============================================================ */
+.rival-strip {
+  display: none;
+  background: linear-gradient(90deg, rgba(122, 40, 40, 0.12), rgba(122, 40, 40, 0.04));
+  border-left: 3px solid var(--crimson);
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 1rem;
+  border-radius: 2px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+.rival-strip.active { display: block; }
+.rival-strip-label {
+  font-family: 'Cinzel', serif;
+  font-style: normal;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  color: var(--crimson);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+/* ============================================================
+   CHECK-IN CARD
+   ============================================================ */
+.checkin-card {
+  background: var(--parchment-dark);
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  padding: 1.1rem 1rem 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 16px var(--shadow);
+  position: relative;
+}
+.checkin-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+}
+.checkin-prompt {
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+  text-transform: uppercase;
+  margin-bottom: 0.7rem;
+  text-align: center;
+}
+.checkin-prompt::before, .checkin-prompt::after {
+  content: '✦';
+  color: var(--gold);
+  margin: 0 0.5rem;
+  font-size: 0.7rem;
+}
+
+.checkin-textarea {
+  width: 100%;
+  min-height: 90px;
+  background: var(--parchment);
+  border: 1px solid var(--ink-faded);
+  padding: 0.7rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: var(--ink);
+  border-radius: 2px;
+  outline: none;
+  resize: vertical;
+}
+.checkin-textarea:focus { border-color: var(--gold); }
+.checkin-textarea::placeholder { color: var(--ink-faded); font-style: italic; }
+
+/* ============================================================
+   CATEGORY TAGS
+   ============================================================ */
+.tag-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.4rem;
+  margin: 0.85rem 0 0.7rem;
+}
+.tag-btn {
+  background: var(--parchment);
+  border: 1px solid var(--ink-faded);
+  border-radius: 3px;
+  padding: 0.55rem 0.2rem 0.45rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  transition: all 0.2s;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-faded);
+  text-transform: uppercase;
+  user-select: none;
+}
+.tag-btn svg { width: 22px; height: 22px; fill: var(--ink-faded); transition: fill 0.2s; }
+.tag-btn.selected {
+  background: var(--ink);
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
+  box-shadow: 0 0 0 1px var(--gold-bright), 0 2px 8px rgba(212, 175, 55, 0.3);
+}
+.tag-btn.selected svg { fill: var(--gold-bright); }
+.tag-btn:active { transform: scale(0.96); }
+.tag-btn.disabled { opacity: 0.35; pointer-events: none; }
+
+.tag-counter {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-faded);
+  text-align: center;
+  margin-bottom: 0.7rem;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  display: block;
+  width: 100%;
+  background: var(--ink);
+  color: var(--gold-bright);
+  border: 1px solid var(--gold);
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+  padding: 0.85rem;
+  border-radius: 3px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.btn:hover { background: var(--ink-soft); }
+.btn:active { transform: scale(0.98); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--ink-faded);
+}
+.btn-secondary:hover { background: var(--parchment-dark); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-faded);
+  border: none;
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  padding: 0.5rem;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+.btn-ghost:hover { color: var(--ink); }
+
+/* ============================================================
+   FOOTER NAV
+   ============================================================ */
+.footer-nav {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+.footer-nav .btn { font-size: 0.72rem; padding: 0.7rem 0.5rem; letter-spacing: 0.12em; }
+
+/* ============================================================
+   CHRONICLE VIEW
+   ============================================================ */
+.chronicle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--gold-deep);
+}
+.chronicle-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+}
+
+.chronicle-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--ink-faded);
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
+.entry {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px dashed var(--ink-faded);
+  animation: fadeIn 0.5s;
+}
+.entry:last-child { border-bottom: none; }
+
+.entry-date {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: var(--gold-deep);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.entry-date::after { content: ''; flex: 1; height: 1px; background: var(--gold-deep); opacity: 0.4; }
+
+.entry-tags {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.6rem;
+}
+.entry-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-faded);
+  border: 1px solid var(--ink-faded);
+  padding: 0.1rem 0.4rem;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+.entry-user-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  font-style: italic;
+  padding: 0.5rem 0.8rem;
+  border-left: 2px solid var(--gold);
+  background: rgba(184, 137, 58, 0.05);
+  margin-bottom: 0.8rem;
+  border-radius: 0 2px 2px 0;
+}
+
+.entry-narration {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.entry-narration::first-letter {
+  font-family: 'Cinzel', serif;
+  font-size: 2.4rem;
+  float: left;
+  line-height: 1;
+  padding: 0.2rem 0.4rem 0 0;
+  color: var(--gold-deep);
+  font-weight: 700;
+}
+
+.entry-event {
+  margin-top: 0.8rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--gold-deep);
+  text-align: center;
+  text-transform: uppercase;
+}
+.entry-event::before, .entry-event::after { content: '— '; }
+.entry-event::after { content: ' —'; }
+
+.entry-rest {
+  background: rgba(42, 24, 16, 0.06);
+  padding: 0.8rem 1rem;
+  border-radius: 3px;
+  margin: 1rem 0;
+  text-align: center;
+}
+.entry-rest .entry-narration { font-size: 1rem; color: var(--ink-faded); font-style: italic; }
+.entry-rest .entry-narration::first-letter { font-size: 1rem; float: none; padding: 0; color: var(--ink-faded); font-family: inherit; }
+
+/* ============================================================
+   SETTINGS / TOAST / MODAL
+   ============================================================ */
+.toast {
+  position: fixed;
+  top: calc(env(safe-area-inset-top) + 1rem);
+  left: 50%;
+  transform: translateX(-50%) translateY(-200%);
+  background: var(--ink);
+  color: var(--gold-bright);
+  padding: 0.7rem 1.2rem;
+  border-radius: 3px;
+  border: 1px solid var(--gold);
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  z-index: 100;
+  transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+  max-width: 90vw;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 12, 8, 0.7);
+  z-index: 90;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: fadeIn 0.2s;
+}
+.modal-backdrop.show { display: flex; }
+.modal {
+  background: var(--parchment);
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  padding: 1.5rem 1.2rem;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+.modal-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.7rem;
+  text-align: center;
+  text-transform: uppercase;
+}
+.modal-body {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+.modal-actions { display: flex; gap: 0.5rem; }
+.modal-actions .btn { font-size: 0.7rem; }
+
+/* ============================================================
+   LEVEL UP CELEBRATION
+   ============================================================ */
+.levelup-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(212, 175, 55, 0.3), rgba(20, 12, 8, 0.92) 70%);
+  z-index: 95;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  animation: fadeIn 0.4s;
+}
+.levelup-overlay.show { display: flex; }
+.levelup-card {
+  text-align: center;
+  color: var(--parchment);
+  max-width: 400px;
+  animation: levelupRise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@keyframes levelupRise {
+  from { opacity: 0; transform: translateY(30px) scale(0.92); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.levelup-flourish {
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.4em;
+  color: var(--gold-bright);
+  margin-bottom: 0.6rem;
+}
+.levelup-title {
+  font-family: 'Cinzel', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--gold-bright);
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+  margin-bottom: 0.4rem;
+}
+.levelup-level {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.2em;
+  color: var(--parchment);
+  margin-bottom: 1.2rem;
+}
+.levelup-boon {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  padding: 0 0.5rem;
+}
+.levelup-boon-name {
+  font-family: 'Cinzel', serif;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--gold-bright);
+  letter-spacing: 0.08em;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+.levelup-btn {
+  background: transparent;
+  color: var(--gold-bright);
+  border: 1px solid var(--gold-bright);
+  padding: 0.7rem 2rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+/* ============================================================
+   MISC / RESPONSIVE
+   ============================================================ */
+@media (max-width: 360px) {
+  .tag-grid { grid-template-columns: repeat(3, 1fr); }
+  .stats-grid { gap: 0.4rem; }
+  .stat-cell .stat-value { font-size: 1.2rem; }
+}
+
+/* Settings panel */
+.settings-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed var(--ink-faded);
+}
+.settings-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-faded);
+  margin-bottom: 0.5rem;
+}
+.settings-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+.settings-row .btn { font-size: 0.7rem; padding: 0.7rem 0.5rem; }
+
+.boons-list {
+  list-style: none;
+  margin-top: 0.5rem;
+}
+
+.prologue-choice-display {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: var(--ink-soft);
+  margin-bottom: 0.5rem;
+  padding-left: 0.7rem;
+  border-left: 2px solid var(--gold);
+  font-style: italic;
+  line-height: 1.4;
+}
+.prologue-choice-display .pc-label {
+  font-family: 'Cinzel', serif;
+  font-style: normal;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--gold-deep);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.15rem;
+}
+.boon-item {
+  background: var(--parchment-dark);
+  border-left: 2px solid var(--gold);
+  padding: 0.5rem 0.8rem;
+  margin-bottom: 0.4rem;
+  border-radius: 0 2px 2px 0;
+}
+.boon-item-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  text-transform: uppercase;
+  margin-bottom: 0.15rem;
+}
+.boon-item-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  line-height: 1.35;
+}
+
+/* ============================================================
+   PHASE 2 — Shimmer, source indicators, alternates, backend
+   ============================================================ */
+
+/* Loading shimmer in narration card slot */
+.shimmer-card {
+  background: var(--parchment-dark);
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  padding: 1.1rem 1rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+.shimmer-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+}
+.shimmer-prompt {
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+  text-transform: uppercase;
+  margin-bottom: 0.85rem;
+  text-align: center;
+}
+.shimmer-prompt::before, .shimmer-prompt::after {
+  content: '✦';
+  color: var(--gold);
+  margin: 0 0.5rem;
+  font-size: 0.7rem;
+}
+.shimmer-line {
+  height: 14px;
+  background: linear-gradient(90deg,
+    rgba(184, 137, 58, 0.08) 0%,
+    rgba(212, 175, 55, 0.32) 50%,
+    rgba(184, 137, 58, 0.08) 100%);
+  background-size: 200% 100%;
+  border-radius: 2px;
+  margin-bottom: 0.65rem;
+  animation: shimmerSlide 2.2s ease-in-out infinite;
+}
+.shimmer-line:nth-child(2) { animation-delay: 0.15s; width: 96%; }
+.shimmer-line:nth-child(3) { animation-delay: 0.3s; width: 88%; }
+.shimmer-line:nth-child(4) { animation-delay: 0.45s; width: 72%; }
+@keyframes shimmerSlide {
+  0%   { background-position: 200% 0%; }
+  100% { background-position: -200% 0%; }
+}
+.shimmer-status {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  text-align: center;
+  color: var(--ink-faded);
+  font-size: 0.95rem;
+  margin-top: 0.6rem;
+  min-height: 1.2em;
+  transition: opacity 0.3s;
+}
+
+/* Source indicators on entries */
+.source-indicator {
+  display: inline-block;
+  font-size: 0.7rem;
+  margin-left: 0.4rem;
+  vertical-align: baseline;
+}
+.source-indicator.haiku  { color: var(--gold); opacity: 0.85; }
+.source-indicator.sonnet { color: var(--gold-bright); text-shadow: 0 0 4px rgba(212, 175, 55, 0.4); }
+.source-indicator.template {
+  color: var(--ink-faded);
+  cursor: pointer;
+  border-bottom: 1px dotted var(--ink-faded);
+  text-decoration: none;
+}
+.source-indicator.template:hover { color: var(--gold-deep); }
+
+/* Pending re-narration banner */
+.pending-banner {
+  background: linear-gradient(90deg, rgba(184, 137, 58, 0.15), rgba(184, 137, 58, 0.05));
+  border-left: 3px solid var(--gold);
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 1rem;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+.pending-banner-text { flex: 1; }
+.pending-banner-btn {
+  background: var(--ink);
+  color: var(--gold-bright);
+  border: 1px solid var(--gold);
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  padding: 0.4rem 0.7rem;
+  border-radius: 2px;
+  cursor: pointer;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.pending-banner-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Regenerate button on entries */
+.entry-regen {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-faded);
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-left: 0.6rem;
+  background: none;
+  border: none;
+  padding: 0.15rem 0.3rem;
+  border-radius: 2px;
+}
+.entry-regen:hover { color: var(--gold-deep); background: rgba(184, 137, 58, 0.08); }
+.entry-regen:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* Alternate selector */
+.alternates-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-faded);
+  text-transform: uppercase;
+}
+.alternates-btn {
+  background: var(--parchment-dark);
+  border: 1px solid var(--ink-faded);
+  color: var(--ink-faded);
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+.alternates-btn:hover { background: var(--parchment); border-color: var(--gold-deep); color: var(--ink); }
+.alternates-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Backend / Cast in Settings */
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 0.4rem;
+  vertical-align: middle;
+}
+.status-dot.ok      { background: var(--forest); box-shadow: 0 0 4px rgba(58, 90, 58, 0.5); }
+.status-dot.warn    { background: var(--gold);  box-shadow: 0 0 4px rgba(184, 137, 58, 0.5); }
+.status-dot.error   { background: var(--crimson); box-shadow: 0 0 4px rgba(122, 40, 40, 0.5); }
+.status-dot.muted   { background: var(--ink-faded); opacity: 0.5; }
+
+.npc-item {
+  background: var(--parchment-dark);
+  border-left: 2px solid var(--gold);
+  padding: 0.55rem 0.85rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0 2px 2px 0;
+}
+.npc-item-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  text-transform: uppercase;
+  margin-bottom: 0.15rem;
+}
+.npc-item-meta {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+  line-height: 1.35;
+}
+.npc-item-attr {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  color: var(--gold-deep);
+  margin-top: 0.2rem;
+}
+
+.ledger-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: var(--ink-soft);
+  padding: 0.2rem 0;
+}
+.ledger-row strong {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+.ledger-divider {
+  border-top: 1px dashed var(--ink-faded);
+  margin: 0.6rem 0;
+  opacity: 0.5;
+}
+
+/* Backend config modal extra */
+.modal-input-group {
+  margin-bottom: 0.8rem;
+  text-align: left;
+}
+.modal-input-group label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--ink-faded);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+.modal-input-group input {
+  width: 100%;
+  background: var(--parchment-dark);
+  border: 1px solid var(--ink-faded);
+  padding: 0.55rem 0.7rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  color: var(--ink);
+  border-radius: 2px;
+  outline: none;
+}
+.modal-input-group input:focus { border-color: var(--gold); }
+
+/* Submit button when waiting */
+.btn.btn-waiting {
+  pointer-events: none;
+  opacity: 0.7;
+}
+.btn.btn-waiting::after {
+  content: '...';
+  display: inline-block;
+  animation: dots 1.4s steps(4) infinite;
+  width: 1.2em;
+  text-align: left;
+}
+@keyframes dots {
+  0%   { content: ''; }
+  25%  { content: '.'; }
+  50%  { content: '..'; }
+  75%  { content: '...'; }
+}
+
+</style>
+</head>
+<body>
+
+<div id="app">
+
+<!-- ============================================================
+     NAME-CONFIRM SCREEN (light intro before prologue)
+     ============================================================ -->
+<div id="screen-create" class="screen">
+  <div class="create-flourish">✦  ✦  ✦</div>
+  <h1 class="create-title">The Chronicle</h1>
+  <p class="create-sub">Avenmark, year of recovery — twelve summers since the war.<br>A chronicle of one Watcher, beginning.</p>
+
+  <div class="create-card">
+    <div class="create-row">
+      <label class="field-label">Name</label>
+      <input id="create-name" class="field" type="text" value="Jerry" maxlength="32" autocomplete="off">
+    </div>
+
+    <div class="create-row">
+      <label class="field-label">Race · Class</label>
+      <div class="create-readonly">Human · Squire of the Twilight Watch</div>
+    </div>
+
+    <div class="create-row">
+      <label class="field-label">Defining Trait</label>
+      <textarea id="create-trait" class="field" maxlength="200">Big dreams, small beginnings.</textarea>
+    </div>
+
+    <div class="create-row" style="margin-top: 1.5rem;">
+      <button id="create-begin" class="btn">⚔ Begin the Prologue</button>
+    </div>
+  </div>
+
+  <div class="create-footnote">
+    The prologue is roughly two minutes of reading.<br>
+    What you choose in it will shape the chronicle.
+  </div>
+</div>
+
+<!-- ============================================================
+     PROLOGUE SCREEN
+     ============================================================ -->
+<div id="screen-prologue" class="screen">
+  <div class="prologue-header">
+    <div class="prologue-counter" id="prologue-counter">1 / 11</div>
+  </div>
+  <div class="prologue-title display" id="prologue-title"></div>
+  <div class="prologue-body narration" id="prologue-body"></div>
+  <div class="prologue-choices" id="prologue-choices"></div>
+  <button id="prologue-continue" class="btn prologue-continue-btn">Continue →</button>
+</div>
+
+<!-- ============================================================
+     HOME SCREEN
+     ============================================================ -->
+<div id="screen-home" class="screen">
+
+  <!-- Scene panel -->
+  <div class="scene-panel" id="scene-panel">
+    <svg class="scene-svg" id="scene-svg" viewBox="0 0 560 200" preserveAspectRatio="xMidYMid slice"></svg>
+    <div class="scene-caption" id="scene-caption">A new road unfolds...</div>
+  </div>
+
+  <!-- Character header -->
+  <div class="char-header">
+    <div class="char-name" id="char-name">Jerry</div>
+    <div class="char-class">
+      <span id="char-class-text">Squire</span>
+      <span class="level-badge" id="char-level">LVL 1</span>
+    </div>
+    <div class="xp-bar-wrap">
+      <div class="xp-bar-track">
+        <div class="xp-bar-fill" id="xp-bar-fill" style="width: 0%;"></div>
+      </div>
+      <div class="xp-label">
+        <span id="xp-current">0 XP</span>
+        <span id="xp-next">100 XP</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats grid -->
+  <div class="stats-grid" id="stats-grid">
+    <!-- Populated by JS -->
+  </div>
+
+  <!-- Rival strip (hidden by default) -->
+  <div class="rival-strip" id="rival-strip">
+    <span class="rival-strip-label">A Rumor</span>
+    <span id="rival-text"></span>
+  </div>
+
+  <!-- Pending re-narration banner -->
+  <div class="pending-banner" id="pending-banner" style="display: none;">
+    <div class="pending-banner-text" id="pending-banner-text"></div>
+    <button class="pending-banner-btn" id="pending-banner-btn">Re-narrate</button>
+  </div>
+
+  <!-- Shimmer card (during AI call) -->
+  <div class="shimmer-card" id="shimmer-card" style="display: none;">
+    <div class="shimmer-prompt">The Chronicler Considers</div>
+    <div class="shimmer-line"></div>
+    <div class="shimmer-line"></div>
+    <div class="shimmer-line"></div>
+    <div class="shimmer-line"></div>
+    <div class="shimmer-status" id="shimmer-status">Pen finds parchment...</div>
+  </div>
+
+  <!-- Check-in card -->
+  <div class="checkin-card" id="checkin-card">
+    <div class="checkin-prompt">What happened today?</div>
+    <textarea id="checkin-text" class="checkin-textarea" placeholder="A line, a paragraph, a fragment — whatever you wish to set down..."></textarea>
+
+    <div class="tag-grid" id="tag-grid"></div>
+    <div class="tag-counter" id="tag-counter">Choose 1–3</div>
+
+    <button id="submit-btn" class="btn" disabled>✦ Set It Down ✦</button>
+  </div>
+
+  <!-- Today's narration card (shown after submit) -->
+  <div id="todays-narration-card" style="display: none;" class="checkin-card">
+    <div class="checkin-prompt">The Chronicler Writes</div>
+    <div id="todays-narration" class="entry-narration" style="margin-top: 0.5rem;"></div>
+    <div id="todays-event" class="entry-event" style="display: none;"></div>
+  </div>
+
+  <!-- Footer nav -->
+  <div class="footer-nav">
+    <button class="btn btn-secondary" id="nav-chronicle">📜 Chronicle</button>
+    <button class="btn btn-secondary" id="nav-settings">⚙ Settings</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     CHRONICLE SCREEN
+     ============================================================ -->
+<div id="screen-chronicle" class="screen">
+  <div class="chronicle-header">
+    <div class="chronicle-title">The Chronicle</div>
+    <button class="btn-ghost" id="back-from-chronicle">← Back</button>
+  </div>
+  <div id="chronicle-list"></div>
+</div>
+
+<!-- ============================================================
+     SETTINGS SCREEN
+     ============================================================ -->
+<div id="screen-settings" class="screen">
+  <div class="chronicle-header">
+    <div class="chronicle-title">Settings</div>
+    <button class="btn-ghost" id="back-from-settings">← Back</button>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-label">Character</div>
+    <div style="font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--ink-soft); margin-bottom: 0.5rem;">
+      <strong id="settings-name"></strong> — <span id="settings-class"></span>
+    </div>
+    <div style="font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--ink-faded); font-size: 0.95rem;" id="settings-trait"></div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-label">Of the Realm</div>
+    <div style="font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--ink-soft); line-height: 1.55;" id="settings-world"></div>
+  </div>
+
+  <div class="settings-section" id="settings-prologue-section">
+    <div class="settings-label">Prologue Choices</div>
+    <div id="settings-prologue"></div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-label">Boons Earned</div>
+    <ul class="boons-list" id="boons-list"></ul>
+    <div id="boons-empty" style="font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--ink-faded); font-size: 0.95rem;">No boons yet. Level up to earn one.</div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-label">Cast</div>
+    <div id="cast-list"></div>
+    <div id="cast-empty" style="font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--ink-faded); font-size: 0.95rem; display: none;">No named characters yet beyond Master Thale.</div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-label">The Chronicler's Ledger</div>
+    <div id="ledger-content"></div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-label">Backend</div>
+    <div id="backend-status" style="font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--ink-soft); margin-bottom: 0.6rem;"></div>
+    <div class="settings-row">
+      <button class="btn btn-secondary" id="backend-config-btn">Configure backend</button>
+      <button class="btn btn-secondary" id="backend-test-btn">Test connection</button>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-label">Streak & Stats</div>
+    <div style="font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--ink-soft);" id="settings-counts"></div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-label">Backup</div>
+    <div class="settings-row">
+      <button class="btn" id="export-btn">↓ Export JSON</button>
+    </div>
+    <div class="settings-row">
+      <button class="btn btn-secondary" id="import-btn">↑ Import JSON</button>
+      <input id="import-file" type="file" accept="application/json" style="display: none;">
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <div class="settings-label">Danger Zone</div>
+    <div class="settings-row">
+      <button class="btn btn-secondary" id="reset-btn" style="border-color: var(--crimson); color: var(--crimson);">Reset Character</button>
+    </div>
+  </div>
+
+  <div style="text-align: center; font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.2em; color: var(--ink-faded); margin-top: 2rem; text-transform: uppercase;">
+    The Chronicle · Phase 2
+  </div>
+</div>
+
+<!-- ============================================================
+     OVERLAYS
+     ============================================================ -->
+<div class="toast" id="toast"></div>
+
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal">
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<div class="levelup-overlay" id="levelup-overlay">
+  <div class="levelup-card">
+    <div class="levelup-flourish">✦  ✦  ✦</div>
+    <div class="levelup-title">LEVEL UP</div>
+    <div class="levelup-level" id="levelup-level"></div>
+    <div class="levelup-boon" id="levelup-boon"></div>
+    <button class="levelup-btn" id="levelup-close">Continue</button>
+  </div>
+</div>
+
+</div><!-- /#app -->
+
+<script>
+'use strict';
+
+/* ============================================================
+   CONSTANTS & CONFIG
+   ============================================================ */
+const SCHEMA_VERSION = 1;
+const STORAGE_KEY = 'chronicle_state_v1';
+
+// Day boundary at 4am — a "day" runs 4am to 4am
+const DAY_BOUNDARY_HOUR = 4;
+
+// Categories → Stat mapping (per project instructions)
+const CATEGORIES = {
+  Work:   { stat: 'WIS', icon: 'caduceus' },
+  Study:  { stat: 'INT', icon: 'book' },
+  Research: { stat: 'INT', icon: 'scroll' },
+  Train:  { stat: 'STR', icon: 'sword' },
+  Health: { stat: 'CON', icon: 'heart' },
+  Chores: { stat: 'DEX', icon: 'broom' },
+  Social: { stat: 'CHA', icon: 'goblets' }
+};
+
+const CATEGORY_ORDER = ['Work', 'Study', 'Research', 'Train', 'Health', 'Chores', 'Social'];
+
+// XP values
+const XP_PER_TAG = { 1: 10, 2: 15, 3: 20 };
+// Bonus: 50 stat-XP per category gives +1 to that stat
+const STAT_XP_PER_BUMP = 50;
+// Each tag also contributes 10 stat-XP to its mapped stat
+const STAT_XP_PER_TAG = 10;
+
+// Level thresholds — first level ~7 days, exponential after
+// L1->L2: 100, L2->L3: 175, L3->L4: 275, then ×1.5 multiplier
+const LEVEL_THRESHOLDS = [0, 100, 275, 550, 962, 1581, 2510, 3903, 5993, 9128, 13832, 20887, 31470, 47345, 71158]; // cumulative
+
+function xpForLevel(level) {
+  if (level >= LEVEL_THRESHOLDS.length) return LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1];
+  return LEVEL_THRESHOLDS[level];
+}
+
+// Class progression (Phase 1 only uses Squire→Knight-Errant transition; rest is roadmap)
+const CLASSES = [
+  { level: 1, name: 'Squire', desc: 'apprentice to the order' },
+  { level: 5, name: 'Knight-Errant', desc: 'wandering oathkeeper' },
+  { level: 10, name: 'Knight', desc: 'sworn of the realm' },
+  { level: 15, name: 'Knight-Captain', desc: 'leader of warriors' },
+  { level: 20, name: 'Paladin', desc: 'paragon of the order' }
+];
+
+function classForLevel(level) {
+  let cls = CLASSES[0];
+  for (const c of CLASSES) if (level >= c.level) cls = c;
+  return cls;
+}
+
+/* ============================================================
+   DAY / DATE HELPERS — 4am boundary
+   ============================================================ */
+function gameDate(d = new Date()) {
+  // Returns YYYY-MM-DD, where the date "rolls over" at 4am local
+  const dt = new Date(d);
+  if (dt.getHours() < DAY_BOUNDARY_HOUR) {
+    dt.setDate(dt.getDate() - 1);
+  }
+  return dt.toISOString().slice(0, 10);
+}
+
+function daysBetweenGameDates(d1, d2) {
+  // d1, d2 are YYYY-MM-DD strings; returns integer day difference
+  const a = new Date(d1 + 'T12:00:00');
+  const b = new Date(d2 + 'T12:00:00');
+  return Math.round((b - a) / 86400000);
+}
+
+function formatDateLong(gd) {
+  const d = new Date(gd + 'T12:00:00');
+  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+/* ============================================================
+   STATE MANAGEMENT
+   ============================================================ */
+const DEFAULT_STATE = {
+  schemaVersion: SCHEMA_VERSION,
+  created: false,
+  character: {
+    name: 'Jerry',
+    race: 'Human',
+    trait: 'Big dreams, small beginnings.',
+    class: 'Squire',
+    level: 1,
+    xp: 0,
+    stats: { STR: 8, DEX: 8, CON: 8, INT: 8, WIS: 8, CHA: 8 },
+    statXP: { STR: 0, DEX: 0, CON: 0, INT: 0, WIS: 0, CHA: 0 },
+    boons: [],
+    // Persistent worldbuilding tokens — referenced by templates forever
+    origin: null,        // { id, label, token, blurb }
+    oath: null,          // { id, label, token, blurb }
+    keepsake: null       // { id, label, token, blurb }
+  },
+  // World fixed points
+  world: {
+    realm: 'Avenmark',
+    order: 'the Twilight Watch',
+    orderShort: 'the Watch',
+    memberTitle: 'Watcher',
+    chapterhouse: 'Calenhal',
+    mentor: 'Master Iven Thale',
+    shadow: 'the Greyrot'
+  },
+  rival: {
+    name: null,        // assigned on first activation
+    progress: 0,       // 0–100
+    lastNarratedAt: null
+  },
+  // Phase 2: backend config (null = not configured, runs in template-only mode)
+  config: {
+    workerUrl: null,
+    workerSecret: null,
+    dailyCallCap: 5,
+    dailyRegenCap: 2,
+    backendStatus: 'not_configured',  // 'not_configured' | 'ok' | 'error'
+    lastTestAt: null,
+    lastTestResult: null
+  },
+  // Phase 2: NPC roster (Master Thale pre-seeded on first launch)
+  npcs: [],
+  // Phase 2: usage counters
+  usage: {
+    callsToday: 0,
+    regensToday: 0,
+    callsTodayDate: null,
+    pendingRenarrations: [],   // entry IDs
+    monthlyTokens: { input: 0, output: 0, monthKey: null },
+    lifetimeCallsByModel: { haiku: 0, sonnet: 0, template: 0 },
+    lastFireDateRule6: null    // YYYY-MM-DD; for 14-day cooldown
+  },
+  // Phase 2: track which categories have been used (for Model B NPC unlocks)
+  firstUsedCategories: {},     // { Work: 'YYYY-MM-DD', Train: 'YYYY-MM-DD', ... }
+  entries: [],         // { id, gameDate, isoTime, text, tags, narration, event, statBumps, levelUp, type, narrationSource, narrationAlternates, tokensUsed, pendingRenarration, npcMentions }
+  lastCheckInDate: null,
+  createdAt: null
+};
+
+let state = null;
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    let parsed = JSON.parse(raw);
+    parsed = migrateState(parsed);
+    return parsed;
+  } catch (e) {
+    console.error('Load failed', e);
+    return null;
+  }
+}
+
+function migrateState(s) {
+  // Migration guards — every field defaulted if missing for backward compat
+  if (!s) s = {};
+  if (typeof s.schemaVersion !== 'number') s.schemaVersion = SCHEMA_VERSION;
+  if (typeof s.created !== 'boolean') s.created = !!s.character;
+  s.character = s.character || {};
+  s.character.name = s.character.name || 'Jerry';
+  s.character.race = s.character.race || 'Human';
+  s.character.trait = s.character.trait || 'Big dreams, small beginnings.';
+  s.character.class = s.character.class || 'Squire';
+  if (typeof s.character.level !== 'number') s.character.level = 1;
+  if (typeof s.character.xp !== 'number') s.character.xp = 0;
+  s.character.stats = Object.assign({ STR: 8, DEX: 8, CON: 8, INT: 8, WIS: 8, CHA: 8 }, s.character.stats || {});
+  s.character.statXP = Object.assign({ STR: 0, DEX: 0, CON: 0, INT: 0, WIS: 0, CHA: 0 }, s.character.statXP || {});
+  if (!Array.isArray(s.character.boons)) s.character.boons = [];
+  // Prologue tokens — null is valid for legacy saves
+  if (s.character.origin === undefined) s.character.origin = null;
+  if (s.character.oath === undefined) s.character.oath = null;
+  if (s.character.keepsake === undefined) s.character.keepsake = null;
+  // World — defaulted in for legacy saves so templates always have tokens
+  s.world = Object.assign({
+    realm: 'Avenmark',
+    order: 'the Twilight Watch',
+    orderShort: 'the Watch',
+    memberTitle: 'Watcher',
+    chapterhouse: 'Calenhal',
+    mentor: 'Master Iven Thale',
+    shadow: 'the Greyrot'
+  }, s.world || {});
+  s.rival = Object.assign({ name: null, progress: 0, lastNarratedAt: null }, s.rival || {});
+  if (!Array.isArray(s.entries)) s.entries = [];
+  if (s.lastCheckInDate === undefined) s.lastCheckInDate = null;
+  if (!s.createdAt) s.createdAt = new Date().toISOString();
+
+  // ===== Phase 2 migrations =====
+  s.config = Object.assign({
+    workerUrl: null,
+    workerSecret: null,
+    dailyCallCap: 5,
+    dailyRegenCap: 2,
+    backendStatus: 'not_configured',
+    lastTestAt: null,
+    lastTestResult: null
+  }, s.config || {});
+
+  if (!Array.isArray(s.npcs)) s.npcs = [];
+
+  s.usage = Object.assign({
+    callsToday: 0,
+    regensToday: 0,
+    callsTodayDate: null,
+    pendingRenarrations: [],
+    monthlyTokens: { input: 0, output: 0, monthKey: null },
+    lifetimeCallsByModel: { haiku: 0, sonnet: 0, template: 0 },
+    lastFireDateRule6: null
+  }, s.usage || {});
+  if (!Array.isArray(s.usage.pendingRenarrations)) s.usage.pendingRenarrations = [];
+  s.usage.monthlyTokens = Object.assign({ input: 0, output: 0, monthKey: null }, s.usage.monthlyTokens || {});
+  s.usage.lifetimeCallsByModel = Object.assign({ haiku: 0, sonnet: 0, template: 0 }, s.usage.lifetimeCallsByModel || {});
+
+  if (!s.firstUsedCategories || typeof s.firstUsedCategories !== 'object') s.firstUsedCategories = {};
+
+  // Per-entry Phase 2 fields
+  for (const e of s.entries) {
+    if (e.type === 'rest') {
+      if (!e.narrationSource) e.narrationSource = 'template';
+    } else {
+      if (!e.narrationSource) e.narrationSource = 'template';
+      if (!Array.isArray(e.narrationAlternates)) e.narrationAlternates = [];
+      if (e.tokensUsed === undefined) e.tokensUsed = null;
+      if (e.pendingRenarration === undefined) e.pendingRenarration = false;
+      if (!Array.isArray(e.npcMentions)) e.npcMentions = [];
+    }
+  }
+
+  // Backfill firstUsedCategories from existing entries (so legacy saves don't
+  // accidentally re-trigger NPC unlocks for tags they've already used)
+  for (const e of s.entries) {
+    if (e.type === 'rest' || !e.tags) continue;
+    for (const tag of e.tags) {
+      if (!s.firstUsedCategories[tag]) {
+        s.firstUsedCategories[tag] = e.gameDate;
+      }
+    }
+  }
+
+  // Pre-seed Master Iven Thale if not present
+  const hasThale = s.npcs.some(n => n.id === 'npc_iven_thale');
+  if (!hasThale) {
+    s.npcs.push({
+      id: 'npc_iven_thale',
+      name: 'Master Iven Thale',
+      role: 'Mentor',
+      description: 'Late fifties, former Knight-Captain of the Watch, now teaches. Tired but watchful. Tea-drinker. Says less than he sees.',
+      attitude: 'tired but watchful',
+      relationship: 'mentor',
+      status: 'alive',
+      tags: ['chapterhouse', 'watch', 'knight', 'teacher'],
+      firstMentionedDate: 'prologue',
+      lastMentionedDate: null
+    });
+  }
+
+  // Migrate existing rival into npcs array if present
+  if (s.rival.name) {
+    const rivalId = 'npc_' + slugifyName(s.rival.name);
+    const hasRival = s.npcs.some(n => n.id === rivalId);
+    if (!hasRival) {
+      s.npcs.push({
+        id: rivalId,
+        name: s.rival.name,
+        role: 'Rival',
+        description: 'A fellow aspirant from the western chapterhouse, ahead of you in training. Politely competitive — drills hard, says little.',
+        attitude: 'politely competitive',
+        relationship: 'rival',
+        status: 'alive',
+        tags: ['chapterhouse', 'aspirant', 'rival'],
+        firstMentionedDate: (s.rival.lastNarratedAt || '').slice(0, 10) || gameDate(),
+        lastMentionedDate: (s.rival.lastNarratedAt || '').slice(0, 10) || null
+      });
+    }
+  }
+
+  return s;
+}
+
+function slugifyName(name) {
+  return String(name).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) {
+    console.error('Save failed', e);
+    showToast('Storage error — export your data');
+  }
+}
+
+function resetState() {
+  state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+  state.createdAt = new Date().toISOString();
+  saveState();
+}
+
+/* ============================================================
+   ICONS — inlined SVG (Game-icons.net inspired, simplified)
+   ============================================================ */
+const ICONS = {
+  sword: '<svg viewBox="0 0 512 512"><path d="M373.5 24.7c-2 .1-4.7.7-7.7 2-7.7 3.4-17.6 11.3-30.8 24.4L181 204l24.7 24.7L376 58.5l-2.5-33.8zM157 228l-29.4 29.4 24.7 24.7L181.7 253 157 228zm-50 50L74.7 310.4l24.7 24.7L132 302.7 107 278zM386 99l-99 99 24.7 24.7L411 123.7 386 99zm-130 130l-24.7 24.7L256 278.4 280.7 254 256 229zm-49 49L74 411l24 24L231 302l-24-24zm185-185l-24.7 24.7L391 142l24.7-24.7L391 92zm54.5 261.5l-21.5 21.5 88.5 88.5 21.5-21.5-88.5-88.5z"/></svg>',
+  book: '<svg viewBox="0 0 512 512"><path d="M64 32v448h384V32H64zm32 32h320v384H96V64zm32 32v32h256V96H128zm0 64v32h256v-32H128zm0 64v32h256v-32H128zm0 64v32h256v-32H128zm0 64v32h256v-32H128z"/></svg>',
+  scroll: '<svg viewBox="0 0 512 512"><path d="M96 32C61 32 32 61 32 96v320c0 35 29 64 64 64h352c-35 0-64-29-64-64v-32H160V96c0-35-29-64-64-64zm0 32c17.6 0 32 14.4 32 32v288h288v32c0 17.6 14.4 32 32 32H96c-17.6 0-32-14.4-32-32V96c0-17.6 14.4-32 32-32zm96 96v32h160v-32H192zm0 64v32h160v-32H192zm0 64v32h128v-32H192z"/></svg>',
+  heart: '<svg viewBox="0 0 512 512"><path d="M376 56c-32 0-65 14-89 38-7 7-21 22-31 35-10-13-24-28-31-35-24-24-57-38-89-38-66 0-120 54-120 120 0 70 60 130 120 184 30 27 60 50 88 75 12 11 27 23 32 27 5-4 20-16 32-27 28-25 58-48 88-75 60-54 120-114 120-184 0-66-54-120-120-120z"/></svg>',
+  broom: '<svg viewBox="0 0 512 512"><path d="M388 32L256 164l-29-29-30 30 138 138 30-30-29-29L508 112 388 32zM158 219L43 334c-7 7-11 17-11 27v98c0 11 9 20 20 20h98c10 0 20-4 27-11l115-115L158 219zm32 90l84-84 73 73-84 84-73-73z"/></svg>',
+  goblets: '<svg viewBox="0 0 512 512"><path d="M64 32v40c0 80 50 145 120 165v179h-44c-22 0-40 18-40 40v24h312v-24c0-22-18-40-40-40h-44V237c70-20 120-85 120-165V32H64zm32 32h320v8c0 65-39 119-96 138v34h32v32H192v-32h32v-34c-57-19-96-73-96-138v-8z"/></svg>',
+  caduceus: '<svg viewBox="0 0 512 512"><path d="M256 32l-48 48 32 32V224h-80c-26 0-48 22-48 48s22 48 48 48h80v144l-32 32 48 48 48-48-32-32V320h80c26 0 48-22 48-48s-22-48-48-48h-80V112l32-32-48-48zm-96 80c-22 16-40 40-48 64 24 0 48-12 64-32l-16-32zm192 0l-16 32c16 20 40 32 64 32-8-24-26-48-48-64zm-192 256c-22-16-40-40-48-64 24 0 48 12 64 32l-16 32zm192 0l-16-32c16-20 40-32 64-32-8 24-26 48-48 64z"/></svg>'
+};
+
+/* ============================================================
+   NARRATION TEMPLATES
+   ============================================================ */
+// Variables: {name}, {trait}, {dominantStat}, {weather}
+// Tone: third-person, novelistic, slightly dry-witted DM voice
+
+const TEMPLATES = {
+  // Single-category templates, by category
+  Work: [
+    "{name} bore the weight of the chapterhouse today. Not the heroic work, the kind that gets sung about — the other kind. Logs, drills, errands, the unglamorous mortar that holds the order together. Master Thale said nothing of approval, but said nothing of complaint, which is its own kind of praise.",
+    "It was a long day in service of the Watch. {name} did the work that does not announce itself — the quiet labor of paying attention, of being where the order needed someone to be. The ledger remembers.",
+    "{name} crossed the courtyard before dawn and did not see the sun set on idleness. Such is the squire's road. The senior knights pretend not to notice the new aspirant putting in the hours; they notice.",
+    "A hard day's duty. {name} carried the day's tasks the way a Watcher is meant to — without flourish, and without flinching. The chronicler counts it.",
+    "Master Thale watched {name} for a long quiet moment today, then gave the smallest of nods. It was not nothing.",
+    "Drills, watch-rotations, the patient endurance of the work. {name} kept faith with the Watch, even when the Watch asked for the third hour past what was fair.",
+    "{name} stood the post the order assigned, and did not flinch from any part of it. {realm} is built of such held lines.",
+    "The chapterhouse was, today, a little more in order because {name} was in it. A modest virtue — the only kind the Watch reliably rewards.",
+  ],
+  Study: [
+    "By candlelight {name} bent over the great codices — histories of the Watch, the standing orders, the long sad arithmetic of past missions and what they had cost. The mind, like a blade, is sharpened only by patient stones.",
+    "{name} read late into the night. The chronicler suspects there is a reckoning coming for which this study is the only good preparation. {mentor} would approve, if {mentor} approved of things on principle, which {mentor} does not.",
+    "Pages turned, terms learned, mnemonics forged into lasting shapes. {name} is becoming, slowly, the kind of mind the Watch will one day need.",
+    "The tomes were unkind to {name} today, but {name} was kinder to the tomes — patient, methodical, steady. The old Watch-masters would have nodded.",
+    "There was a passage today that {name} understood for the first time. Such moments are how books cease to be books and become parts of a person.",
+    "{name} sat with the texts as one sits with an old, slow friend. Nothing dramatic. Real progress rarely is.",
+    "The lamp guttered low and {name} kept reading. This is how Watchers are made, in the end — not on roads, but at desks.",
+    "{name} closed the book with a question still open. The right kind of question. The kind that becomes a thread one can follow.",
+  ],
+  Research: [
+    "{name} pursued a thread of inquiry today, following it through a thicket of citations into territory where the answer was not yet known. This is the geography in which scholars truly live.",
+    "The work of investigation is mostly the work of waiting, but {name} did the part that cannot be waited through — the careful naming of the question.",
+    "{name} added a small stone to a very long wall today. The wall does not know yet, but the wall will be taller for it.",
+    "Notes, drafts, the maddening clarity of a problem that almost yields. {name} kept circling it, and circles, given time, become arrivals.",
+    "There was a discovery today, small but genuine — the kind that nobody writes ballads about, but on which the ballads quietly depend.",
+    "{name} bent to the long, unromantic labor of the seeker. The chronicler approves.",
+  ],
+  Train: [
+    "{name} put the body to the wheel today and let it complain and continued anyway. The body's complaints are easily distinguished from its actual limits, once one has learned to listen.",
+    "Iron and breath and the steady metronome of effort. {name} made the body a little less of a stranger.",
+    "{name} trained until the shake came, and then trained the small specific amount past it that turns shake into strength.",
+    "There was a moment in the lift today where {name} thought it was over and was wrong. Most growth lives in the difference between the thought and the wrong.",
+    "The training-yard does not lie. {name} is a small measurable amount more capable tonight than this morning. {mentor} watched a portion of it without comment, which is, from {mentor}, very nearly a compliment.",
+    "{name} fought the body's argument and won the argument, which means tomorrow the body will argue from a slightly weaker position.",
+    "Drills repeated until they stopped feeling like drills and started feeling like the way one stands. The Watch is built of such reps.",
+    "The blade is heavier in the morning than at night. {name} carried it through the whole day anyway.",
+  ],
+  Health: [
+    "{name} ate well, slept enough, or otherwise tended to the slow garden of the self. These are the unglamorous foundations of all glamor.",
+    "The body received care today. The chronicler, who has seen many heroes destroyed not by their enemies but by their own neglect, is relieved.",
+    "{name} chose, in some small way, the long road over the short one. The long road is the only one that arrives.",
+    "There was a quiet moment of restoration today — a meal, a stretch, a real breath — and the chronicler counts it among the day's true victories.",
+    "{name} did the maintenance the body asks of every traveler. It is not heroic, but heroes who skip it do not stay heroes long.",
+    "The squire's body is the squire's first weapon. {name} cleaned and oiled it today.",
+  ],
+  Chores: [
+    "{name} put the small kingdom of the household into order. There is a particular kind of peace that lives in clean countertops, and {name} earned it today.",
+    "The endless small wars of laundry and dust were waged today, and {name} won enough of them to call it a victory.",
+    "{name} did the unrewarded work that makes the rewarded work possible. The chronicler salutes.",
+    "Stacks were sorted, dishes washed, the geography of the dwelling reasserted. The squire's quarters are no place for chaos.",
+    "{name} tended to the small unending tasks that civilization is built of. A modest virtue, modestly performed.",
+    "There is order in the place where {name} sleeps tonight that was not there this morning. This counts.",
+  ],
+  Social: [
+    "{name} broke bread with companions tonight, and the chronicler — who has seen many a hero ruined by isolation — is glad of it.",
+    "There was laughter today, real and unmeasured, and {name} was inside of it. The road is long, and laughter is the cheapest of provisions.",
+    "{name} gave the gift of presence to someone today. They will remember, even if they don't quite remember why.",
+    "Words were exchanged that mattered. {name} was the kind of friend that {name} would want to have, and the world has more of that quantity tonight.",
+    "{name} kept the bonds in good repair. A sword can be replaced. A friend, less so.",
+    "An hour of real conversation today, the kind that sets a small private fire that will warm later weeks. The chronicler logs it.",
+    "{name} ate at the long table tonight rather than alone, and was the better for it. The other aspirants of the chapterhouse made room without comment, which is, in its small way, a beginning.",
+    "Someone made {name} laugh today in a way {name} had not laughed in some weeks. The chronicler does not yet know who. The chronicler will learn.",
+  ],
+  // Multi-category combos (used when 2+ categories)
+  multi: [
+    "A full day, by any honest measure. {name} moved between {tag1} and {tag2} like a traveler moving between rooms in their own house — unfussed, capable, present in each.",
+    "{name} held more than one thread today, and did not drop them. There is a particular kind of strength in that, which the chronicler counts among the rarer ones.",
+    "The day asked {name} to be more than one thing, and {name} was. The squire grows.",
+    "{name} did the work of {tag1} and the work of {tag2} both, and a little of the soul that turns work into a life besides. A good day's pages.",
+    "It was the kind of day that, looking back, will seem ordinary. It was not. {name} was many things to many ends, and that is the architecture of a life well-spent.",
+    "Threads of effort woven together — {tag1}, {tag2} — and {name} the patient hand at the loom. The tapestry grows, even when no one is watching it grow.",
+    "{name} carried more than one duty today. The chronicler notes that this is what separates the squire from the sleeper, and writes the day in steady ink.",
+    "The hours did not spare {name}, and {name} did not spare the hours. {tag1}, {tag2}, all of it answered. The day stands as written.",
+  ],
+  // Three-category days
+  three: [
+    "{name} spread the day wide today — {tag1}, {tag2}, {tag3} — and the chronicler, who has watched many a traveler try this and fail, is moved to make special note. A full day's pages, and they are good ones.",
+    "Three duties, one squire. {name} answered each. The order would be pleased, were the order in the habit of being pleased.",
+    "{name} lived a notably full day today. The chronicler suspects {name} will sleep well, and earned it.",
+    "Few days are given the dignity of being lived through three doors at once. {name} walked through {tag1}, {tag2}, and {tag3}, and closed each gently behind. A rare and good page.",
+  ],
+  // Generic fallback (shouldn't trigger but here for safety)
+  generic: [
+    "{name} did the day's work, and the day was met. The chronicle is the longer for it.",
+    "Another page set down. The squire's road is made one such page at a time.",
+    "{name} added a stone to the cairn today. The cairn rises.",
+  ],
+  // Rest-at-camp templates (single missed day or partial gap)
+  rest: [
+    "The fire crackled low at camp last night, and {name} slept deep. The world, for its part, did not wait — but the world rarely does.",
+    "{name} rested. The road is long, and even the order's most devoted carry a tally of nights spent simply staring at a fire and being alive. Today resumes the journey.",
+    "A quiet day passed without entry. The chronicler trusts {name}'s reasons, and sets down a small mark for the gap.",
+    "{name} did not write yesterday. The candle was unlit, the page unmarked. It happens. The pen returns to {name}'s hand today.",
+    "There was a silence in the chronicle. {name} returns to it now. The road is patient.",
+    "Rest came, asked-for or not. {name} resumes the watch.",
+  ],
+  // Multi-day rest
+  long_rest: [
+    "Some days the chronicle simply does not get written, and on those days the world keeps its own tally. {n} suns rose without {name}'s name in this book. The book reopens now, and so, in a sense, does {name}.",
+    "{n} days passed in the quiet between pages. There is no shame in it — every long road has its rests — but the chronicler is glad to see ink again, and notes that {name} returns now.",
+    "A stretch of {n} days went unrecorded. The path did not stop while {name} was not looking at it. {name} steps back onto it, and the ink begins again.",
+  ]
+};
+
+// Rival progress templates (Phase 1: 1 named rival — another aspirant in the chapterhouse)
+const RIVAL_NAMES = [
+  'Aldric Vey', 'Roen Holloway', 'Cassiana Bryne', 'Tomas Larrow',
+  'Wren Halix', 'Galen Marsh', 'Isolde Brace', 'Edran Cole'
+];
+
+const RIVAL_INTRO = "{rival}, the other aspirant who came up from the western chapterhouse, drilled while you were absent. The talk in the dining hall is admiring. {mentor} did not look at you when the name was said, which is its own kind of looking.";
+const RIVAL_PROGRESS = [
+  "{rival} was first to the yard again this morning. The sword forms have begun to come easily for them, in a way that cannot quite be faked.",
+  "Word in the chapterhouse is that {rival} drilled hard while you slept. The gap closes — or rather, opens.",
+  "A passing senior knight mentioned {rival}'s name with what sounded almost like approval. You felt it as a small, useful sting.",
+  "{rival} was seen training before sunrise. The chronicler does not pretend not to notice.",
+  "{mentor} is said to have praised {rival} by name today. The praise was specific. {mentor} does not give specific praise often."
+];
+
+/* ============================================================
+   BOON SYSTEM
+   ============================================================ */
+const BOONS_BY_STAT = {
+  STR: [
+    { name: "Iron Wrist", desc: "The arm remembers what the will demands of it." },
+    { name: "Hammer's Patience", desc: "Slow strength that does not retreat." },
+    { name: "Forge-Heart", desc: "The body fears less than it once did." }
+  ],
+  DEX: [
+    { name: "Quiet Foot", desc: "The world bends a little to let you through it." },
+    { name: "Hand of Order", desc: "What you set down stays set down, in its right place." },
+    { name: "Sure Step", desc: "The path arranges itself beneath you." }
+  ],
+  CON: [
+    { name: "Long Wind", desc: "The lungs that the long road requires." },
+    { name: "Old Oak", desc: "Slow to bend, slower to break." },
+    { name: "Hearth-Strong", desc: "The body kept, the body keeps you." }
+  ],
+  INT: [
+    { name: "Quick Study", desc: "The pages give up their secrets faster now." },
+    { name: "Lantern-Mind", desc: "Where your thought goes, the dark thins." },
+    { name: "Scholar's Patience", desc: "The hard problem yields to the long sit." }
+  ],
+  WIS: [
+    { name: "Steady Eye", desc: "You see what others have already started missing." },
+    { name: "Healer's Stillness", desc: "Your hands are calm where calm is the medicine." },
+    { name: "Long View", desc: "The shape of the day is visible to you, hours before." }
+  ],
+  CHA: [
+    { name: "Open Hand", desc: "People stay nearer you than they meant to." },
+    { name: "Honest Tongue", desc: "Your words land where they were aimed." },
+    { name: "Warm Hearth", desc: "The room is a little easier when you are in it." }
+  ]
+};
+
+function awardBoon(level) {
+  // Award boon based on dominant stat at this level
+  const stats = state.character.stats;
+  const sorted = Object.entries(stats).sort((a, b) => b[1] - a[1]);
+  const topStat = sorted[0][0];
+
+  // Find a boon from this stat that hasn't been earned yet
+  const earned = new Set(state.character.boons.map(b => b.name));
+  const pool = BOONS_BY_STAT[topStat].filter(b => !earned.has(b.name));
+  let boon;
+  if (pool.length > 0) {
+    boon = pool[Math.floor(Math.random() * pool.length)];
+  } else {
+    // Fallback to any unowned boon
+    const allBoons = Object.values(BOONS_BY_STAT).flat();
+    const unowned = allBoons.filter(b => !earned.has(b.name));
+    boon = unowned.length > 0 ? unowned[Math.floor(Math.random() * unowned.length)] : { name: 'Wayfarer', desc: 'The road remembers you.' };
+  }
+  const stamped = { ...boon, level, stat: topStat, awardedAt: new Date().toISOString() };
+  state.character.boons.push(stamped);
+  return stamped;
+}
+
+/* ============================================================
+   PROLOGUE — choice data + scene script
+   ============================================================
+   Each choice writes a persistent token onto state.character that
+   templates can interpolate forever. Mechanical effects are small
+   in Phase 1 (a single +1 stat) — the real value is narrative
+   anchoring for Phase 2's API.
+   ============================================================ */
+
+const ORIGINS = [
+  {
+    id: 'border',
+    label: 'A border town.',
+    blurb: 'You grew up watching banners ride past on missions you weren\'t part of, and decided early that one day you would be.',
+    token: 'a border town in the realm\'s long shadow',
+    statBonus: 'CON',
+    flavor: 'border-raised'
+  },
+  {
+    id: 'merchant',
+    label: 'A merchant family in a quiet city.',
+    blurb: 'Comfortable, expected, dull. You wrote the order\'s recruitment hall a letter at fifteen. They took six years to answer.',
+    token: 'a merchant\'s house in a city too quiet for you',
+    statBonus: 'INT',
+    flavor: 'city-bred'
+  },
+  {
+    id: 'unspoken',
+    label: '"Around."',
+    blurb: 'You don\'t say where. Thale lets the silence sit a long second, then nods and moves on. He doesn\'t ask again. He doesn\'t forget, either.',
+    token: 'somewhere you have not yet seen fit to name',
+    statBonus: 'WIS',
+    flavor: 'a past kept close'
+  }
+];
+
+const OATHS = [
+  {
+    id: 'best',
+    label: 'To be the best.',
+    blurb: 'Because they are. You don\'t see the point of aiming lower.',
+    token: 'the simple, brutal ambition to be the best',
+    flavor: 'driven'
+  },
+  {
+    id: 'service',
+    label: 'To go where help is needed.',
+    blurb: 'The realm has a lot of places like that. You want to be one of the people who shows up.',
+    token: 'the conviction that someone has to show up',
+    flavor: 'service-bound'
+  },
+  {
+    id: 'story',
+    label: 'A story you heard once.',
+    blurb: 'About a Watcher who did something extraordinary. You\'ve never told anyone, and you don\'t tell Thale either. But it\'s the reason.',
+    token: 'a story you carry that no one else has heard',
+    flavor: 'a private fire'
+  }
+];
+
+const KEEPSAKES = [
+  {
+    id: 'sword',
+    label: 'A practice sword. Your father\'s.',
+    blurb: 'Older than you. The grip has been re-wrapped twice. You set it against the wall by the door.',
+    token: 'a re-wrapped practice sword that was your father\'s before yours',
+    statBonus: 'STR'
+  },
+  {
+    id: 'book',
+    label: 'A novel, dog-eared.',
+    blurb: 'Not a manual, not scripture. A novel you\'ve read four times. You don\'t know why you brought it. You couldn\'t leave it.',
+    token: 'a dog-eared novel you have read four times for reasons you do not entirely understand',
+    statBonus: 'CHA'
+  },
+  {
+    id: 'letter',
+    label: 'A folded letter, unopened.',
+    blurb: 'You know who it\'s from. You\'re saving it for a day you\'ll know when it comes. You hang it on the hook above the bed.',
+    token: 'a folded letter you have not yet opened, hanging above your bed',
+    statBonus: 'WIS'
+  }
+];
+
+// The prologue is a sequence of "scenes" — some are pure prose,
+// some present a choice. Each scene has a key, a body (string or
+// function returning string after choices are made), and optionally
+// a `choice` field naming which choice this scene presents.
+const PROLOGUE_SCENES = [
+  {
+    key: 'arrival',
+    title: 'I. Arrival',
+    body: () => `The road into ${state.world.chapterhouse} crests a long hill before it drops to the river crossing, and from that crest you can see the chapterhouse for the first time. A grey stone building on the far rise, walls patched with newer stone that hasn't yet weathered to match. A standard above the gate too far to read but easy to guess: the eight-pointed star with one dark petal, against a deep indigo field.
+
+You have been walking for some time. You are ${state.character.name}. Your acceptance letter is folded twice in your coat. The realm is ${state.world.realm}, twelve years past the end of the war, recovering unevenly. The order you have come to join — ${state.world.order} — has stood for three hundred and seven years, on paper.
+
+You shoulder what you brought with you, and start down the hill.`
+  },
+  {
+    key: 'gate',
+    title: 'II. The Gate',
+    body: () => `The gate-warden is older than you expected — closer to seventy than fifty, with a long grey braid and the careful posture of someone whose back has opinions. He reads your letter without taking it from you. Looks you over.
+
+"They told you which cell?"
+
+"East tower, third floor."
+
+"Mm." He gestures you through with two fingers. "Master Thale's already waiting. Dining hall. He doesn't like to be kept."
+
+You step through into a courtyard that is, you cannot help noticing, mostly empty. A practice yard at the far end, scuffed clean by long use. Two horses in stalls that could hold eight. The chapterhouse of ${state.world.chapterhouse} was built to house twelve banners. You count, walking across the flagstones, and arrive at four. One of which is yours, when you have one. None of which you have yet met.
+
+You hear voices from somewhere above — two of them, young, arguing about something ordinary. You don't see who. You file the sound away.`
+  },
+  {
+    key: 'mentor',
+    title: 'III. Master Thale',
+    body: () => `The dining hall is long and mostly dark. One end is lit. A tall man in a dark coat sits at a long table with a single candle and a cup of something that is not tea, reading a stack of mission reports the way someone reads a bill they already know they cannot pay.
+
+He looks up when you come in. Late fifties. Silver-streaked. Eyes that have done a lot of looking.
+
+"${state.character.name}." Not a question. He has been expecting you. He gestures to the bench across from him. "Sit. Eat, if you're hungry — there's bread on the sideboard, it isn't fresh but it isn't stale either, which is most of what you can ask of bread."
+
+You sit. He goes back to the report for a moment, finishes a paragraph, closes the folder, and sets it aside with the unhurried care of someone who has decided a thing can wait. Then he looks at you properly for the first time.
+
+"I am Iven Thale. I was a Knight-Captain of this Watch. Now I teach. You will train under me until I tell you otherwise, which will not be soon. There are two other aspirants in the house, both ahead of you, both of whom you will meet tomorrow, neither of whom I will describe for you tonight because first impressions are yours to make and I do not propose to spoil them."
+
+He takes a slow drink from his cup.
+
+"First, though. Some questions."`
+  },
+  {
+    key: 'choice-origin',
+    title: 'IV. A Question',
+    intro: () => `He asks it casually, in the way of someone who has asked it a thousand times.
+
+"Where were you, before you were here?"`,
+    choice: 'origin'
+  },
+  {
+    key: 'after-origin',
+    title: '',
+    body: () => {
+      const o = state.character.origin;
+      return `${o.blurb}
+
+He nods. Doesn't write it down. He won't forget it.`;
+    }
+  },
+  {
+    key: 'choice-oath',
+    title: 'V. The Second Question',
+    intro: () => `He pours himself another half-measure of whatever is in the cup. Doesn't offer you any. Waits.
+
+"And why ${state.world.orderShort}, specifically? There are other orders. Some of them pay better."`,
+    choice: 'oath'
+  },
+  {
+    key: 'after-oath',
+    title: '',
+    body: () => {
+      const oath = state.character.oath;
+      return `${oath.blurb}
+
+Thale watches you for a long moment after you answer. You can't quite read his face. Whatever he was looking for, you think you may have given him — or may not have. He doesn't say which.
+
+"Good enough," he says finally, which is neither approval nor its opposite. "The work will tell us the rest."
+
+He stands. The candle is burning low. He gestures toward the hall behind you.
+
+"Your cell. East tower, third floor. The window is small but it faces east, which means the sun will get you up whether you want it to or not. Settle in. We begin in earnest tomorrow."`;
+    }
+  },
+  {
+    key: 'cell',
+    title: 'VI. The Cell',
+    body: () => `The room is the size of a modest closet. A bed, a hook on the wall, a window the size of a book. A single candle in a pewter dish on the sill, already lit — by whom, you don't know. The Watch keeps strange small kindnesses.
+
+Outside the door, somewhere down the corridor, you can hear someone snoring already. Someone else is humming, very quietly, a song you don't recognize. The chapterhouse settles around you like an old building deciding to accept a new sound in it.
+
+You sit on the bed. It is exactly as soft as you expected, which is to say, not at all. You take a long breath. You unpack what you brought from before.`
+  },
+  {
+    key: 'choice-keepsake',
+    title: 'VII. What You Brought',
+    intro: () => `You set down what you brought from before.`,
+    choice: 'keepsake'
+  },
+  {
+    key: 'after-keepsake',
+    title: '',
+    body: () => {
+      const k = state.character.keepsake;
+      return `${k.blurb}
+
+You blow out the candle. The dark is total for a long second before the moon finds the small window and makes a pale rectangle of it on the floor. You lie down. The bed is bad. You are exactly where you wanted to be.
+
+You sleep.`;
+    }
+  },
+  {
+    key: 'oath-stone',
+    title: 'VIII. The Oath',
+    body: () => `You wake before the bell, in the grey hour. Master Thale is already in the courtyard. He has not been waiting; he was simply there first, the way he will be there first for as long as you know him.
+
+He hands you a smooth dark stone the size of a thumb. The eight-pointed star is incised on one face. The other face is blank.
+
+"This is yours now," he says. "It's nothing magical. It's a stone. The order has given new aspirants a stone for two hundred and forty-some years. The blank face is your own to fill. Some Watchers carve a sigil. Some do nothing. Some lose theirs immediately, which is its own answer."
+
+He does not make you say an oath aloud. He does not ask you to swear by anything.
+
+"There is no ceremony. There used to be. The order has trimmed itself, in places. We trust that if you are here, you understand why you are here. If we are wrong about you, we will find out together."
+
+He looks at you. The light is just beginning to come up over the eastern wall.
+
+"Welcome to the Watch, ${state.character.name}."
+
+The chronicle begins.`
+  }
+];
+
+let prologueIndex = 0;
+let prologueAnswers = {}; // { origin: ORIGINS[i], oath: OATHS[i], keepsake: KEEPSAKES[i] }
+
+function startPrologue() {
+  prologueIndex = 0;
+  prologueAnswers = {};
+  showScreen('prologue');
+  renderPrologueScene();
+}
+
+function renderPrologueScene() {
+  const scene = PROLOGUE_SCENES[prologueIndex];
+  if (!scene) return finishPrologue();
+
+  const titleEl = document.getElementById('prologue-title');
+  const bodyEl = document.getElementById('prologue-body');
+  const choiceEl = document.getElementById('prologue-choices');
+  const continueBtn = document.getElementById('prologue-continue');
+  const counterEl = document.getElementById('prologue-counter');
+
+  // Reset
+  choiceEl.innerHTML = '';
+  choiceEl.style.display = 'none';
+  continueBtn.style.display = 'none';
+
+  titleEl.textContent = scene.title || '';
+  titleEl.style.display = scene.title ? 'block' : 'none';
+
+  counterEl.textContent = `${prologueIndex + 1} / ${PROLOGUE_SCENES.length}`;
+
+  if (scene.choice) {
+    // Choice scene: render intro + options
+    bodyEl.innerHTML = formatProse(scene.intro());
+    const opts = scene.choice === 'origin' ? ORIGINS : scene.choice === 'oath' ? OATHS : KEEPSAKES;
+    for (const opt of opts) {
+      const btn = document.createElement('button');
+      btn.className = 'prologue-choice-btn';
+      btn.innerHTML = `<span class="choice-label">${escapeHTML(opt.label)}</span>`;
+      btn.addEventListener('click', () => selectChoice(scene.choice, opt));
+      choiceEl.appendChild(btn);
+    }
+    choiceEl.style.display = 'flex';
+  } else {
+    // Prose scene: render body + continue
+    bodyEl.innerHTML = formatProse(scene.body());
+    continueBtn.style.display = 'block';
+    continueBtn.textContent = prologueIndex === PROLOGUE_SCENES.length - 1 ? '✦ Begin the Chronicle ✦' : 'Continue →';
+  }
+
+  // Scroll the prologue body to top
+  document.getElementById('screen-prologue').scrollTop = 0;
+}
+
+function formatProse(text) {
+  // Convert double newlines to paragraph breaks
+  return text.split(/\n\n+/).map(p => `<p>${escapeHTML(p).replace(/\n/g, '<br>')}</p>`).join('');
+}
+
+function selectChoice(kind, opt) {
+  // Persist immediately to state
+  state.character[kind] = opt;
+  prologueAnswers[kind] = opt;
+  // Apply stat bonus if any (only on first selection — guarded by created flag)
+  if (opt.statBonus && !state.created) {
+    state.character.stats[opt.statBonus] = (state.character.stats[opt.statBonus] || 8) + 1;
+  }
+  saveState();
+  prologueIndex += 1;
+  renderPrologueScene();
+}
+
+function continuePrologue() {
+  prologueIndex += 1;
+  if (prologueIndex >= PROLOGUE_SCENES.length) {
+    finishPrologue();
+  } else {
+    renderPrologueScene();
+  }
+}
+
+function finishPrologue() {
+  state.created = true;
+  saveState();
+  showScreen('home');
+  showToast('The Chronicle begins');
+}
+
+/* ============================================================
+   NARRATION GENERATION
+   ============================================================ */
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function worldVars() {
+  return {
+    realm: state.world.realm,
+    order: state.world.order,
+    orderShort: state.world.orderShort,
+    mentor: state.world.mentor,
+    chapterhouse: state.world.chapterhouse,
+    title: state.world.memberTitle,
+    Title: state.world.memberTitle
+  };
+}
+
+function fillTemplate(t, vars) {
+  const merged = Object.assign({}, worldVars(), vars);
+  return t.replace(/\{(\w+)\}/g, (_, k) => merged[k] !== undefined ? merged[k] : '{' + k + '}');
+}
+
+function generateNarration(text, tags) {
+  const name = state.character.name;
+  let template;
+
+  if (tags.length === 1) {
+    template = pick(TEMPLATES[tags[0]] || TEMPLATES.generic);
+  } else if (tags.length === 2) {
+    template = pick(TEMPLATES.multi);
+    return fillTemplate(template, { name, tag1: tags[0].toLowerCase(), tag2: tags[1].toLowerCase() });
+  } else if (tags.length >= 3) {
+    template = pick(TEMPLATES.three);
+    return fillTemplate(template, { name, tag1: tags[0].toLowerCase(), tag2: tags[1].toLowerCase(), tag3: tags[2].toLowerCase() });
+  } else {
+    template = pick(TEMPLATES.generic);
+  }
+
+  return fillTemplate(template, { name });
+}
+
+function generateRestNarration(daysSkipped) {
+  const name = state.character.name;
+  if (daysSkipped <= 1) {
+    return fillTemplate(pick(TEMPLATES.rest), { name });
+  } else {
+    return fillTemplate(pick(TEMPLATES.long_rest), { name, n: daysSkipped });
+  }
+}
+
+/* ============================================================
+   XP / LEVELING
+   ============================================================ */
+function awardXP(tagCount, tags) {
+  const xpGained = XP_PER_TAG[tagCount] || 10;
+  state.character.xp += xpGained;
+
+  // Stat XP
+  const statBumps = [];
+  for (const tag of tags) {
+    const stat = CATEGORIES[tag].stat;
+    state.character.statXP[stat] = (state.character.statXP[stat] || 0) + STAT_XP_PER_TAG;
+    if (state.character.statXP[stat] >= STAT_XP_PER_BUMP) {
+      const bumps = Math.floor(state.character.statXP[stat] / STAT_XP_PER_BUMP);
+      state.character.statXP[stat] -= bumps * STAT_XP_PER_BUMP;
+      state.character.stats[stat] += bumps;
+      statBumps.push({ stat, by: bumps });
+    }
+  }
+
+  // Check for level up
+  let leveledUp = null;
+  while (state.character.level < CLASSES.length * 5 && state.character.xp >= xpForLevel(state.character.level + 1)) {
+    state.character.level += 1;
+    const newClass = classForLevel(state.character.level);
+    if (newClass.name !== state.character.class) {
+      state.character.class = newClass.name;
+    }
+    const boon = awardBoon(state.character.level);
+    leveledUp = { level: state.character.level, class: state.character.class, boon };
+  }
+
+  return { xpGained, statBumps, leveledUp };
+}
+
+/* ============================================================
+   PHASE 2 — PRICING (verified Apr 2026)
+   ============================================================ */
+// Per million tokens. TODO: re-verify if Anthropic changes pricing.
+const PRICING = {
+  haiku:  { in: 1, out: 5 },     // claude-haiku-4-5-20251001
+  sonnet: { in: 3, out: 15 }     // claude-sonnet-4-6
+};
+
+const STREAK_BUMP_COOLDOWN_DAYS = 14;
+const STREAK_THRESHOLD_DAYS = 7;
+const SHIMMER_TIMEOUT_MS = 15000;
+const SHIMMER_NUDGE_1_MS = 6000;
+const SHIMMER_NUDGE_2_MS = 12000;
+
+/* ============================================================
+   PHASE 2 — USAGE / DAILY COUNTERS
+   ============================================================ */
+function rolloverUsageIfNewDay() {
+  const today = gameDate();
+  if (state.usage.callsTodayDate !== today) {
+    state.usage.callsToday = 0;
+    state.usage.regensToday = 0;
+    state.usage.callsTodayDate = today;
+  }
+  // Monthly token rollover
+  const monthKey = today.slice(0, 7);
+  if (state.usage.monthlyTokens.monthKey !== monthKey) {
+    state.usage.monthlyTokens = { input: 0, output: 0, monthKey };
+  }
+}
+
+function callBudgetRemaining() {
+  rolloverUsageIfNewDay();
+  return Math.max(0, state.config.dailyCallCap - state.usage.callsToday);
+}
+
+function regenBudgetRemaining() {
+  rolloverUsageIfNewDay();
+  return Math.max(0, state.config.dailyRegenCap - state.usage.regensToday);
+}
+
+/* ============================================================
+   PHASE 2 — STREAK COUNTER (consecutive check-in days)
+   ============================================================ */
+function consecutiveCheckInStreak() {
+  const today = gameDate();
+  let streak = 0;
+  let cursor = today;
+  // Walk backward from yesterday looking for consecutive entries
+  // (today's check-in not yet logged when this is called)
+  for (let i = 0; i < 30; i++) {
+    const d = new Date(cursor + 'T12:00:00');
+    d.setDate(d.getDate() - 1);
+    cursor = d.toISOString().slice(0, 10);
+    const had = state.entries.some(e => e.gameDate === cursor && e.type !== 'rest');
+    if (had) streak++;
+    else break;
+  }
+  return streak;
+}
+
+/* ============================================================
+   PHASE 2 — MILESTONE DETECTION & MODEL ROUTING
+   ============================================================ */
+function detectMilestones(tags) {
+  const today = gameDate();
+  const m = {
+    isFirstEver: state.entries.filter(e => e.type !== 'rest').length === 0,
+    isLevelUp: false,           // determined post-XP
+    isClassTransition: false,   // determined post-XP
+    isFirstUseOfTag: null,      // first new tag in this entry
+    daysSkipped: 0,
+    canIntroduceNpc: false,
+    streakBumpDay: false,
+    newClass: null
+  };
+
+  // Skip days
+  if (state.lastCheckInDate) {
+    const gap = daysBetweenGameDates(state.lastCheckInDate, today);
+    m.daysSkipped = Math.max(0, gap - 1);
+  }
+
+  // First use of any tag
+  for (const tag of tags) {
+    if (!state.firstUsedCategories[tag]) {
+      m.isFirstUseOfTag = tag;
+      break;
+    }
+  }
+
+  // Streak bump (rule 6 with cooldown)
+  if (tags.length === 3) {
+    const streak = consecutiveCheckInStreak();
+    if (streak >= STREAK_THRESHOLD_DAYS) {
+      const lastFire = state.usage.lastFireDateRule6;
+      if (!lastFire || daysBetweenGameDates(lastFire, today) >= STREAK_BUMP_COOLDOWN_DAYS) {
+        m.streakBumpDay = true;
+      }
+    }
+  }
+
+  return m;
+}
+
+function chooseModel(milestones) {
+  // Sonnet criteria
+  if (milestones.isFirstEver) return 'sonnet';
+  if (milestones.isLevelUp) return 'sonnet';
+  if (milestones.isClassTransition) return 'sonnet';
+  if (milestones.daysSkipped >= 3) return 'sonnet';
+  if (milestones.streakBumpDay) return 'sonnet';
+  return 'haiku';
+}
+
+function shouldUnlockNpc(milestones, tags) {
+  // Model B: NPCs unlock only on Sonnet calls OR on first-time category use
+  // (except Chores which is excluded per spec)
+  if (milestones.isFirstUseOfTag && milestones.isFirstUseOfTag !== 'Chores') return true;
+  if (chooseModel(milestones) === 'sonnet') return true;
+  return false;
+}
+
+/* ============================================================
+   PHASE 2 — WORKER CLIENT
+   ============================================================ */
+async function callWorker({ model, kind, context, timeoutMs = SHIMMER_TIMEOUT_MS }) {
+  const cfg = state.config;
+  if (!cfg.workerUrl || !cfg.workerSecret) {
+    throw new Error('backend_not_configured');
+  }
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+  let response;
+  try {
+    response = await fetch(cfg.workerUrl + '/narrate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Chronicle-Secret': cfg.workerSecret
+      },
+      body: JSON.stringify({ model, kind, context }),
+      signal: controller.signal
+    });
+  } catch (e) {
+    clearTimeout(timeout);
+    if (e.name === 'AbortError') throw new Error('timeout');
+    throw new Error('network: ' + e.message);
+  }
+  clearTimeout(timeout);
+
+  let body;
+  try {
+    body = await response.json();
+  } catch (e) {
+    throw new Error('bad_json_from_worker');
+  }
+
+  if (!response.ok) {
+    const err = new Error(body.error || ('http_' + response.status));
+    err.status = response.status;
+    err.detail = body.detail;
+    err.retryAt = body.retryAt;
+    throw err;
+  }
+  return body;
+}
+
+/* ============================================================
+   PHASE 2 — CONTEXT BUILDER (sent to Worker)
+   ============================================================ */
+function buildWorkerContext(tags, text, milestones) {
+  const today = gameDate();
+  return {
+    character: {
+      name: state.character.name,
+      class: state.character.class,
+      level: state.character.level,
+      stats: state.character.stats,
+      trait: state.character.trait,
+      origin: state.character.origin,
+      oath: state.character.oath,
+      keepsake: state.character.keepsake
+    },
+    world: state.world,
+    npcs: trimmedNpcsForPrompt(),
+    recentEntries: trimmedRecentEntriesForPrompt(),
+    todaysEntry: { gameDate: today, tags, text },
+    milestones
+  };
+}
+
+function trimmedNpcsForPrompt() {
+  // Always include all named NPCs. Roster is small (single digits).
+  // Trim only if it grows past ~20.
+  const all = state.npcs || [];
+  if (all.length <= 20) return all;
+  // Keep the recently-mentioned 20
+  return [...all]
+    .sort((a, b) => (b.lastMentionedDate || '').localeCompare(a.lastMentionedDate || ''))
+    .slice(0, 20);
+}
+
+function trimmedRecentEntriesForPrompt() {
+  // Last 10 non-rest entries, oldest first
+  const real = state.entries.filter(e => e.type !== 'rest');
+  return real.slice(-10).map(e => ({
+    gameDate: e.gameDate,
+    tags: e.tags || [],
+    text: (e.text || '').slice(0, 200),
+    narration: e.narration
+  }));
+}
+
+/* ============================================================
+   PHASE 2 — SHIMMER UI HELPERS
+   ============================================================ */
+let shimmerTimer1, shimmerTimer2;
+function showShimmer() {
+  document.getElementById('shimmer-card').style.display = 'block';
+  document.getElementById('shimmer-status').textContent = 'Pen finds parchment...';
+  document.getElementById('shimmer-status').style.opacity = '1';
+  document.getElementById('todays-narration-card').style.display = 'none';
+  clearTimeout(shimmerTimer1); clearTimeout(shimmerTimer2);
+  shimmerTimer1 = setTimeout(() => {
+    document.getElementById('shimmer-status').textContent = 'The chronicler considers...';
+  }, SHIMMER_NUDGE_1_MS);
+  shimmerTimer2 = setTimeout(() => {
+    document.getElementById('shimmer-status').textContent = 'The chronicler takes a moment longer...';
+  }, SHIMMER_NUDGE_2_MS);
+}
+function hideShimmer() {
+  document.getElementById('shimmer-card').style.display = 'none';
+  clearTimeout(shimmerTimer1); clearTimeout(shimmerTimer2);
+}
+
+/* ============================================================
+   PHASE 2 — NPC HELPERS
+   ============================================================ */
+function ingestNpcMentions(npcMentions, today) {
+  if (!Array.isArray(npcMentions)) return [];
+  const added = [];
+  for (const n of npcMentions) {
+    if (!n || !n.name || typeof n.name !== 'string') continue;
+    const id = 'npc_' + slugifyName(n.name);
+    const existing = state.npcs.find(x => x.id === id);
+    if (existing) {
+      existing.lastMentionedDate = today;
+      continue;
+    }
+    state.npcs.push({
+      id,
+      name: n.name.trim(),
+      role: (n.role || 'unknown').trim(),
+      description: (n.description || '').trim(),
+      attitude: (n.attitude || 'neutral').trim(),
+      relationship: (n.relationship || 'acquaintance').trim(),
+      status: 'alive',
+      tags: Array.isArray(n.tags) ? n.tags.slice(0, 8).map(String) : [],
+      firstMentionedDate: today,
+      lastMentionedDate: today
+    });
+    added.push(n.name);
+  }
+  return added;
+}
+
+function touchNpcMentionsByName(narration, today) {
+  // Light-touch: scan narration for known NPC names and update lastMentioned
+  const mentioned = [];
+  for (const npc of state.npcs) {
+    if (!npc.name) continue;
+    if (narration.includes(npc.name)) {
+      npc.lastMentionedDate = today;
+      mentioned.push(npc.name);
+    } else {
+      // Also try the first part of the name (e.g. "Thale" matches "Master Iven Thale")
+      const lastPart = npc.name.split(' ').pop();
+      if (lastPart && lastPart.length >= 4 && narration.includes(lastPart)) {
+        npc.lastMentionedDate = today;
+        mentioned.push(npc.name);
+      }
+    }
+  }
+  return mentioned;
+}
+
+
+function maybeAdvanceRival(daysSkipped) {
+  // Days 1–2: pure flavor. Day 3+: mechanical penalty (rival gains progress).
+  if (daysSkipped < 3) return null;
+
+  if (!state.rival.name) {
+    state.rival.name = pick(RIVAL_NAMES);
+  }
+
+  const advancement = Math.min(15 + (daysSkipped - 3) * 5, 40);
+  state.rival.progress = Math.min(100, state.rival.progress + advancement);
+  state.rival.lastNarratedAt = new Date().toISOString();
+
+  const isIntro = !state.entries.some(e => e.event && e.event.includes('rival'));
+  const template = isIntro ? RIVAL_INTRO : pick(RIVAL_PROGRESS);
+  return fillTemplate(template, { rival: state.rival.name });
+}
+
+function rivalMessageForStrip() {
+  if (!state.rival.name || state.rival.progress === 0) return null;
+  return `${state.rival.name} continues to gain ground while you rest. The gap is real.`;
+}
+
+/* ============================================================
+   SCENE PANEL — animated SVG that adapts to recent activity
+   ============================================================ */
+function dominantRecentCategory(days = 7) {
+  const today = gameDate();
+  const cutoff = new Date(today + 'T12:00:00');
+  cutoff.setDate(cutoff.getDate() - days);
+  const cutoffStr = cutoff.toISOString().slice(0, 10);
+
+  const counts = {};
+  for (const e of state.entries) {
+    if (!e.tags || e.gameDate < cutoffStr || e.type === 'rest') continue;
+    for (const t of e.tags) counts[t] = (counts[t] || 0) + 1;
+  }
+
+  let top = null, topCount = 0;
+  for (const [k, v] of Object.entries(counts)) {
+    if (v > topCount) { top = k; topCount = v; }
+  }
+  return { top, totalEntries: Object.values(counts).reduce((a, b) => a + b, 0) };
+}
+
+const SCENES = {
+  // Each scene returns SVG inner content (drawn into 560x200 viewBox)
+  campfire: {
+    caption: "At rest by the fire.",
+    svg: `
+      <defs>
+        <radialGradient id="sky" cx="50%" cy="100%" r="80%">
+          <stop offset="0%" stop-color="#3a2818"/>
+          <stop offset="100%" stop-color="#0f0905"/>
+        </radialGradient>
+        <radialGradient id="firelight" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="rgba(255,180,80,0.6)"/>
+          <stop offset="100%" stop-color="rgba(255,180,80,0)"/>
+        </radialGradient>
+      </defs>
+      <rect width="560" height="200" fill="url(#sky)"/>
+      <!-- Stars -->
+      <circle cx="80" cy="30" r="1" fill="#fff" opacity="0.7"><animate attributeName="opacity" values="0.7;0.2;0.7" dur="3s" repeatCount="indefinite"/></circle>
+      <circle cx="200" cy="40" r="1" fill="#fff" opacity="0.5"><animate attributeName="opacity" values="0.5;0.1;0.5" dur="4s" repeatCount="indefinite"/></circle>
+      <circle cx="450" cy="25" r="1.5" fill="#fff" opacity="0.6"><animate attributeName="opacity" values="0.6;0.15;0.6" dur="3.5s" repeatCount="indefinite"/></circle>
+      <circle cx="350" cy="45" r="1" fill="#fff" opacity="0.5"><animate attributeName="opacity" values="0.5;0.1;0.5" dur="2.8s" repeatCount="indefinite"/></circle>
+      <circle cx="120" cy="55" r="1" fill="#fff" opacity="0.4"/>
+      <!-- Distant mountains -->
+      <path d="M 0 130 L 100 90 L 180 110 L 280 75 L 380 105 L 480 85 L 560 115 L 560 200 L 0 200 Z" fill="#1a1008" opacity="0.8"/>
+      <!-- Firelight halo -->
+      <ellipse cx="280" cy="175" rx="160" ry="50" fill="url(#firelight)"/>
+      <!-- Logs -->
+      <ellipse cx="280" cy="180" rx="35" ry="6" fill="#3d2817"/>
+      <ellipse cx="280" cy="178" rx="30" ry="4" fill="#2a1810"/>
+      <!-- Flames -->
+      <g>
+        <path d="M 265 178 Q 268 160 275 165 Q 278 145 285 158 Q 292 145 290 165 Q 297 160 295 178 Z" fill="#ff8c40" opacity="0.9">
+          <animate attributeName="d" dur="0.8s" repeatCount="indefinite"
+            values="M 265 178 Q 268 160 275 165 Q 278 145 285 158 Q 292 145 290 165 Q 297 160 295 178 Z;
+                    M 265 178 Q 270 158 275 165 Q 280 142 285 155 Q 290 148 290 168 Q 295 162 295 178 Z;
+                    M 265 178 Q 268 160 275 165 Q 278 145 285 158 Q 292 145 290 165 Q 297 160 295 178 Z"/>
+        </path>
+        <path d="M 270 178 Q 273 167 280 170 Q 282 158 285 168 Q 290 162 290 178 Z" fill="#ffcc66" opacity="0.95">
+          <animate attributeName="d" dur="0.6s" repeatCount="indefinite"
+            values="M 270 178 Q 273 167 280 170 Q 282 158 285 168 Q 290 162 290 178 Z;
+                    M 270 178 Q 275 165 280 172 Q 283 156 285 166 Q 289 164 290 178 Z;
+                    M 270 178 Q 273 167 280 170 Q 282 158 285 168 Q 290 162 290 178 Z"/>
+        </path>
+      </g>
+      <!-- Sparks -->
+      <circle cx="282" cy="155" r="1" fill="#ffe066">
+        <animate attributeName="cy" values="155;120;155" dur="2.4s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="1;0;1" dur="2.4s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="288" cy="160" r="0.8" fill="#ffe066">
+        <animate attributeName="cy" values="160;125;160" dur="3s" repeatCount="indefinite" begin="0.7s"/>
+        <animate attributeName="opacity" values="1;0;1" dur="3s" repeatCount="indefinite" begin="0.7s"/>
+      </circle>
+      <!-- Silhouette figure sitting -->
+      <path d="M 220 180 Q 218 165 225 162 Q 230 155 235 162 Q 240 167 238 175 L 240 180 Z" fill="#0a0604"/>
+      <!-- Tent on right -->
+      <path d="M 410 180 L 440 140 L 470 180 Z" fill="#2a1810" stroke="#1a1008" stroke-width="1"/>
+      <line x1="440" y1="140" x2="440" y2="180" stroke="#0a0604" stroke-width="1.5"/>
+    `
+  },
+  infirmary: {
+    caption: "The healing hall, by lantern-light.",
+    svg: `
+      <defs>
+        <linearGradient id="hallSky" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#1a1410"/>
+          <stop offset="100%" stop-color="#3a2818"/>
+        </linearGradient>
+        <radialGradient id="lantern" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="rgba(255,200,100,0.5)"/>
+          <stop offset="100%" stop-color="rgba(255,200,100,0)"/>
+        </radialGradient>
+      </defs>
+      <rect width="560" height="200" fill="url(#hallSky)"/>
+      <!-- Stone floor -->
+      <rect x="0" y="155" width="560" height="45" fill="#1f1611"/>
+      <!-- Vault arches -->
+      <path d="M 60 155 L 60 90 Q 60 50 100 50 Q 140 50 140 90 L 140 155 Z" fill="#2a1f17" opacity="0.9"/>
+      <path d="M 180 155 L 180 90 Q 180 50 220 50 Q 260 50 260 90 L 260 155 Z" fill="#2a1f17" opacity="0.9"/>
+      <path d="M 300 155 L 300 90 Q 300 50 340 50 Q 380 50 380 90 L 380 155 Z" fill="#2a1f17" opacity="0.9"/>
+      <path d="M 420 155 L 420 90 Q 420 50 460 50 Q 500 50 500 90 L 500 155 Z" fill="#2a1f17" opacity="0.9"/>
+      <!-- Hanging lanterns -->
+      <line x1="100" y1="50" x2="100" y2="75" stroke="#1a1008" stroke-width="1"/>
+      <ellipse cx="100" cy="80" rx="40" ry="20" fill="url(#lantern)"/>
+      <rect x="96" y="73" width="8" height="10" fill="#3d2817" stroke="#5a3a20" stroke-width="0.5"/>
+      <rect x="97" y="74" width="6" height="8" fill="#ffcc66" opacity="0.8">
+        <animate attributeName="opacity" values="0.8;0.6;0.8" dur="3s" repeatCount="indefinite"/>
+      </rect>
+      <line x1="340" y1="50" x2="340" y2="75" stroke="#1a1008" stroke-width="1"/>
+      <ellipse cx="340" cy="80" rx="40" ry="20" fill="url(#lantern)"/>
+      <rect x="336" y="73" width="8" height="10" fill="#3d2817"/>
+      <rect x="337" y="74" width="6" height="8" fill="#ffcc66" opacity="0.8">
+        <animate attributeName="opacity" values="0.8;0.55;0.8" dur="2.7s" repeatCount="indefinite"/>
+      </rect>
+      <!-- Cot -->
+      <rect x="200" y="135" width="80" height="20" fill="#3d2817"/>
+      <rect x="200" y="130" width="80" height="8" fill="#d4c498"/>
+      <!-- Figure tending -->
+      <ellipse cx="300" cy="135" rx="6" ry="8" fill="#1a1008"/>
+      <rect x="296" y="138" width="8" height="20" fill="#1a1008"/>
+    `
+  },
+  library: {
+    caption: "Among the great codices.",
+    svg: `
+      <defs>
+        <linearGradient id="libSky" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#1a1208"/>
+          <stop offset="100%" stop-color="#2a1810"/>
+        </linearGradient>
+        <radialGradient id="candle" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="rgba(255,200,100,0.5)"/>
+          <stop offset="100%" stop-color="rgba(255,200,100,0)"/>
+        </radialGradient>
+      </defs>
+      <rect width="560" height="200" fill="url(#libSky)"/>
+      <!-- Bookshelves background -->
+      <rect x="0" y="20" width="560" height="135" fill="#1a1008"/>
+      <g fill="#3d2817">
+        <rect x="20" y="30" width="100" height="30"/>
+        <rect x="140" y="30" width="100" height="30"/>
+        <rect x="260" y="30" width="100" height="30"/>
+        <rect x="380" y="30" width="100" height="30"/>
+        <rect x="20" y="70" width="100" height="30"/>
+        <rect x="140" y="70" width="100" height="30"/>
+        <rect x="260" y="70" width="100" height="30"/>
+        <rect x="380" y="70" width="100" height="30"/>
+        <rect x="20" y="110" width="100" height="30"/>
+        <rect x="140" y="110" width="100" height="30"/>
+        <rect x="260" y="110" width="100" height="30"/>
+        <rect x="380" y="110" width="100" height="30"/>
+      </g>
+      <!-- Book spines -->
+      <g>
+        <rect x="22" y="32" width="6" height="26" fill="#7a2828"/>
+        <rect x="30" y="32" width="6" height="26" fill="#3a5a3a"/>
+        <rect x="38" y="32" width="6" height="26" fill="#b8893a"/>
+        <rect x="46" y="32" width="6" height="26" fill="#5a3a20"/>
+        <rect x="54" y="32" width="6" height="26" fill="#2a4a5a"/>
+        <rect x="142" y="32" width="6" height="26" fill="#3a5a3a"/>
+        <rect x="150" y="32" width="6" height="26" fill="#7a2828"/>
+        <rect x="158" y="32" width="6" height="26" fill="#5a3a20"/>
+        <rect x="262" y="72" width="6" height="26" fill="#b8893a"/>
+        <rect x="270" y="72" width="6" height="26" fill="#7a2828"/>
+        <rect x="382" y="112" width="6" height="26" fill="#3a5a3a"/>
+        <rect x="390" y="112" width="6" height="26" fill="#5a3a20"/>
+      </g>
+      <!-- Floor -->
+      <rect x="0" y="155" width="560" height="45" fill="#1a1008"/>
+      <!-- Desk -->
+      <rect x="180" y="148" width="200" height="10" fill="#3d2817"/>
+      <rect x="190" y="158" width="6" height="30" fill="#3d2817"/>
+      <rect x="364" y="158" width="6" height="30" fill="#3d2817"/>
+      <!-- Open book on desk -->
+      <path d="M 240 148 L 240 138 Q 280 134 320 138 L 320 148" fill="#e8d8b8" stroke="#8b6420" stroke-width="0.5"/>
+      <line x1="280" y1="138" x2="280" y2="148" stroke="#8b6420" stroke-width="0.5"/>
+      <!-- Candle on desk -->
+      <ellipse cx="350" cy="120" rx="35" ry="22" fill="url(#candle)"/>
+      <rect x="346" y="138" width="8" height="12" fill="#d4c498"/>
+      <ellipse cx="350" cy="138" rx="4" ry="1" fill="#8b6420"/>
+      <path d="M 348 138 Q 349 130 350 132 Q 351 128 352 138 Z" fill="#ffcc66">
+        <animate attributeName="d" dur="1.2s" repeatCount="indefinite"
+          values="M 348 138 Q 349 130 350 132 Q 351 128 352 138 Z;
+                  M 348 138 Q 349 128 350 134 Q 351 130 352 138 Z;
+                  M 348 138 Q 349 130 350 132 Q 351 128 352 138 Z"/>
+      </path>
+    `
+  },
+  yard: {
+    caption: "The training yard at dawn.",
+    svg: `
+      <defs>
+        <linearGradient id="yardSky" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#5a4a3a"/>
+          <stop offset="60%" stop-color="#8b6a4a"/>
+          <stop offset="100%" stop-color="#d4af7a"/>
+        </linearGradient>
+      </defs>
+      <rect width="560" height="200" fill="url(#yardSky)"/>
+      <!-- Sun -->
+      <circle cx="450" cy="80" r="30" fill="#ffcc66" opacity="0.6">
+        <animate attributeName="opacity" values="0.6;0.5;0.6" dur="6s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="450" cy="80" r="20" fill="#ffe066" opacity="0.8"/>
+      <!-- Distant keep -->
+      <rect x="380" y="100" width="100" height="60" fill="#3a2818" opacity="0.7"/>
+      <path d="M 380 100 L 380 90 L 395 90 L 395 100 M 405 100 L 405 90 L 420 90 L 420 100 M 430 100 L 430 90 L 445 90 L 445 100 M 455 100 L 455 90 L 470 90 L 470 100" fill="none" stroke="#3a2818" stroke-width="6" opacity="0.7"/>
+      <!-- Ground -->
+      <rect x="0" y="155" width="560" height="45" fill="#5a4020"/>
+      <rect x="0" y="155" width="560" height="3" fill="#3a2818"/>
+      <!-- Wooden practice dummy -->
+      <rect x="120" y="100" width="6" height="60" fill="#3d2817"/>
+      <ellipse cx="123" cy="100" rx="14" ry="16" fill="#5a3a20"/>
+      <rect x="100" y="115" width="46" height="6" fill="#3d2817"/>
+      <!-- Sword leaning -->
+      <line x1="200" y1="155" x2="195" y2="100" stroke="#aaa" stroke-width="2"/>
+      <rect x="194" y="100" width="3" height="6" fill="#8b6420"/>
+      <line x1="190" y1="103" x2="200" y2="103" stroke="#8b6420" stroke-width="1.5"/>
+      <!-- Squire silhouette -->
+      <ellipse cx="280" cy="130" rx="7" ry="9" fill="#1a1008"/>
+      <rect x="276" y="135" width="8" height="22" fill="#1a1008"/>
+      <line x1="284" y1="138" x2="295" y2="125" stroke="#1a1008" stroke-width="2"/>
+      <line x1="295" y1="125" x2="305" y2="105" stroke="#aaa" stroke-width="2"/>
+      <!-- Banner -->
+      <line x1="50" y1="50" x2="50" y2="155" stroke="#3a2818" stroke-width="2"/>
+      <path d="M 50 60 L 70 60 L 65 75 L 70 90 L 50 90 Z" fill="#7a2828">
+        <animateTransform attributeName="transform" type="skewX" values="0;3;0;-2;0" dur="4s" repeatCount="indefinite"/>
+      </path>
+    `
+  },
+  hearth: {
+    caption: "The hearth at home.",
+    svg: `
+      <defs>
+        <radialGradient id="hearthLight" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="rgba(255,200,100,0.4)"/>
+          <stop offset="100%" stop-color="rgba(255,200,100,0)"/>
+        </radialGradient>
+      </defs>
+      <rect width="560" height="200" fill="#2a1810"/>
+      <!-- Wall -->
+      <rect x="0" y="0" width="560" height="155" fill="#3a2818"/>
+      <!-- Fireplace -->
+      <rect x="200" y="60" width="160" height="100" fill="#1a1008"/>
+      <rect x="195" y="55" width="170" height="10" fill="#5a3a20"/>
+      <rect x="195" y="155" width="170" height="8" fill="#5a3a20"/>
+      <!-- Inside fire -->
+      <ellipse cx="280" cy="160" rx="80" ry="30" fill="url(#hearthLight)"/>
+      <ellipse cx="280" cy="148" rx="40" ry="8" fill="#3d2817"/>
+      <g>
+        <path d="M 260 148 Q 265 125 275 132 Q 280 110 285 125 Q 295 115 295 132 Q 305 125 300 148 Z" fill="#ff8c40">
+          <animate attributeName="d" dur="0.9s" repeatCount="indefinite"
+            values="M 260 148 Q 265 125 275 132 Q 280 110 285 125 Q 295 115 295 132 Q 305 125 300 148 Z;
+                    M 260 148 Q 268 122 275 130 Q 282 108 285 122 Q 293 118 295 135 Q 302 128 300 148 Z;
+                    M 260 148 Q 265 125 275 132 Q 280 110 285 125 Q 295 115 295 132 Q 305 125 300 148 Z"/>
+        </path>
+        <path d="M 268 148 Q 272 132 280 138 Q 285 122 290 135 Q 295 130 295 148 Z" fill="#ffcc66">
+          <animate attributeName="d" dur="0.7s" repeatCount="indefinite"
+            values="M 268 148 Q 272 132 280 138 Q 285 122 290 135 Q 295 130 295 148 Z;
+                    M 268 148 Q 274 130 280 140 Q 286 124 290 132 Q 296 132 295 148 Z;
+                    M 268 148 Q 272 132 280 138 Q 285 122 290 135 Q 295 130 295 148 Z"/>
+        </path>
+      </g>
+      <!-- Floor -->
+      <rect x="0" y="155" width="560" height="45" fill="#2a1810"/>
+      <!-- Chair -->
+      <rect x="100" y="125" width="40" height="35" fill="#3d2817"/>
+      <rect x="98" y="100" width="44" height="30" fill="#3d2817"/>
+      <!-- Mug on chair -->
+      <rect x="115" y="115" width="10" height="12" fill="#5a3a20"/>
+      <path d="M 125 117 Q 130 119 130 122 Q 130 125 125 125" fill="none" stroke="#5a3a20" stroke-width="1.5"/>
+      <!-- Pot hanging -->
+      <line x1="280" y1="65" x2="280" y2="100" stroke="#5a3a20" stroke-width="1"/>
+      <ellipse cx="280" cy="105" rx="18" ry="8" fill="#1a1008"/>
+      <rect x="262" y="100" width="36" height="10" fill="#1a1008"/>
+    `
+  },
+  tavern: {
+    caption: "The tavern, warm with company.",
+    svg: `
+      <defs>
+        <radialGradient id="tavLight" cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stop-color="rgba(255,200,100,0.3)"/>
+          <stop offset="100%" stop-color="rgba(255,200,100,0)"/>
+        </radialGradient>
+      </defs>
+      <rect width="560" height="200" fill="#1f1408"/>
+      <ellipse cx="280" cy="80" rx="280" ry="120" fill="url(#tavLight)"/>
+      <!-- Beams -->
+      <rect x="0" y="35" width="560" height="8" fill="#3d2817"/>
+      <rect x="0" y="155" width="560" height="45" fill="#2a1810"/>
+      <!-- Bar -->
+      <rect x="60" y="120" width="440" height="12" fill="#5a3a20"/>
+      <rect x="60" y="132" width="440" height="25" fill="#3d2817"/>
+      <!-- Bottles on shelf behind -->
+      <rect x="100" y="60" width="6" height="25" fill="#3a5a3a"/>
+      <rect x="115" y="55" width="6" height="30" fill="#7a2828"/>
+      <rect x="130" y="60" width="6" height="25" fill="#b8893a"/>
+      <rect x="400" y="55" width="6" height="30" fill="#3a5a3a"/>
+      <rect x="415" y="60" width="6" height="25" fill="#7a2828"/>
+      <rect x="430" y="58" width="6" height="27" fill="#5a3a20"/>
+      <!-- Hanging lantern -->
+      <line x1="280" y1="35" x2="280" y2="60" stroke="#1a1008" stroke-width="1"/>
+      <rect x="270" y="60" width="20" height="22" fill="#3d2817"/>
+      <rect x="273" y="63" width="14" height="16" fill="#ffcc66" opacity="0.7">
+        <animate attributeName="opacity" values="0.7;0.5;0.7" dur="2.5s" repeatCount="indefinite"/>
+      </rect>
+      <!-- Patrons (silhouettes) -->
+      <ellipse cx="180" cy="115" rx="7" ry="9" fill="#1a1008"/>
+      <rect x="176" y="120" width="8" height="20" fill="#1a1008"/>
+      <ellipse cx="220" cy="115" rx="7" ry="9" fill="#1a1008"/>
+      <rect x="216" y="120" width="8" height="20" fill="#1a1008"/>
+      <ellipse cx="370" cy="115" rx="7" ry="9" fill="#1a1008"/>
+      <rect x="366" y="120" width="8" height="20" fill="#1a1008"/>
+      <!-- Mug -->
+      <rect x="195" y="113" width="6" height="8" fill="#5a3a20"/>
+      <rect x="345" y="113" width="6" height="8" fill="#5a3a20"/>
+    `
+  },
+  road: {
+    caption: "On the road, beneath open sky.",
+    svg: `
+      <defs>
+        <linearGradient id="roadSky" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#5a7a9a"/>
+          <stop offset="60%" stop-color="#c4a880"/>
+          <stop offset="100%" stop-color="#8b6a4a"/>
+        </linearGradient>
+      </defs>
+      <rect width="560" height="200" fill="url(#roadSky)"/>
+      <!-- Drifting clouds -->
+      <ellipse cx="100" cy="50" rx="50" ry="10" fill="#fff" opacity="0.4">
+        <animate attributeName="cx" from="-60" to="620" dur="60s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="350" cy="35" rx="40" ry="8" fill="#fff" opacity="0.3">
+        <animate attributeName="cx" from="-60" to="620" dur="80s" repeatCount="indefinite" begin="-30s"/>
+      </ellipse>
+      <ellipse cx="450" cy="60" rx="55" ry="11" fill="#fff" opacity="0.35">
+        <animate attributeName="cx" from="-60" to="620" dur="70s" repeatCount="indefinite" begin="-15s"/>
+      </ellipse>
+      <!-- Distant hills -->
+      <path d="M 0 130 Q 100 100 200 125 Q 320 95 420 120 Q 500 110 560 125 L 560 200 L 0 200 Z" fill="#5a6a4a" opacity="0.7"/>
+      <path d="M 0 145 Q 120 120 280 140 Q 420 125 560 145 L 560 200 L 0 200 Z" fill="#3a5a3a" opacity="0.8"/>
+      <!-- Road -->
+      <path d="M 240 155 L 320 155 L 380 200 L 180 200 Z" fill="#8b6a4a"/>
+      <path d="M 270 165 L 290 165 M 268 175 L 292 175 M 264 188 L 296 188" stroke="#5a4030" stroke-width="2" opacity="0.6"/>
+      <!-- Traveler -->
+      <ellipse cx="280" cy="135" rx="5" ry="7" fill="#1a1008"/>
+      <rect x="277" y="139" width="6" height="14" fill="#1a1008"/>
+      <line x1="277" y1="143" x2="270" y2="155" stroke="#1a1008" stroke-width="1.5"/>
+      <line x1="270" y1="125" x2="270" y2="155" stroke="#3a2818" stroke-width="1"/>
+      <!-- Trees -->
+      <ellipse cx="60" cy="135" rx="20" ry="25" fill="#2a4a2a"/>
+      <rect x="58" y="150" width="4" height="15" fill="#3d2817"/>
+      <ellipse cx="490" cy="130" rx="18" ry="22" fill="#2a4a2a"/>
+      <rect x="488" y="145" width="4" height="15" fill="#3d2817"/>
+      <!-- Birds -->
+      <path d="M 380 60 Q 385 55 390 60 M 390 60 Q 395 55 400 60" stroke="#1a1008" stroke-width="1.5" fill="none">
+        <animateTransform attributeName="transform" type="translate" values="0,0; 100,-10; 200,0" dur="20s" repeatCount="indefinite"/>
+      </path>
+    `
+  }
+};
+
+function chooseScene() {
+  if (state.entries.length === 0) return 'road';
+  // Check for recent rest
+  const today = gameDate();
+  const lastEntry = state.entries[state.entries.length - 1];
+  if (lastEntry && lastEntry.gameDate !== today) {
+    const daysSince = daysBetweenGameDates(lastEntry.gameDate, today);
+    if (daysSince >= 2) return 'campfire';
+  }
+
+  const dom = dominantRecentCategory(7);
+  if (!dom.top || dom.totalEntries < 2) return 'road';
+
+  switch (dom.top) {
+    case 'Work': return 'infirmary';
+    case 'Study':
+    case 'Research': return 'library';
+    case 'Train': return 'yard';
+    case 'Health': return 'hearth';
+    case 'Chores': return 'hearth';
+    case 'Social': return 'tavern';
+    default: return 'road';
+  }
+}
+
+function renderScene() {
+  const sceneKey = chooseScene();
+  const scene = SCENES[sceneKey];
+  document.getElementById('scene-svg').innerHTML = scene.svg;
+  document.getElementById('scene-caption').textContent = scene.caption;
+}
+
+/* ============================================================
+   RENDER FUNCTIONS
+   ============================================================ */
+function renderCharacterHeader() {
+  document.getElementById('char-name').textContent = state.character.name;
+  document.getElementById('char-class-text').textContent = `${state.character.class} · ${state.world.order}`;
+  document.getElementById('char-level').textContent = `LVL ${state.character.level}`;
+
+  const curThreshold = xpForLevel(state.character.level);
+  const nextThreshold = xpForLevel(state.character.level + 1);
+  const xpInLevel = state.character.xp - curThreshold;
+  const xpNeeded = nextThreshold - curThreshold;
+  const pct = Math.min(100, (xpInLevel / xpNeeded) * 100);
+  document.getElementById('xp-bar-fill').style.width = pct + '%';
+  document.getElementById('xp-current').textContent = `${xpInLevel} / ${xpNeeded} XP`;
+  document.getElementById('xp-next').textContent = `LVL ${state.character.level + 1}`;
+}
+
+function renderStats(highlightStats = []) {
+  const grid = document.getElementById('stats-grid');
+  const STAT_ORDER = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
+  grid.innerHTML = '';
+  for (const stat of STAT_ORDER) {
+    const cell = document.createElement('div');
+    cell.className = 'stat-cell';
+    if (highlightStats.includes(stat)) cell.classList.add('bumped');
+    const xpToNext = STAT_XP_PER_BUMP - (state.character.statXP[stat] || 0);
+    cell.innerHTML = `
+      <span class="stat-label">${stat}</span>
+      <span class="stat-value">${state.character.stats[stat]}</span>
+      <span class="stat-mini">${state.character.statXP[stat]}/${STAT_XP_PER_BUMP}</span>
+    `;
+    grid.appendChild(cell);
+  }
+}
+
+function renderRivalStrip() {
+  const strip = document.getElementById('rival-strip');
+  const text = document.getElementById('rival-text');
+  const msg = rivalMessageForStrip();
+  if (msg) {
+    text.textContent = msg;
+    strip.classList.add('active');
+  } else {
+    strip.classList.remove('active');
+  }
+}
+
+function renderTagButtons() {
+  const grid = document.getElementById('tag-grid');
+  grid.innerHTML = '';
+  for (const cat of CATEGORY_ORDER) {
+    const btn = document.createElement('button');
+    btn.className = 'tag-btn';
+    btn.dataset.category = cat;
+    btn.innerHTML = `${ICONS[CATEGORIES[cat].icon]}<span>${cat}</span>`;
+    btn.addEventListener('click', () => toggleTag(cat));
+    grid.appendChild(btn);
+  }
+}
+
+function renderHome() {
+  renderScene();
+  renderCharacterHeader();
+  renderStats();
+  renderRivalStrip();
+  renderPendingBanner();
+  updateTagSelectionUI();
+  updateSubmitState();
+  // Today's narration
+  showTodayCardIfLogged();
+}
+
+function renderPendingBanner() {
+  rolloverUsageIfNewDay();
+  const pending = state.usage.pendingRenarrations.length;
+  const banner = document.getElementById('pending-banner');
+  const text = document.getElementById('pending-banner-text');
+  const btn = document.getElementById('pending-banner-btn');
+  if (pending === 0) {
+    banner.style.display = 'none';
+    return;
+  }
+  const budget = callBudgetRemaining();
+  const willProcess = Math.min(pending, budget);
+  text.innerHTML = `${pending} ${pending === 1 ? 'entry awaits' : 'entries await'} the chronicler's hand.`;
+  if (budget <= 0) {
+    btn.disabled = true;
+    btn.textContent = 'No budget';
+  } else {
+    btn.disabled = false;
+    btn.textContent = `Re-narrate (${willProcess})`;
+  }
+  banner.style.display = 'flex';
+}
+
+function showTodayCardIfLogged() {
+  const today = gameDate();
+  const todayEntry = state.entries.find(e => e.gameDate === today && e.type !== 'rest');
+  const card = document.getElementById('todays-narration-card');
+  if (todayEntry) {
+    document.getElementById('todays-narration').textContent = todayEntry.narration;
+    const eventEl = document.getElementById('todays-event');
+    if (todayEntry.event) {
+      eventEl.textContent = todayEntry.event;
+      eventEl.style.display = 'block';
+    } else {
+      eventEl.style.display = 'none';
+    }
+    // Update prompt to include source indicator
+    const promptEl = card.querySelector('.checkin-prompt');
+    if (promptEl) {
+      const indicator = sourceIndicatorHTML(todayEntry.narrationSource, todayEntry.id);
+      promptEl.innerHTML = `The Chronicler Writes ${indicator}`;
+    }
+    card.style.display = 'block';
+    document.getElementById('checkin-card').style.opacity = '0.55';
+    document.getElementById('submit-btn').disabled = true;
+    document.getElementById('checkin-text').disabled = true;
+  } else {
+    card.style.display = 'none';
+    document.getElementById('checkin-card').style.opacity = '1';
+    document.getElementById('checkin-text').disabled = false;
+  }
+}
+
+function sourceIndicatorHTML(source, entryId) {
+  if (source === 'sonnet') return `<span class="source-indicator sonnet" title="Sonnet narration">✦</span>`;
+  if (source === 'haiku')  return `<span class="source-indicator haiku" title="Haiku narration">·</span>`;
+  // template
+  return `<span class="source-indicator template" title="Templated (Worker unreachable)" data-entry-id="${entryId}">○</span>`;
+}
+
+/* ============================================================
+   CHECK-IN FLOW
+   ============================================================ */
+let selectedTags = [];
+
+function toggleTag(cat) {
+  const idx = selectedTags.indexOf(cat);
+  if (idx >= 0) {
+    selectedTags.splice(idx, 1);
+  } else {
+    if (selectedTags.length >= 3) return;
+    selectedTags.push(cat);
+  }
+  updateTagSelectionUI();
+  updateSubmitState();
+}
+
+function updateTagSelectionUI() {
+  const buttons = document.querySelectorAll('#tag-grid .tag-btn');
+  buttons.forEach(btn => {
+    const cat = btn.dataset.category;
+    btn.classList.toggle('selected', selectedTags.includes(cat));
+    if (!selectedTags.includes(cat) && selectedTags.length >= 3) {
+      btn.classList.add('disabled');
+    } else {
+      btn.classList.remove('disabled');
+    }
+  });
+  const counter = document.getElementById('tag-counter');
+  if (selectedTags.length === 0) counter.textContent = 'Choose 1–3';
+  else counter.textContent = `${selectedTags.length} chosen — ${XP_PER_TAG[selectedTags.length] || 0} XP`;
+}
+
+function updateSubmitState() {
+  const text = document.getElementById('checkin-text').value.trim();
+  const today = gameDate();
+  const alreadyLogged = state.entries.some(e => e.gameDate === today && e.type !== 'rest');
+  const canSubmit = text.length > 0 && selectedTags.length > 0 && !alreadyLogged;
+  document.getElementById('submit-btn').disabled = !canSubmit;
+}
+
+async function submitCheckIn() {
+  const text = document.getElementById('checkin-text').value.trim();
+  if (!text || selectedTags.length === 0) return;
+
+  const today = gameDate();
+  if (state.entries.some(e => e.gameDate === today && e.type !== 'rest')) {
+    showToast('Already logged today');
+    return;
+  }
+
+  rolloverUsageIfNewDay();
+
+  // Detect milestones BEFORE XP award (some depend on pre-state)
+  const tags = [...selectedTags];
+  const milestones = detectMilestones(tags);
+
+  // Insert rest entries for missed days BEFORE this entry
+  await insertRestEntriesIfNeeded(today);
+
+  // Award XP & stats LOCALLY first — never network-dependent
+  const result = awardXP(tags.length, tags);
+  // Update milestones with post-XP info
+  milestones.isLevelUp = !!result.leveledUp;
+  if (result.leveledUp) {
+    milestones.newClass = result.leveledUp.class;
+    // Class transition iff class string changed
+    const previousClassAtLevel = classForLevel(result.leveledUp.level - 1);
+    milestones.isClassTransition = previousClassAtLevel.name !== result.leveledUp.class;
+  }
+  milestones.canIntroduceNpc = shouldUnlockNpc(milestones, tags);
+
+  // Update firstUsedCategories
+  for (const tag of tags) {
+    if (!state.firstUsedCategories[tag]) {
+      state.firstUsedCategories[tag] = today;
+    }
+  }
+
+  // Streak bump cooldown bookkeeping (only if it actually fired)
+  if (milestones.streakBumpDay) {
+    state.usage.lastFireDateRule6 = today;
+  }
+
+  // Choose model
+  const model = chooseModel(milestones);
+
+  // Build entry shell
+  const entry = {
+    id: 'e_' + Date.now(),
+    gameDate: today,
+    isoTime: new Date().toISOString(),
+    text,
+    tags,
+    narration: '',                  // filled in below
+    statBumps: result.statBumps,
+    levelUp: result.leveledUp,
+    type: 'entry',
+    narrationSource: 'template',
+    narrationAlternates: [],
+    tokensUsed: null,
+    pendingRenarration: false,
+    npcMentions: []
+  };
+
+  // Try AI narration if backend configured and budget available
+  const backendOk = state.config.workerUrl && state.config.workerSecret;
+  const budgetOk = callBudgetRemaining() > 0;
+
+  let usedFallback = false;
+  let fallbackReason = null;
+
+  if (backendOk && budgetOk) {
+    // Lock submit, show shimmer
+    document.getElementById('submit-btn').classList.add('btn-waiting');
+    document.getElementById('submit-btn').disabled = true;
+    document.getElementById('checkin-text').disabled = true;
+    showShimmer();
+
+    const context = buildWorkerContext(tags, text, milestones);
+    try {
+      const resp = await callWorker({ model, kind: 'checkin', context });
+      entry.narration = resp.narration;
+      entry.event = resp.event || null;
+      entry.narrationSource = model;
+      entry.tokensUsed = resp.tokensUsed;
+
+      // Increment counters
+      state.usage.callsToday += 1;
+      state.usage.lifetimeCallsByModel[model] = (state.usage.lifetimeCallsByModel[model] || 0) + 1;
+      state.usage.monthlyTokens.input  += resp.tokensUsed?.input  || 0;
+      state.usage.monthlyTokens.output += resp.tokensUsed?.output || 0;
+
+      // Ingest any new NPCs
+      const added = ingestNpcMentions(resp.npcMentions, today);
+      entry.npcMentions = added;
+      // Also touch lastMentioned for existing NPCs by name match
+      touchNpcMentionsByName(entry.narration, today);
+
+      state.config.backendStatus = 'ok';
+      state.config.lastTestAt = new Date().toISOString();
+      state.config.lastTestResult = 'ok';
+    } catch (err) {
+      usedFallback = true;
+      fallbackReason = err.message || 'unknown';
+      console.warn('Worker call failed, falling back:', err);
+      if (err.status === 401 || err.status === 403) {
+        state.config.backendStatus = 'error';
+        state.config.lastTestResult = err.message;
+      }
+    } finally {
+      hideShimmer();
+      document.getElementById('submit-btn').classList.remove('btn-waiting');
+      document.getElementById('checkin-text').disabled = false;
+    }
+  } else if (!backendOk) {
+    usedFallback = true;
+    fallbackReason = 'not_configured';
+  } else {
+    usedFallback = true;
+    fallbackReason = 'budget_exhausted';
+  }
+
+  // Fallback path
+  if (usedFallback) {
+    entry.narration = generateNarration(text, tags);
+    entry.narrationSource = 'template';
+    if (backendOk && fallbackReason !== 'budget_exhausted') {
+      // Queue for re-narration if backend exists but the call failed
+      entry.pendingRenarration = true;
+      state.usage.pendingRenarrations.push(entry.id);
+    }
+    state.usage.lifetimeCallsByModel.template = (state.usage.lifetimeCallsByModel.template || 0) + 1;
+  }
+
+  state.entries.push(entry);
+  state.lastCheckInDate = today;
+  saveState();
+
+  // Reset form
+  selectedTags = [];
+  document.getElementById('checkin-text').value = '';
+
+  // Re-render
+  renderHome();
+
+  // Toasts
+  if (usedFallback && fallbackReason === 'not_configured') {
+    showToast(`+${result.xpGained} XP set down · templated`);
+  } else if (usedFallback && fallbackReason === 'budget_exhausted') {
+    showToast(`+${result.xpGained} XP · daily call cap reached`);
+  } else if (usedFallback) {
+    showToast(`+${result.xpGained} XP · backend unreachable`);
+  } else {
+    const modelLabel = model === 'sonnet' ? '✦ Sonnet' : '· Haiku';
+    showToast(`+${result.xpGained} XP set down ${modelLabel}`);
+  }
+
+  // Highlight stat bumps
+  if (result.statBumps.length > 0) {
+    setTimeout(() => renderStats(result.statBumps.map(b => b.stat)), 100);
+  }
+
+  // Level up celebration
+  if (result.leveledUp) {
+    setTimeout(() => showLevelUp(result.leveledUp), 700);
+  }
+}
+
+async function insertRestEntriesIfNeeded(todayGD) {
+  if (!state.lastCheckInDate) return;
+  const daysGap = daysBetweenGameDates(state.lastCheckInDate, todayGD);
+  if (daysGap <= 1) return; // No gap
+
+  const skipped = daysGap - 1;
+  const rivalEvent = maybeAdvanceRival(skipped);
+
+  // Default templated narration
+  let restNarration = generateRestNarration(skipped);
+  let source = 'template';
+  let tokensUsed = null;
+
+  // For 3+ day gaps, try Sonnet for richer rest narration
+  const backendOk = state.config.workerUrl && state.config.workerSecret;
+  const budgetOk = callBudgetRemaining() > 0;
+  if (skipped >= 3 && backendOk && budgetOk) {
+    try {
+      const milestones = {
+        isFirstEver: false,
+        isLevelUp: false,
+        isClassTransition: false,
+        isFirstUseOfTag: null,
+        daysSkipped: skipped,
+        canIntroduceNpc: false,
+        streakBumpDay: false
+      };
+      const context = buildWorkerContext([], '', milestones);
+      const resp = await callWorker({ model: 'sonnet', kind: 'rest', context });
+      restNarration = resp.narration;
+      source = 'sonnet';
+      tokensUsed = resp.tokensUsed;
+      state.usage.callsToday += 1;
+      state.usage.lifetimeCallsByModel.sonnet = (state.usage.lifetimeCallsByModel.sonnet || 0) + 1;
+      state.usage.monthlyTokens.input  += resp.tokensUsed?.input  || 0;
+      state.usage.monthlyTokens.output += resp.tokensUsed?.output || 0;
+      // Use the model's event if it returned one, else the rival event we computed
+      if (resp.event) restNarration = restNarration; // narration carries it; event field separate
+    } catch (err) {
+      console.warn('Rest narration AI call failed, using template:', err);
+    }
+  }
+
+  const restEntry = {
+    id: 'r_' + Date.now(),
+    gameDate: todayGD,
+    coversFrom: state.lastCheckInDate,
+    coversTo: todayGD,
+    daysSkipped: skipped,
+    narration: restNarration,
+    event: rivalEvent || null,
+    type: 'rest',
+    narrationSource: source,
+    tokensUsed
+  };
+  state.entries.push(restEntry);
+}
+
+/* ============================================================
+   PHASE 2 — REGENERATE AND PENDING RE-NARRATION
+   ============================================================ */
+async function regenerateEntry(entryId) {
+  const entry = state.entries.find(e => e.id === entryId);
+  if (!entry || entry.type === 'rest') {
+    showToast('Cannot regenerate this entry');
+    return;
+  }
+  rolloverUsageIfNewDay();
+
+  const backendOk = state.config.workerUrl && state.config.workerSecret;
+  if (!backendOk) {
+    showToast('Backend not configured');
+    return;
+  }
+  if (callBudgetRemaining() <= 0) {
+    showToast('Daily call cap reached');
+    return;
+  }
+  if (regenBudgetRemaining() <= 0) {
+    showToast('Daily regeneration cap reached');
+    return;
+  }
+
+  // Was this entry already regenerated today?
+  const todayStart = gameDate();
+  const alreadyRegenedToday = (entry.narrationAlternates || [])
+    .some(a => (a.ts || '').slice(0, 10) === todayStart);
+  if (alreadyRegenedToday) {
+    showToast('Already regenerated today');
+    return;
+  }
+
+  // Build context. Treat as a regenerate kind so prompt can vary if needed.
+  const tags = entry.tags || [];
+  const milestones = {
+    isFirstEver: false,
+    isLevelUp: !!entry.levelUp,
+    isClassTransition: false,
+    isFirstUseOfTag: null,
+    daysSkipped: 0,
+    canIntroduceNpc: false,
+    streakBumpDay: false
+  };
+
+  // Use the same model the original used, or upgrade to sonnet if it was a level-up
+  const model = entry.levelUp ? 'sonnet' : 'haiku';
+
+  showToast('Regenerating...');
+  try {
+    const context = buildWorkerContext(tags, entry.text, milestones);
+    // Override todaysEntry with the historical date
+    context.todaysEntry = { gameDate: entry.gameDate, tags, text: entry.text };
+    const resp = await callWorker({ model, kind: 'regenerate', context });
+
+    // Stack the OLD narration as an alternate, replace current with new
+    if (!entry.narrationAlternates) entry.narrationAlternates = [];
+    entry.narrationAlternates.push({
+      text: entry.narration,
+      source: entry.narrationSource,
+      ts: entry.isoTime || new Date().toISOString()
+    });
+    entry.narration = resp.narration;
+    entry.narrationSource = model;
+    entry.tokensUsed = resp.tokensUsed;
+
+    state.usage.callsToday += 1;
+    state.usage.regensToday += 1;
+    state.usage.lifetimeCallsByModel[model] = (state.usage.lifetimeCallsByModel[model] || 0) + 1;
+    state.usage.monthlyTokens.input  += resp.tokensUsed?.input  || 0;
+    state.usage.monthlyTokens.output += resp.tokensUsed?.output || 0;
+
+    // If this entry was pending re-narration, clear that flag
+    if (entry.pendingRenarration) {
+      entry.pendingRenarration = false;
+      state.usage.pendingRenarrations = state.usage.pendingRenarrations.filter(id => id !== entryId);
+    }
+
+    saveState();
+    if (document.getElementById('screen-chronicle').classList.contains('active')) renderChronicle();
+    if (document.getElementById('screen-home').classList.contains('active')) renderHome();
+    showToast('Regenerated');
+  } catch (err) {
+    console.error('Regen failed:', err);
+    showToast('Regeneration failed');
+  }
+}
+
+function selectAlternate(entryId, alternateIdx) {
+  // alternateIdx: 0 = current, 1..N = entry.narrationAlternates[idx-1]
+  const entry = state.entries.find(e => e.id === entryId);
+  if (!entry) return;
+  if (alternateIdx === 0) return; // already showing current
+
+  const alt = entry.narrationAlternates[alternateIdx - 1];
+  if (!alt) return;
+
+  // Swap: push current to alternates at the position selected, take alt out
+  const oldCurrent = {
+    text: entry.narration,
+    source: entry.narrationSource,
+    ts: entry.isoTime || new Date().toISOString()
+  };
+  entry.narration = alt.text;
+  entry.narrationSource = alt.source;
+  entry.narrationAlternates[alternateIdx - 1] = oldCurrent;
+
+  saveState();
+  renderChronicle();
+}
+
+async function processPendingRenarrations() {
+  rolloverUsageIfNewDay();
+  const queue = [...state.usage.pendingRenarrations];
+  if (queue.length === 0) {
+    showToast('Nothing pending');
+    return;
+  }
+  const budget = callBudgetRemaining();
+  if (budget <= 0) {
+    showToast('No call budget today');
+    return;
+  }
+  const toProcess = queue.slice(0, budget);
+  showToast(`Re-narrating ${toProcess.length}...`);
+
+  let succeeded = 0;
+  for (const entryId of toProcess) {
+    const entry = state.entries.find(e => e.id === entryId);
+    if (!entry) {
+      state.usage.pendingRenarrations = state.usage.pendingRenarrations.filter(id => id !== entryId);
+      continue;
+    }
+    try {
+      const milestones = {
+        isFirstEver: false,
+        isLevelUp: !!entry.levelUp,
+        isClassTransition: false,
+        isFirstUseOfTag: null,
+        daysSkipped: 0,
+        canIntroduceNpc: false,
+        streakBumpDay: false
+      };
+      const model = entry.levelUp ? 'sonnet' : 'haiku';
+      const context = buildWorkerContext(entry.tags || [], entry.text || '', milestones);
+      context.todaysEntry = { gameDate: entry.gameDate, tags: entry.tags || [], text: entry.text || '' };
+      const resp = await callWorker({ model, kind: 'regenerate', context });
+
+      // Stack the templated narration as an alternate
+      if (!entry.narrationAlternates) entry.narrationAlternates = [];
+      entry.narrationAlternates.push({
+        text: entry.narration,
+        source: 'template',
+        ts: entry.isoTime || new Date().toISOString()
+      });
+      entry.narration = resp.narration;
+      entry.narrationSource = model;
+      entry.tokensUsed = resp.tokensUsed;
+      entry.pendingRenarration = false;
+      state.usage.pendingRenarrations = state.usage.pendingRenarrations.filter(id => id !== entryId);
+
+      state.usage.callsToday += 1;
+      state.usage.lifetimeCallsByModel[model] = (state.usage.lifetimeCallsByModel[model] || 0) + 1;
+      state.usage.monthlyTokens.input  += resp.tokensUsed?.input  || 0;
+      state.usage.monthlyTokens.output += resp.tokensUsed?.output || 0;
+      succeeded++;
+    } catch (err) {
+      console.warn('Pending re-narration failed for', entryId, err);
+      // Stop early on failure to preserve budget
+      break;
+    }
+  }
+
+  saveState();
+  renderHome();
+  showToast(`Re-narrated ${succeeded}`);
+}
+
+
+function showLevelUp(lu) {
+  document.getElementById('levelup-level').textContent = `${lu.class} · Level ${lu.level}`;
+  document.getElementById('levelup-boon').innerHTML = `
+    <span class="levelup-boon-name">${lu.boon.name}</span>
+    ${lu.boon.desc}
+  `;
+  document.getElementById('levelup-overlay').classList.add('show');
+}
+
+function closeLevelUp() {
+  document.getElementById('levelup-overlay').classList.remove('show');
+}
+
+/* ============================================================
+   CHRONICLE VIEW
+   ============================================================ */
+function renderChronicle() {
+  const list = document.getElementById('chronicle-list');
+  list.innerHTML = '';
+  if (state.entries.length === 0) {
+    list.innerHTML = '<div class="chronicle-empty">No entries yet.<br>The first page awaits the first day.</div>';
+    return;
+  }
+  // Render newest first
+  const sorted = [...state.entries].sort((a, b) => b.isoTime?.localeCompare?.(a.isoTime || '') || 0);
+  for (const e of sorted) {
+    list.appendChild(renderEntry(e));
+  }
+}
+
+function renderEntry(e) {
+  const div = document.createElement('div');
+  if (e.type === 'rest') {
+    div.className = 'entry entry-rest';
+    const indicator = sourceIndicatorHTML(e.narrationSource || 'template', e.id);
+    div.innerHTML = `
+      <div class="entry-date">A Quiet Stretch · ${e.daysSkipped} day${e.daysSkipped > 1 ? 's' : ''} ${indicator}</div>
+      <div class="entry-narration">${escapeHTML(e.narration)}</div>
+      ${e.event ? `<div class="entry-event">${escapeHTML(e.event)}</div>` : ''}
+    `;
+  } else {
+    div.className = 'entry';
+    const tagsHTML = (e.tags || []).map(t => `<span class="entry-tag">${t}</span>`).join('');
+    const bumpsHTML = (e.statBumps || []).length > 0
+      ? `<div class="entry-event">${e.statBumps.map(b => `${b.stat} +${b.by}`).join(' · ')}</div>`
+      : '';
+    const levelHTML = e.levelUp
+      ? `<div class="entry-event">Reached ${e.levelUp.class} · Level ${e.levelUp.level}</div>`
+      : '';
+    const indicator = sourceIndicatorHTML(e.narrationSource || 'template', e.id);
+
+    // Regenerate button — show if backend configured
+    const backendOk = state.config.workerUrl && state.config.workerSecret;
+    const today = gameDate();
+    const alreadyRegenedToday = (e.narrationAlternates || [])
+      .some(a => (a.ts || '').slice(0, 10) === today);
+    const canRegen = backendOk && !alreadyRegenedToday && callBudgetRemaining() > 0 && regenBudgetRemaining() > 0;
+    const regenBtn = backendOk
+      ? `<button class="entry-regen" data-entry-id="${e.id}" ${canRegen ? '' : 'disabled'} title="${canRegen ? 'Regenerate this passage' : 'Cannot regenerate (cap reached or already done today)'}">↻ Regen</button>`
+      : '';
+
+    // Alternates selector
+    const altCount = (e.narrationAlternates || []).length;
+    const altRowHTML = altCount > 0
+      ? `<div class="alternates-row">
+           <span>Alternates:</span>
+           <button class="alternates-btn" data-entry-id="${e.id}" data-alt-idx="0" disabled>Current</button>
+           ${e.narrationAlternates.map((a, i) =>
+              `<button class="alternates-btn" data-entry-id="${e.id}" data-alt-idx="${i + 1}">${i + 1}</button>`
+            ).join('')}
+         </div>`
+      : '';
+
+    div.innerHTML = `
+      <div class="entry-date">${formatDateLong(e.gameDate)} ${indicator}${regenBtn}</div>
+      <div class="entry-tags">${tagsHTML}</div>
+      <div class="entry-user-text">${escapeHTML(e.text)}</div>
+      <div class="entry-narration">${escapeHTML(e.narration)}</div>
+      ${altRowHTML}
+      ${bumpsHTML}
+      ${levelHTML}
+    `;
+
+    // Wire regenerate button
+    const regBtn = div.querySelector('.entry-regen');
+    if (regBtn && !regBtn.disabled) {
+      regBtn.addEventListener('click', () => {
+        showConfirm('Regenerate this passage?',
+          `The current narration will become an alternate. This costs 1 of your ${callBudgetRemaining()} remaining calls today.`,
+          () => regenerateEntry(e.id));
+      });
+    }
+
+    // Wire alternate selectors
+    div.querySelectorAll('.alternates-btn').forEach(btn => {
+      const idx = parseInt(btn.dataset.altIdx, 10);
+      if (idx === 0) return; // current, disabled
+      btn.addEventListener('click', () => selectAlternate(e.id, idx));
+    });
+  }
+  return div;
+}
+
+function escapeHTML(s) {
+  if (!s) return '';
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+/* ============================================================
+   SETTINGS / EXPORT / IMPORT / RESET
+   ============================================================ */
+function renderSettings() {
+  document.getElementById('settings-name').textContent = state.character.name;
+  document.getElementById('settings-class').textContent = `${state.character.class} of ${state.world.order} · Level ${state.character.level}`;
+  document.getElementById('settings-trait').textContent = `"${state.character.trait}"`;
+
+  // World
+  document.getElementById('settings-world').innerHTML = `
+    Realm: <strong>${escapeHTML(state.world.realm)}</strong><br>
+    Order: <strong>${escapeHTML(state.world.order)}</strong><br>
+    Chapterhouse: <strong>${escapeHTML(state.world.chapterhouse)}</strong><br>
+    Mentor: <strong>${escapeHTML(state.world.mentor)}</strong>
+  `;
+
+  // Prologue choices
+  const prologueEl = document.getElementById('settings-prologue');
+  const prologueSection = document.getElementById('settings-prologue-section');
+  const c = state.character;
+  if (c.origin || c.oath || c.keepsake) {
+    prologueSection.style.display = 'block';
+    let html = '';
+    if (c.origin) html += `<div class="prologue-choice-display"><span class="pc-label">Origin:</span> ${escapeHTML(c.origin.token)}</div>`;
+    if (c.oath) html += `<div class="prologue-choice-display"><span class="pc-label">Oath:</span> ${escapeHTML(c.oath.token)}</div>`;
+    if (c.keepsake) html += `<div class="prologue-choice-display"><span class="pc-label">Keepsake:</span> ${escapeHTML(c.keepsake.token)}</div>`;
+    prologueEl.innerHTML = html;
+  } else {
+    prologueSection.style.display = 'none';
+  }
+
+  const boonsList = document.getElementById('boons-list');
+  const boonsEmpty = document.getElementById('boons-empty');
+  boonsList.innerHTML = '';
+  if (state.character.boons.length === 0) {
+    boonsEmpty.style.display = 'block';
+  } else {
+    boonsEmpty.style.display = 'none';
+    for (const b of state.character.boons) {
+      const li = document.createElement('li');
+      li.className = 'boon-item';
+      li.innerHTML = `
+        <div class="boon-item-name">${escapeHTML(b.name)} <span style="color: var(--gold-deep); font-size: 0.65rem;">· LVL ${b.level} · ${b.stat}</span></div>
+        <div class="boon-item-desc">${escapeHTML(b.desc)}</div>
+      `;
+      boonsList.appendChild(li);
+    }
+  }
+
+  // Cast
+  const castList = document.getElementById('cast-list');
+  const castEmpty = document.getElementById('cast-empty');
+  castList.innerHTML = '';
+  if (!state.npcs || state.npcs.length === 0) {
+    castEmpty.style.display = 'block';
+  } else {
+    castEmpty.style.display = 'none';
+    // Sort by relationship priority then alphabetical
+    const order = { mentor: 0, rival: 1, peer: 2, superior: 3, subordinate: 4, acquaintance: 5 };
+    const sorted = [...state.npcs].sort((a, b) =>
+      (order[a.relationship] ?? 9) - (order[b.relationship] ?? 9) || a.name.localeCompare(b.name)
+    );
+    for (const npc of sorted) {
+      const div = document.createElement('div');
+      div.className = 'npc-item';
+      div.innerHTML = `
+        <div class="npc-item-name">${escapeHTML(npc.name)}</div>
+        <div class="npc-item-meta">${escapeHTML(npc.role || '')} — ${escapeHTML(npc.description || '')}</div>
+        <div class="npc-item-attr">Attitude: ${escapeHTML(npc.attitude || 'neutral')}${npc.lastMentionedDate ? ' · last mentioned ' + escapeHTML(npc.lastMentionedDate) : ''}</div>
+      `;
+      castList.appendChild(div);
+    }
+  }
+
+  // Ledger
+  renderLedger();
+
+  // Backend
+  renderBackendStatus();
+
+  // Counts
+  const realEntries = state.entries.filter(e => e.type !== 'rest').length;
+  const restEntries = state.entries.filter(e => e.type === 'rest').length;
+  document.getElementById('settings-counts').innerHTML = `
+    Entries logged: <strong>${realEntries}</strong><br>
+    Quiet stretches: <strong>${restEntries}</strong><br>
+    Total XP: <strong>${state.character.xp}</strong>
+  `;
+}
+
+function renderLedger() {
+  rolloverUsageIfNewDay();
+  const u = state.usage;
+  const inK  = (u.monthlyTokens.input  || 0) / 1000;
+  const outK = (u.monthlyTokens.output || 0) / 1000;
+  // Approximate cost — we don't track per-model token splits monthly, so use a
+  // weighted estimate: assume the lifetime ratio of haiku:sonnet calls applies
+  // roughly to monthly tokens.
+  const total = (u.lifetimeCallsByModel.haiku || 0) + (u.lifetimeCallsByModel.sonnet || 0);
+  const haikuShare  = total === 0 ? 0.95 : (u.lifetimeCallsByModel.haiku || 0) / total;
+  const sonnetShare = 1 - haikuShare;
+  const inCost  = (inK / 1000) * (haikuShare * PRICING.haiku.in  + sonnetShare * PRICING.sonnet.in);
+  const outCost = (outK / 1000) * (haikuShare * PRICING.haiku.out + sonnetShare * PRICING.sonnet.out);
+  const totalCost = inCost + outCost;
+
+  const real = state.entries.filter(e => e.type !== 'rest');
+  const aiNarrated = real.filter(e => e.narrationSource === 'haiku' || e.narrationSource === 'sonnet').length;
+  const templated  = real.filter(e => e.narrationSource === 'template').length;
+  const aiPct = real.length === 0 ? 0 : Math.round((aiNarrated / real.length) * 100);
+
+  document.getElementById('ledger-content').innerHTML = `
+    <div class="ledger-row"><span>Calls today</span><strong>${u.callsToday} / ${state.config.dailyCallCap}</strong></div>
+    <div class="ledger-row"><span>Regenerations today</span><strong>${u.regensToday} / ${state.config.dailyRegenCap}</strong></div>
+    <div class="ledger-row"><span>Pending re-narrations</span><strong>${u.pendingRenarrations.length}</strong></div>
+    <div class="ledger-divider"></div>
+    <div class="ledger-row"><span>This month — Haiku calls</span><strong>${u.lifetimeCallsByModel.haiku || 0}</strong></div>
+    <div class="ledger-row"><span>This month — Sonnet calls</span><strong>${u.lifetimeCallsByModel.sonnet || 0}</strong></div>
+    <div class="ledger-row"><span>Tokens (in/out)</span><strong>~${formatTokens(u.monthlyTokens.input)} / ~${formatTokens(u.monthlyTokens.output)}</strong></div>
+    <div class="ledger-row"><span>Estimated month cost</span><strong>$${totalCost.toFixed(3)}</strong></div>
+    <div class="ledger-divider"></div>
+    <div class="ledger-row"><span>Lifetime — entries</span><strong>${real.length}</strong></div>
+    <div class="ledger-row"><span>AI-narrated</span><strong>${aiNarrated} (${aiPct}%)</strong></div>
+    <div class="ledger-row"><span>Templated</span><strong>${templated}</strong></div>
+  `;
+}
+
+function formatTokens(n) {
+  if (n < 1000) return String(n);
+  if (n < 1000000) return (n / 1000).toFixed(1) + 'K';
+  return (n / 1000000).toFixed(2) + 'M';
+}
+
+function renderBackendStatus() {
+  const cfg = state.config;
+  const statusEl = document.getElementById('backend-status');
+  let dot, label;
+  if (!cfg.workerUrl || !cfg.workerSecret) {
+    dot = 'muted'; label = 'Not configured — running in template-only mode.';
+  } else if (cfg.backendStatus === 'ok') {
+    dot = 'ok'; label = `Connected${cfg.lastTestAt ? ' · last call ' + new Date(cfg.lastTestAt).toLocaleString() : ''}`;
+  } else if (cfg.backendStatus === 'error') {
+    dot = 'error'; label = `Connection error${cfg.lastTestResult ? ' (' + cfg.lastTestResult + ')' : ''}`;
+  } else {
+    dot = 'warn'; label = 'Configured but not yet tested';
+  }
+  statusEl.innerHTML = `<span class="status-dot ${dot}"></span>${escapeHTML(label)}`;
+}
+
+function exportData() {
+  const dump = {
+    exported: new Date().toISOString(),
+    state
+  };
+  const json = JSON.stringify(dump, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `chronicle-backup-${stamp}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 100);
+  showToast('Backup downloaded');
+}
+
+function importData(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      const incoming = parsed.state || parsed;
+      const migrated = migrateState(incoming);
+      showConfirm(
+        'Replace current chronicle?',
+        `This will overwrite your current state with the backup. ${(migrated.entries || []).filter(e => e.type !== 'rest').length} entries will be loaded.`,
+        () => {
+          state = migrated;
+          saveState();
+          renderHome();
+          showToast('Backup restored');
+          showScreen('home');
+        }
+      );
+    } catch (err) {
+      showToast('Invalid backup file');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function resetCharacter() {
+  showConfirm(
+    'Reset everything?',
+    'This will erase your character, all entries, all boons, all prologue choices, and all progress. This cannot be undone. Export a backup first if you want to keep it.',
+    () => {
+      resetState();
+      state.created = false;
+      saveState();
+      showScreen('create');
+      showToast('Reset complete');
+    }
+  );
+}
+
+/* ============================================================
+   UI HELPERS
+   ============================================================ */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function showConfirm(title, body, onConfirm) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').textContent = body;
+  const actions = document.getElementById('modal-actions');
+  actions.innerHTML = '';
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'btn btn-secondary';
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.onclick = () => document.getElementById('modal-backdrop').classList.remove('show');
+  const okBtn = document.createElement('button');
+  okBtn.className = 'btn';
+  okBtn.textContent = 'Confirm';
+  okBtn.onclick = () => {
+    document.getElementById('modal-backdrop').classList.remove('show');
+    onConfirm();
+  };
+  actions.appendChild(cancelBtn);
+  actions.appendChild(okBtn);
+  document.getElementById('modal-backdrop').classList.add('show');
+}
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  if (name === 'home') renderHome();
+  if (name === 'chronicle') renderChronicle();
+  if (name === 'settings') renderSettings();
+  window.scrollTo(0, 0);
+}
+
+/* ============================================================
+   INITIALIZATION
+   ============================================================ */
+function init() {
+  state = loadState();
+
+  if (!state) {
+    state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+    state.createdAt = new Date().toISOString();
+  }
+
+  // Wire creation screen — now goes to prologue, not directly to home
+  document.getElementById('create-begin').addEventListener('click', () => {
+    const name = document.getElementById('create-name').value.trim() || 'Jerry';
+    const trait = document.getElementById('create-trait').value.trim() || 'Big dreams, small beginnings.';
+    state.character.name = name;
+    state.character.trait = trait;
+    saveState();
+    startPrologue();
+  });
+
+  // Wire prologue continue
+  document.getElementById('prologue-continue').addEventListener('click', continuePrologue);
+
+  // Wire check-in
+  document.getElementById('checkin-text').addEventListener('input', updateSubmitState);
+  document.getElementById('submit-btn').addEventListener('click', submitCheckIn);
+
+  // Wire navigation
+  document.getElementById('nav-chronicle').addEventListener('click', () => showScreen('chronicle'));
+  document.getElementById('nav-settings').addEventListener('click', () => showScreen('settings'));
+  document.getElementById('back-from-chronicle').addEventListener('click', () => showScreen('home'));
+  document.getElementById('back-from-settings').addEventListener('click', () => showScreen('home'));
+
+  // Wire settings
+  document.getElementById('export-btn').addEventListener('click', exportData);
+  document.getElementById('import-btn').addEventListener('click', () => document.getElementById('import-file').click());
+  document.getElementById('import-file').addEventListener('change', (e) => {
+    if (e.target.files[0]) importData(e.target.files[0]);
+    e.target.value = '';
+  });
+  document.getElementById('reset-btn').addEventListener('click', resetCharacter);
+
+  // Phase 2: backend config and test buttons
+  document.getElementById('backend-config-btn').addEventListener('click', showBackendConfigModal);
+  document.getElementById('backend-test-btn').addEventListener('click', testBackendConnection);
+
+  // Phase 2: pending re-narration banner button
+  document.getElementById('pending-banner-btn').addEventListener('click', processPendingRenarrations);
+
+  // Level up close
+  document.getElementById('levelup-close').addEventListener('click', closeLevelUp);
+
+  // Modal backdrop click
+  document.getElementById('modal-backdrop').addEventListener('click', (e) => {
+    if (e.target.id === 'modal-backdrop') {
+      document.getElementById('modal-backdrop').classList.remove('show');
+    }
+  });
+
+  // Initial tag buttons
+  renderTagButtons();
+
+  // Show appropriate screen
+  if (!state.created) {
+    showScreen('create');
+  } else {
+    showScreen('home');
+  }
+}
+
+/* ============================================================
+   PHASE 2 — BACKEND CONFIG MODAL
+   ============================================================ */
+function showBackendConfigModal() {
+  const cfg = state.config;
+  document.getElementById('modal-title').textContent = 'Configure Backend';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-input-group">
+      <label>Worker URL</label>
+      <input id="backend-url-input" type="url" placeholder="https://chronicle-narrator.xxx.workers.dev"
+             value="${escapeHTML(cfg.workerUrl || '')}" autocomplete="off" autocapitalize="none" spellcheck="false">
+    </div>
+    <div class="modal-input-group">
+      <label>Shared Secret</label>
+      <input id="backend-secret-input" type="text" placeholder="paste hex string"
+             value="${escapeHTML(cfg.workerSecret || '')}" autocomplete="off" autocapitalize="none" spellcheck="false">
+    </div>
+    <div style="font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--ink-faded); font-size: 0.85rem; margin-top: 0.5rem;">
+      Stored locally only. Leave empty to revert to template-only mode.
+    </div>
+  `;
+  const actions = document.getElementById('modal-actions');
+  actions.innerHTML = '';
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'btn btn-secondary';
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.onclick = () => document.getElementById('modal-backdrop').classList.remove('show');
+  const saveBtn = document.createElement('button');
+  saveBtn.className = 'btn';
+  saveBtn.textContent = 'Save';
+  saveBtn.onclick = () => {
+    let url = document.getElementById('backend-url-input').value.trim();
+    const secret = document.getElementById('backend-secret-input').value.trim();
+    // Strip trailing slash
+    if (url.endsWith('/')) url = url.slice(0, -1);
+    state.config.workerUrl = url || null;
+    state.config.workerSecret = secret || null;
+    state.config.backendStatus = (url && secret) ? 'configured' : 'not_configured';
+    saveState();
+    document.getElementById('modal-backdrop').classList.remove('show');
+    renderSettings();
+    showToast(url && secret ? 'Backend saved — try Test connection' : 'Backend cleared');
+  };
+  actions.appendChild(cancelBtn);
+  actions.appendChild(saveBtn);
+  document.getElementById('modal-backdrop').classList.add('show');
+}
+
+async function testBackendConnection() {
+  if (!state.config.workerUrl || !state.config.workerSecret) {
+    showToast('Configure backend first');
+    return;
+  }
+  showToast('Testing...');
+  // Send a tiny dummy checkin call. We use 'haiku' and a minimal context that
+  // the Worker will accept. The actual narration result is discarded — we only
+  // care that the round-trip works.
+  try {
+    const dummyContext = {
+      character: state.character,
+      world: state.world,
+      npcs: [],
+      recentEntries: [],
+      todaysEntry: { gameDate: gameDate(), tags: ['Work'], text: 'connection test' },
+      milestones: { isFirstEver: false, daysSkipped: 0, canIntroduceNpc: false }
+    };
+    const resp = await callWorker({
+      model: 'haiku', kind: 'checkin', context: dummyContext, timeoutMs: 20000
+    });
+    state.config.backendStatus = 'ok';
+    state.config.lastTestAt = new Date().toISOString();
+    state.config.lastTestResult = 'ok';
+    // Count this as a real call (it consumed tokens)
+    rolloverUsageIfNewDay();
+    state.usage.callsToday += 1;
+    state.usage.lifetimeCallsByModel.haiku = (state.usage.lifetimeCallsByModel.haiku || 0) + 1;
+    state.usage.monthlyTokens.input  += resp.tokensUsed?.input  || 0;
+    state.usage.monthlyTokens.output += resp.tokensUsed?.output || 0;
+    saveState();
+    renderSettings();
+    showToast('Connection ✓ (used 1 call)');
+  } catch (err) {
+    state.config.backendStatus = 'error';
+    state.config.lastTestAt = new Date().toISOString();
+    state.config.lastTestResult = err.message || 'unknown';
+    saveState();
+    renderSettings();
+    showToast(`Failed: ${err.message || 'unknown'}`);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
