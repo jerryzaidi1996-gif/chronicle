@@ -1217,6 +1217,311 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
   75%  { content: '...'; }
 }
 
+/* ============================================================
+   PHASE 2.6 — QUEST PANEL & BANNERS
+   ============================================================ */
+
+.quest-panel {
+  background: var(--parchment-dark);
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  padding: 0.9rem 1rem 1rem;
+  margin-bottom: 1rem;
+  position: relative;
+  box-shadow: 0 2px 12px var(--shadow);
+}
+.quest-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+}
+
+.quest-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.7rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--gold-deep);
+}
+.quest-panel-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  color: var(--ink);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.quest-panel-title::before {
+  content: '✦';
+  color: var(--gold);
+  margin-right: 0.5rem;
+  font-size: 0.7rem;
+}
+.quest-panel-day {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--ink-faded);
+}
+
+.quest-section-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  color: var(--gold-deep);
+  text-transform: uppercase;
+  margin: 0.5rem 0 0.4rem;
+}
+.quest-section-label:first-child { margin-top: 0; }
+
+.quest-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.2rem;
+  border-bottom: 1px dashed transparent;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-radius: 2px;
+}
+.quest-row:hover { background: rgba(184, 137, 58, 0.06); }
+.quest-row:active { transform: scale(0.99); }
+
+.quest-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.quest-icon svg { width: 18px; height: 18px; fill: var(--ink-soft); }
+.quest-row.kept .quest-icon svg,
+.quest-row.complete .quest-icon svg { fill: var(--gold-bright); }
+.quest-row.broken .quest-icon svg { fill: var(--crimson); opacity: 0.7; }
+
+.quest-name {
+  flex: 1;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.02rem;
+  color: var(--ink);
+  font-weight: 500;
+}
+.quest-row.broken .quest-name { color: var(--ink-faded); text-decoration: line-through; text-decoration-color: rgba(122, 40, 40, 0.4); text-decoration-thickness: 1px; }
+.quest-row.complete .quest-name { color: var(--ink); }
+
+.quest-status {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faded);
+  white-space: nowrap;
+}
+.quest-status.kept { color: var(--gold-deep); }
+.quest-status.kept::before { content: '✓ '; color: var(--gold-bright); font-size: 0.85rem; }
+.quest-status.broken { color: var(--crimson); opacity: 0.85; }
+.quest-status.broken::before { content: '✗ '; }
+.quest-status.pending::before { content: '◯ '; opacity: 0.5; }
+
+.quest-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+.quest-progress-bar {
+  display: flex;
+  gap: 2px;
+}
+.quest-progress-cell {
+  width: 14px;
+  height: 8px;
+  background: var(--parchment);
+  border: 1px solid var(--ink-faded);
+  border-radius: 1px;
+}
+.quest-progress-cell.filled {
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright));
+  border-color: var(--gold-deep);
+  box-shadow: 0 0 3px rgba(212, 175, 55, 0.4);
+}
+.quest-row.complete .quest-progress-cell.filled {
+  background: var(--gold-bright);
+  box-shadow: 0 0 6px rgba(212, 175, 55, 0.7);
+}
+.quest-progress-count {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-faded);
+  min-width: 2.4em;
+  text-align: right;
+}
+.quest-row.complete .quest-progress-count { color: var(--gold-deep); }
+.quest-row.complete .quest-progress-count::after { content: ' ✦'; color: var(--gold-bright); }
+
+/* Quest banners (above quest panel) */
+.quest-banner {
+  padding: 0.6rem 0.85rem;
+  margin-bottom: 0.7rem;
+  border-radius: 2px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 0.97rem;
+  line-height: 1.4;
+  border-left: 3px solid;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.quest-banner-icon {
+  font-style: normal;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
+.quest-banner-text { flex: 1; color: var(--ink-soft); }
+
+.quest-banner.miss {
+  background: linear-gradient(90deg, rgba(122, 40, 40, 0.10), rgba(122, 40, 40, 0.02));
+  border-left-color: var(--crimson);
+}
+.quest-banner.miss .quest-banner-icon { color: var(--crimson); }
+.quest-banner.weekly-fail {
+  background: linear-gradient(90deg, rgba(122, 40, 40, 0.15), rgba(122, 40, 40, 0.04));
+  border-left-color: var(--crimson);
+}
+.quest-banner.weekly-fail .quest-banner-icon { color: var(--crimson); }
+.quest-banner.win {
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.18), rgba(184, 137, 58, 0.05));
+  border-left-color: var(--gold-bright);
+}
+.quest-banner.win .quest-banner-icon { color: var(--gold-bright); }
+.quest-banner.win .quest-banner-text { color: var(--ink); font-style: italic; }
+
+/* Class progression locked indicator */
+.class-locked {
+  display: inline-block;
+  background: rgba(122, 40, 40, 0.15);
+  color: var(--crimson);
+  font-family: 'Cinzel', serif;
+  font-style: normal;
+  font-size: 0.6rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 2px;
+  letter-spacing: 0.12em;
+  margin-left: 0.35rem;
+  vertical-align: middle;
+  border: 1px solid var(--crimson);
+}
+
+/* Quest detail modal */
+.quest-detail-history {
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+  margin: 0.7rem 0;
+  flex-wrap: wrap;
+}
+.quest-history-cell {
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  border: 1px solid var(--ink-faded);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  color: var(--ink-faded);
+}
+.quest-history-cell.kept { background: var(--gold); border-color: var(--gold-deep); color: var(--ink); }
+.quest-history-cell.kept::after { content: '✓'; color: var(--ink); font-size: 0.65rem; }
+.quest-history-cell.broken { background: rgba(122, 40, 40, 0.2); border-color: var(--crimson); }
+.quest-history-cell.broken::after { content: '✗'; color: var(--crimson); font-size: 0.65rem; }
+.quest-history-cell.future { opacity: 0.3; }
+
+.quest-detail-meta {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  text-align: center;
+  margin-bottom: 0.4rem;
+  font-style: italic;
+}
+
+/* Today's Reckoning section in chronicle */
+.entry-reckoning {
+  margin-top: 0.7rem;
+  padding: 0.5rem 0.8rem;
+  background: rgba(184, 137, 58, 0.06);
+  border-left: 2px solid var(--gold-deep);
+  border-radius: 0 2px 2px 0;
+}
+.entry-reckoning-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  color: var(--gold-deep);
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+.entry-reckoning-line {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.92rem;
+  font-style: italic;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+.entry-reckoning-line .kept-mark  { color: var(--gold-deep); font-weight: 600; }
+.entry-reckoning-line .broken-mark { color: var(--crimson); font-weight: 600; }
+
+/* Week summary block */
+.week-summary {
+  background: var(--parchment-dark);
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+.week-summary::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+}
+.week-summary-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--gold-deep);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+.week-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  text-align: center;
+}
+.week-summary-stat strong {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  color: var(--ink);
+  font-weight: 700;
+}
+
 </style>
 </head>
 <body>
@@ -1280,6 +1585,18 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
   <div class="scene-panel" id="scene-panel">
     <svg class="scene-svg" id="scene-svg" viewBox="0 0 560 200" preserveAspectRatio="xMidYMid slice"></svg>
     <div class="scene-caption" id="scene-caption">A new road unfolds...</div>
+  </div>
+
+  <!-- Quest banners (miss/win/weekly) -->
+  <div id="quest-banners"></div>
+
+  <!-- Quest panel: The Week's Watch -->
+  <div class="quest-panel" id="quest-panel" style="display: none;">
+    <div class="quest-panel-header">
+      <div class="quest-panel-title">The Week's Watch</div>
+      <div class="quest-panel-day" id="quest-panel-day"></div>
+    </div>
+    <div id="quest-panel-body"></div>
   </div>
 
   <!-- Character header -->
@@ -1408,6 +1725,11 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
   </div>
 
   <div class="settings-section">
+    <div class="settings-label">Quests · Class Progress</div>
+    <div id="quest-stats-content"></div>
+  </div>
+
+  <div class="settings-section">
     <div class="settings-label">Backend</div>
     <div id="backend-status" style="font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--ink-soft); margin-bottom: 0.6rem;"></div>
     <div class="settings-row">
@@ -1440,7 +1762,7 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
   </div>
 
   <div style="text-align: center; font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.2em; color: var(--ink-faded); margin-top: 2rem; text-transform: uppercase;">
-    The Chronicle · Phase 2
+    The Chronicle · Phase 2.6
   </div>
 </div>
 
@@ -1609,7 +1931,14 @@ const DEFAULT_STATE = {
   },
   // Phase 2: track which categories have been used (for Model B NPC unlocks)
   firstUsedCategories: {},     // { Work: 'YYYY-MM-DD', Train: 'YYYY-MM-DD', ... }
-  entries: [],         // { id, gameDate, isoTime, text, tags, narration, event, statBumps, levelUp, type, narrationSource, narrationAlternates, tokensUsed, pendingRenarration, npcMentions }
+  // Phase 2.6: quests
+  quests: [],                  // populated on first launch via migrateState
+  questHistory: {              // { 'YYYY-MM-DD': { daily: { questId: 'kept'|'broken' }, ... } }
+    daily: {},                 // { 'YYYY-MM-DD': { questId: 'kept'|'broken' } }
+    weekly: {}                 // { 'YYYY-WW': { questId: { hits: N, target: N, status: 'complete'|'fail'|'open' } } }
+  },
+  questBanners: [],            // [{ id, kind: 'miss'|'weekly-fail'|'win', text, expiresAt: 'YYYY-MM-DD' }]
+  entries: [],         // { id, gameDate, isoTime, text, tags, narration, event, statBumps, levelUp, type, narrationSource, narrationAlternates, tokensUsed, pendingRenarration, npcMentions, questResolution }
   lastCheckInDate: null,
   createdAt: null
 };
@@ -1752,6 +2081,24 @@ function migrateState(s) {
     }
   }
 
+  // ===== Phase 2.6 migrations =====
+  if (!Array.isArray(s.quests)) s.quests = [];
+  s.questHistory = Object.assign({ daily: {}, weekly: {} }, s.questHistory || {});
+  if (!s.questHistory.daily || typeof s.questHistory.daily !== 'object') s.questHistory.daily = {};
+  if (!s.questHistory.weekly || typeof s.questHistory.weekly !== 'object') s.questHistory.weekly = {};
+  if (!Array.isArray(s.questBanners)) s.questBanners = [];
+
+  // Seed default quests if none exist
+  if (s.quests.length === 0) {
+    s.quests = DEFAULT_QUESTS.map(q => ({ ...q, archived: false, createdAt: new Date().toISOString() }));
+  }
+
+  // Per-entry questResolution field (Phase 2.6)
+  for (const e of s.entries) {
+    if (e.type === 'rest') continue;
+    if (e.questResolution === undefined) e.questResolution = null;
+  }
+
   return s;
 }
 
@@ -1784,7 +2131,8 @@ const ICONS = {
   heart: '<svg viewBox="0 0 512 512"><path d="M376 56c-32 0-65 14-89 38-7 7-21 22-31 35-10-13-24-28-31-35-24-24-57-38-89-38-66 0-120 54-120 120 0 70 60 130 120 184 30 27 60 50 88 75 12 11 27 23 32 27 5-4 20-16 32-27 28-25 58-48 88-75 60-54 120-114 120-184 0-66-54-120-120-120z"/></svg>',
   broom: '<svg viewBox="0 0 512 512"><path d="M388 32L256 164l-29-29-30 30 138 138 30-30-29-29L508 112 388 32zM158 219L43 334c-7 7-11 17-11 27v98c0 11 9 20 20 20h98c10 0 20-4 27-11l115-115L158 219zm32 90l84-84 73 73-84 84-73-73z"/></svg>',
   goblets: '<svg viewBox="0 0 512 512"><path d="M64 32v40c0 80 50 145 120 165v179h-44c-22 0-40 18-40 40v24h312v-24c0-22-18-40-40-40h-44V237c70-20 120-85 120-165V32H64zm32 32h320v8c0 65-39 119-96 138v34h32v32H192v-32h32v-34c-57-19-96-73-96-138v-8z"/></svg>',
-  caduceus: '<svg viewBox="0 0 512 512"><path d="M256 32l-48 48 32 32V224h-80c-26 0-48 22-48 48s22 48 48 48h80v144l-32 32 48 48 48-48-32-32V320h80c26 0 48-22 48-48s-22-48-48-48h-80V112l32-32-48-48zm-96 80c-22 16-40 40-48 64 24 0 48-12 64-32l-16-32zm192 0l-16 32c16 20 40 32 64 32-8-24-26-48-48-64zm-192 256c-22-16-40-40-48-64 24 0 48 12 64 32l-16 32zm192 0l-16-32c16-20 40-32 64-32-8 24-26 48-48 64z"/></svg>'
+  caduceus: '<svg viewBox="0 0 512 512"><path d="M256 32l-48 48 32 32V224h-80c-26 0-48 22-48 48s22 48 48 48h80v144l-32 32 48 48 48-48-32-32V320h80c26 0 48-22 48-48s-22-48-48-48h-80V112l32-32-48-48zm-96 80c-22 16-40 40-48 64 24 0 48-12 64-32l-16-32zm192 0l-16 32c16 20 40 32 64 32-8-24-26-48-48-64zm-192 256c-22-16-40-40-48-64 24 0 48 12 64 32l-16 32zm192 0l-16-32c16-20 40-32 64-32-8 24-26 48-48 64z"/></svg>',
+  hourglass: '<svg viewBox="0 0 512 512"><path d="M96 32v32h32v32c0 64 32 96 64 128-32 32-64 64-64 128v32H96v32h320v-32h-32v-32c0-64-32-96-64-128 32-32 64-64 64-128V64h32V32H96zm64 32h192v32c0 48-24 80-64 112-40-32-64-64-64-112V64zm0 320c0-48 24-80 64-112 40 32 64 64 64 112v32H160v-32zm32-32c8-16 24-32 64-48 40 16 56 32 64 48H192z"/></svg>'
 };
 
 /* ============================================================
@@ -2351,10 +2699,18 @@ function awardXP(tagCount, tags) {
     }
   }
 
-  // Check for level up
+  // Check for level up — but respect class gates
   let leveledUp = null;
   while (state.character.level < CLASSES.length * 5 && state.character.xp >= xpForLevel(state.character.level + 1)) {
-    state.character.level += 1;
+    const nextLevel = state.character.level + 1;
+    // Check class gate at this level
+    if (classGateBlocked(nextLevel)) {
+      // Held back — don't advance, but cap XP at the threshold so the bar shows full
+      // (The Class progression locked indicator will show in UI)
+      state.character.xp = xpForLevel(nextLevel) - 1;
+      break;
+    }
+    state.character.level = nextLevel;
     const newClass = classForLevel(state.character.level);
     if (newClass.name !== state.character.class) {
       state.character.class = newClass.name;
@@ -2364,6 +2720,320 @@ function awardXP(tagCount, tags) {
   }
 
   return { xpGained, statBumps, leveledUp };
+}
+
+/* ============================================================
+   PHASE 2.6 — QUEST CONSTANTS & CORE LOGIC
+   ============================================================ */
+const DEFAULT_QUESTS = [
+  {
+    id: 'q_long_reading',
+    name: 'The Long Reading',
+    desc: 'Twenty minutes or more with board prep material — UWorld, a review chapter, an Anki deck. The bar is engagement, not completion.',
+    category: 'Study',
+    cadence: 'daily',
+    target: 1,
+    icon: 'book'
+  },
+  {
+    id: 'q_bodys_due',
+    name: "The Body's Due",
+    desc: 'A workout, an intentional walk over twenty minutes, or an honest food log day. The bar is that the body got considered.',
+    category: 'Health',
+    cadence: 'daily',
+    target: 1,
+    icon: 'heart'
+  },
+  {
+    id: 'q_hour_unspent',
+    name: 'The Hour Unspent',
+    desc: 'One hour spent on something that was not work, scrolling, or sleep. Reading, calling someone, training, cooking — anything chosen.',
+    category: null,            // any non-Work tag credits this
+    cadence: 'daily',
+    target: 1,
+    icon: 'hourglass',
+    creditingTags: ['Study', 'Health', 'Train', 'Social', 'Research', 'Chores']
+  },
+  {
+    id: 'q_forge',
+    name: 'The Forge',
+    desc: 'Three real training sessions per week. Not the daily walk — actual lifts, runs, gym sessions.',
+    category: 'Train',
+    cadence: 'weekly',
+    target: 3,
+    icon: 'sword'
+  },
+  {
+    id: 'q_bonds_kept',
+    name: 'Bonds Kept',
+    desc: 'Two real social connections per week — meal with someone, real phone call, hangout. Texting does not count.',
+    category: 'Social',
+    cadence: 'weekly',
+    target: 2,
+    icon: 'goblets'
+  },
+  {
+    id: 'q_slow_work',
+    name: 'The Slow Work',
+    desc: 'Two meaningful research touches per week — read a paper, work on a project, draft, lit search, meet with PI. The bar is that the work moved forward.',
+    category: 'Research',
+    cadence: 'weekly',
+    target: 2,
+    icon: 'scroll'
+  }
+];
+
+const STAT_XP_HIT_BONUS = 5;
+const STAT_XP_MISS_PENALTY = 3;
+const WEEKLY_COMPLETE_XP = 20;
+const WEEKLY_FAIL_XP_PENALTY = 10;
+const WEEKLY_FAIL_RIVAL_PROGRESS = 5;
+
+const BANNER_DURATION_DAYS = {
+  miss: 1,
+  'weekly-fail': 2,
+  win: 1
+};
+
+// Class progression gates (Phase 2.6)
+const CLASS_GATES = {
+  // Each gate is checked when the player would otherwise advance to that level.
+  // Returns true if the gate is satisfied, false if blocked.
+  5: function() {
+    // Squire → Knight-Errant: 4wk + 80% daily + 1 perfect week
+    return checkClassGate({ minWeeks: 4, dailyPct: 0.80, perfectWeeks: 1 });
+  },
+  10: function() {
+    // Knight-Errant → Knight: 8wk + 85% daily + 4 perfect weeks
+    return checkClassGate({ minWeeks: 8, dailyPct: 0.85, perfectWeeks: 4 });
+  },
+  15: function() {
+    return checkClassGate({ minWeeks: 16, dailyPct: 0.85, perfectWeeks: 8 });
+  },
+  20: function() {
+    return checkClassGate({ minWeeks: 30, dailyPct: 0.90, perfectWeeks: 16 });
+  }
+};
+
+function checkClassGate(reqs) {
+  const stats = computeQuestStats();
+  if (stats.weeksTracked < reqs.minWeeks) return false;
+  if (stats.dailyCompletionRate < reqs.dailyPct) return false;
+  if (stats.perfectWeeklyWeeks < reqs.perfectWeeks) return false;
+  return true;
+}
+
+/* ----- Quest helpers ----- */
+function getActiveQuests() {
+  return (state.quests || []).filter(q => !q.archived);
+}
+function getDailyQuests() {
+  return getActiveQuests().filter(q => q.cadence === 'daily');
+}
+function getWeeklyQuests() {
+  return getActiveQuests().filter(q => q.cadence === 'weekly');
+}
+
+function questCreditsCategory(quest, tag) {
+  if (quest.category === tag) return true;
+  if (quest.category === null && Array.isArray(quest.creditingTags) && quest.creditingTags.includes(tag)) return true;
+  return false;
+}
+
+/* ----- Week key helpers (Mon-Sun weeks) ----- */
+function weekKeyForDate(gd) {
+  // Returns 'YYYY-WW' (ISO week, Monday-start)
+  const d = new Date(gd + 'T12:00:00');
+  // Find Monday of this week
+  const dow = d.getDay(); // 0=Sun, 1=Mon, ...
+  const daysFromMonday = dow === 0 ? 6 : dow - 1;
+  const monday = new Date(d);
+  monday.setDate(d.getDate() - daysFromMonday);
+  // Compute ISO-style week number
+  const yearStart = new Date(monday.getFullYear(), 0, 1);
+  const weekNum = Math.ceil(((monday - yearStart) / 86400000 + yearStart.getDay() + 1) / 7);
+  return monday.getFullYear() + '-W' + String(weekNum).padStart(2, '0');
+}
+
+function startOfWeekDate(gd) {
+  const d = new Date(gd + 'T12:00:00');
+  const dow = d.getDay();
+  const daysFromMonday = dow === 0 ? 6 : dow - 1;
+  d.setDate(d.getDate() - daysFromMonday);
+  return d.toISOString().slice(0, 10);
+}
+
+function endOfWeekDate(gd) {
+  const start = new Date(startOfWeekDate(gd) + 'T12:00:00');
+  start.setDate(start.getDate() + 6);
+  return start.toISOString().slice(0, 10);
+}
+
+/* ----- Quest evaluation ----- */
+function evaluateDailyQuestsForDate(gd, hitTags) {
+  // Returns { questId: 'kept' | 'broken' } for daily quests on this date.
+  // hitTags is an array of tags submitted in the entry.
+  const result = {};
+  for (const quest of getDailyQuests()) {
+    // Only evaluate if the quest existed on this date
+    if (quest.createdAt && gd < quest.createdAt.slice(0, 10)) continue;
+    const hit = hitTags.some(t => questCreditsCategory(quest, t));
+    result[quest.id] = hit ? 'kept' : 'broken';
+  }
+  return result;
+}
+
+function recordDailyQuestResolution(gd, hitTags) {
+  // Records the outcome and applies stat XP modifiers. Returns the resolution object.
+  const resolution = evaluateDailyQuestsForDate(gd, hitTags);
+  state.questHistory.daily[gd] = resolution;
+
+  // Apply stat modifiers
+  for (const [questId, outcome] of Object.entries(resolution)) {
+    const quest = state.quests.find(q => q.id === questId);
+    if (!quest) continue;
+    // For "Hour Unspent" with no fixed category, use WIS as proxy stat
+    const stat = quest.category ? CATEGORIES[quest.category]?.stat : 'WIS';
+    if (!stat) continue;
+    if (outcome === 'kept') {
+      state.character.statXP[stat] = (state.character.statXP[stat] || 0) + STAT_XP_HIT_BONUS;
+      // Check for stat bump from this bonus alone
+      if (state.character.statXP[stat] >= STAT_XP_PER_BUMP) {
+        const bumps = Math.floor(state.character.statXP[stat] / STAT_XP_PER_BUMP);
+        state.character.statXP[stat] -= bumps * STAT_XP_PER_BUMP;
+        state.character.stats[stat] += bumps;
+      }
+    } else {
+      // Broken: subtract from statXP, but never below 0
+      state.character.statXP[stat] = Math.max(0, (state.character.statXP[stat] || 0) - STAT_XP_MISS_PENALTY);
+    }
+  }
+  return resolution;
+}
+
+function evaluateWeeklyQuestsForWeek(weekKey) {
+  // Walks all dates in this week and tallies hits per quest.
+  // Returns { questId: { hits, target, status } }
+  const result = {};
+  for (const quest of getWeeklyQuests()) {
+    if (quest.createdAt && weekKey < weekKeyForDate(quest.createdAt.slice(0, 10))) continue;
+    let hits = 0;
+    // Walk all entries this week
+    for (const e of state.entries) {
+      if (e.type === 'rest' || !e.tags) continue;
+      if (weekKeyForDate(e.gameDate) !== weekKey) continue;
+      if (e.tags.some(t => questCreditsCategory(quest, t))) hits++;
+    }
+    const status = hits >= quest.target ? 'complete' : 'open';
+    result[quest.id] = { hits, target: quest.target, status };
+  }
+  return result;
+}
+
+function processWeeklyEvaluations(currentDate) {
+  // For every completed past week (week-end < currentDate), if not yet finalized,
+  // finalize it: complete or fail, apply XP, set banners.
+  const today = currentDate || gameDate();
+  const todayWeek = weekKeyForDate(today);
+  // Look back over up to 8 weeks
+  for (let weeksBack = 1; weeksBack <= 8; weeksBack++) {
+    const refDate = new Date(today + 'T12:00:00');
+    refDate.setDate(refDate.getDate() - 7 * weeksBack);
+    const refDateStr = refDate.toISOString().slice(0, 10);
+    const wk = weekKeyForDate(refDateStr);
+    if (state.questHistory.weekly[wk]) {
+      const finalized = Object.values(state.questHistory.weekly[wk]).every(q => q.status === 'complete' || q.status === 'fail');
+      if (finalized) continue;
+    }
+    // Evaluate and finalize
+    const evalResult = evaluateWeeklyQuestsForWeek(wk);
+    for (const [qid, r] of Object.entries(evalResult)) {
+      const wasComplete = r.status === 'complete';
+      r.status = wasComplete ? 'complete' : 'fail';
+      const quest = state.quests.find(q => q.id === qid);
+      if (!quest) continue;
+      if (wasComplete) {
+        state.character.xp += WEEKLY_COMPLETE_XP;
+        addQuestBanner('win', `A weekly oath kept. ${quest.name} held — ${r.hits} of ${r.target}, as you swore.`, today);
+      } else {
+        state.character.xp = Math.max(0, state.character.xp - WEEKLY_FAIL_XP_PENALTY);
+        // Bump rival
+        if (!state.rival.name) state.rival.name = pick(RIVAL_NAMES);
+        state.rival.progress = Math.min(100, state.rival.progress + WEEKLY_FAIL_RIVAL_PROGRESS);
+        addQuestBanner('weekly-fail', `The week closes. ${quest.name} stood empty — only ${r.hits} of ${r.target}.`, today);
+      }
+    }
+    state.questHistory.weekly[wk] = evalResult;
+  }
+}
+
+function checkAndAddDailyMissBanners(today) {
+  // Check yesterday's quests; add miss banners for any broken ones (only if check-in was made yesterday too — otherwise the rest entry covers the gap)
+  const y = new Date(today + 'T12:00:00');
+  y.setDate(y.getDate() - 1);
+  const yest = y.toISOString().slice(0, 10);
+  const yestRes = state.questHistory.daily[yest];
+  if (!yestRes) return;
+  const broken = Object.entries(yestRes).filter(([_, v]) => v === 'broken');
+  if (broken.length === 0) return;
+  const names = broken.map(([qid, _]) => state.quests.find(q => q.id === qid)?.name).filter(Boolean);
+  if (names.length === 0) return;
+  let text;
+  if (names.length === 1) text = `A duty went unkept yesterday. ${names[0]} saw no candle.`;
+  else if (names.length === 2) text = `Two duties went unkept yesterday. ${names[0]} and ${names[1]} both stood empty.`;
+  else text = `${names.length} duties went unkept yesterday. ${names.slice(0, -1).join(', ')}, and ${names[names.length - 1]} all stood empty.`;
+  addQuestBanner('miss', text, today);
+}
+
+function addQuestBanner(kind, text, currentDate) {
+  // Don't duplicate identical banners
+  if (state.questBanners.some(b => b.kind === kind && b.text === text)) return;
+  const today = new Date(currentDate + 'T12:00:00');
+  today.setDate(today.getDate() + (BANNER_DURATION_DAYS[kind] || 1));
+  state.questBanners.push({
+    id: 'b_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+    kind,
+    text,
+    expiresAt: today.toISOString().slice(0, 10),
+    createdAt: currentDate
+  });
+}
+
+function pruneExpiredBanners() {
+  const today = gameDate();
+  state.questBanners = state.questBanners.filter(b => b.expiresAt > today);
+}
+
+/* ----- Quest stats for class gates ----- */
+function computeQuestStats() {
+  // Returns { weeksTracked, dailyCompletionRate, perfectWeeklyWeeks }
+  const weekKeys = Object.keys(state.questHistory.weekly);
+  const finalizedWeeks = weekKeys.filter(wk => {
+    const w = state.questHistory.weekly[wk];
+    return w && Object.values(w).every(q => q.status === 'complete' || q.status === 'fail');
+  });
+  const weeksTracked = finalizedWeeks.length;
+  const perfectWeeklyWeeks = finalizedWeeks.filter(wk => {
+    const w = state.questHistory.weekly[wk];
+    return Object.values(w).every(q => q.status === 'complete');
+  }).length;
+  // Daily completion rate
+  const dailyDates = Object.keys(state.questHistory.daily);
+  let totalDaily = 0, keptDaily = 0;
+  for (const d of dailyDates) {
+    for (const v of Object.values(state.questHistory.daily[d])) {
+      totalDaily++;
+      if (v === 'kept') keptDaily++;
+    }
+  }
+  const dailyCompletionRate = totalDaily === 0 ? 0 : keptDaily / totalDaily;
+  return { weeksTracked, dailyCompletionRate, perfectWeeklyWeeks };
+}
+
+function classGateBlocked(level) {
+  const gate = CLASS_GATES[level];
+  if (!gate) return false;
+  return !gate();
 }
 
 /* ============================================================
@@ -2542,6 +3212,29 @@ async function callWorker({ model, kind, context, timeoutMs = SHIMMER_TIMEOUT_MS
    ============================================================ */
 function buildWorkerContext(tags, text, milestones) {
   const today = gameDate();
+  // Phase 2.6: build active quest snapshot for prompt
+  const activeQuests = getActiveQuests().map(q => {
+    const todayRes = state.questHistory.daily[today]?.[q.id];
+    if (q.cadence === 'daily') {
+      return {
+        name: q.name,
+        cadence: 'daily',
+        category: q.category || '(any non-work)',
+        todayStatus: todayRes || (tags.some(t => questCreditsCategory(q, t)) ? 'kept (about to be)' : 'pending')
+      };
+    } else {
+      const wk = weekKeyForDate(today);
+      const wkRes = state.questHistory.weekly[wk]?.[q.id] || evaluateWeeklyQuestsForWeek(wk)[q.id];
+      return {
+        name: q.name,
+        cadence: 'weekly',
+        category: q.category,
+        target: q.target,
+        currentHits: wkRes?.hits || 0,
+        weekStatus: wkRes?.status || 'open'
+      };
+    }
+  });
   return {
     character: {
       name: state.character.name,
@@ -2557,7 +3250,8 @@ function buildWorkerContext(tags, text, milestones) {
     npcs: trimmedNpcsForPrompt(),
     recentEntries: trimmedRecentEntriesForPrompt(),
     todaysEntry: { gameDate: today, tags, text },
-    milestones
+    milestones,
+    activeQuests   // Phase 2.6
   };
 }
 
@@ -3083,7 +3777,13 @@ function renderScene() {
 function renderCharacterHeader() {
   document.getElementById('char-name').textContent = state.character.name;
   document.getElementById('char-class-text').textContent = `${state.character.class} · ${state.world.order}`;
-  document.getElementById('char-level').textContent = `LVL ${state.character.level}`;
+  // Phase 2.6: show class-locked indicator if at threshold but blocked
+  let levelLabel = `LVL ${state.character.level}`;
+  const nextLevel = state.character.level + 1;
+  if (state.character.xp >= xpForLevel(nextLevel) - 1 && classGateBlocked(nextLevel)) {
+    levelLabel += ` <span class="class-locked">HELD</span>`;
+  }
+  document.getElementById('char-level').innerHTML = levelLabel;
 
   const curThreshold = xpForLevel(state.character.level);
   const nextThreshold = xpForLevel(state.character.level + 1);
@@ -3139,15 +3839,160 @@ function renderTagButtons() {
 }
 
 function renderHome() {
+  pruneExpiredBanners();
+  // Process any pending weekly evaluations whenever home renders
+  processWeeklyEvaluations(gameDate());
+  // Add miss banners for yesterday's broken quests if not already present
+  checkAndAddDailyMissBanners(gameDate());
+
   renderScene();
   renderCharacterHeader();
   renderStats();
   renderRivalStrip();
+  renderQuestBanners();
+  renderQuestPanel();
   renderPendingBanner();
   updateTagSelectionUI();
   updateSubmitState();
   // Today's narration
   showTodayCardIfLogged();
+}
+
+function renderQuestBanners() {
+  const container = document.getElementById('quest-banners');
+  container.innerHTML = '';
+  if (!state.questBanners || state.questBanners.length === 0) return;
+  for (const b of state.questBanners) {
+    const div = document.createElement('div');
+    div.className = `quest-banner ${b.kind}`;
+    const icon = b.kind === 'win' ? '✦' : '⚠';
+    div.innerHTML = `
+      <span class="quest-banner-icon">${icon}</span>
+      <span class="quest-banner-text">${escapeHTML(b.text)}</span>
+    `;
+    container.appendChild(div);
+  }
+}
+
+function renderQuestPanel() {
+  const panel = document.getElementById('quest-panel');
+  const dailyQuests = getDailyQuests();
+  const weeklyQuests = getWeeklyQuests();
+  if (dailyQuests.length === 0 && weeklyQuests.length === 0) {
+    panel.style.display = 'none';
+    return;
+  }
+  panel.style.display = 'block';
+
+  const today = gameDate();
+  const dayName = new Date(today + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' });
+  const wk = weekKeyForDate(today);
+  const startWk = startOfWeekDate(today);
+  const dayInWeek = daysBetweenGameDates(startWk, today) + 1;
+  document.getElementById('quest-panel-day').textContent = `${dayName} · Day ${dayInWeek} of 7`;
+
+  let html = '';
+  // Daily section
+  if (dailyQuests.length > 0) {
+    html += '<div class="quest-section-label">Today</div>';
+    const todayRes = state.questHistory.daily[today] || {};
+    for (const q of dailyQuests) {
+      const status = todayRes[q.id]; // 'kept' | 'broken' | undefined
+      const stateClass = status === 'kept' ? 'kept' : status === 'broken' ? 'broken' : 'pending';
+      const statusLabel = status === 'kept' ? 'kept' : status === 'broken' ? 'broken' : 'pending';
+      const iconSvg = ICONS[q.icon] || ICONS.book;
+      html += `
+        <div class="quest-row ${stateClass}" data-quest-id="${q.id}">
+          <div class="quest-icon">${iconSvg}</div>
+          <div class="quest-name">${escapeHTML(q.name)}</div>
+          <div class="quest-status ${stateClass}">${statusLabel}</div>
+        </div>
+      `;
+    }
+  }
+
+  // Weekly section
+  if (weeklyQuests.length > 0) {
+    html += '<div class="quest-section-label">This Week</div>';
+    const weekRes = state.questHistory.weekly[wk] || evaluateWeeklyQuestsForWeek(wk);
+    for (const q of weeklyQuests) {
+      const r = weekRes[q.id] || { hits: 0, target: q.target, status: 'open' };
+      const stateClass = r.status === 'complete' ? 'complete' : r.status === 'fail' ? 'broken' : '';
+      const cells = Array.from({ length: q.target }, (_, i) =>
+        `<div class="quest-progress-cell ${i < r.hits ? 'filled' : ''}"></div>`
+      ).join('');
+      const iconSvg = ICONS[q.icon] || ICONS.sword;
+      html += `
+        <div class="quest-row ${stateClass}" data-quest-id="${q.id}">
+          <div class="quest-icon">${iconSvg}</div>
+          <div class="quest-name">${escapeHTML(q.name)}</div>
+          <div class="quest-progress">
+            <div class="quest-progress-bar">${cells}</div>
+            <div class="quest-progress-count">${r.hits} of ${q.target}</div>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  document.getElementById('quest-panel-body').innerHTML = html;
+
+  // Wire quest row taps to open detail modal
+  document.querySelectorAll('#quest-panel-body .quest-row').forEach(row => {
+    row.addEventListener('click', () => showQuestDetail(row.dataset.questId));
+  });
+}
+
+function showQuestDetail(questId) {
+  const quest = state.quests.find(q => q.id === questId);
+  if (!quest) return;
+  document.getElementById('modal-title').textContent = quest.name;
+  let bodyHtml = `
+    <div class="quest-detail-meta">${escapeHTML(quest.desc)}</div>
+  `;
+  // History
+  if (quest.cadence === 'daily') {
+    bodyHtml += `<div class="quest-detail-meta" style="margin-top: 0.7rem;">Last 14 days</div>`;
+    const cells = [];
+    const today = gameDate();
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(today + 'T12:00:00');
+      d.setDate(d.getDate() - i);
+      const ds = d.toISOString().slice(0, 10);
+      const r = state.questHistory.daily[ds]?.[questId];
+      let cls = 'future';
+      if (r === 'kept') cls = 'kept';
+      else if (r === 'broken') cls = 'broken';
+      else if (ds <= today && (!quest.createdAt || ds >= quest.createdAt.slice(0, 10))) cls = '';
+      cells.push(`<div class="quest-history-cell ${cls}" title="${ds}"></div>`);
+    }
+    bodyHtml += `<div class="quest-detail-history">${cells.join('')}</div>`;
+  } else {
+    bodyHtml += `<div class="quest-detail-meta" style="margin-top: 0.7rem;">Last 4 weeks</div>`;
+    const cells = [];
+    const today = gameDate();
+    for (let weeksBack = 3; weeksBack >= 0; weeksBack--) {
+      const d = new Date(today + 'T12:00:00');
+      d.setDate(d.getDate() - 7 * weeksBack);
+      const wk = weekKeyForDate(d.toISOString().slice(0, 10));
+      const r = state.questHistory.weekly[wk]?.[questId];
+      let cls = 'future';
+      if (r?.status === 'complete') cls = 'kept';
+      else if (r?.status === 'fail') cls = 'broken';
+      else if (weeksBack === 0) cls = '';
+      cells.push(`<div class="quest-history-cell ${cls}" title="${wk}: ${r ? r.hits + '/' + r.target : 'pending'}"></div>`);
+    }
+    bodyHtml += `<div class="quest-detail-history">${cells.join('')}</div>`;
+  }
+  document.getElementById('modal-body').innerHTML = bodyHtml;
+  const actions = document.getElementById('modal-actions');
+  actions.innerHTML = '';
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'btn';
+  closeBtn.textContent = 'Close';
+  closeBtn.onclick = () => document.getElementById('modal-backdrop').classList.remove('show');
+  actions.appendChild(closeBtn);
+  document.getElementById('modal-backdrop').classList.add('show');
 }
 
 function renderPendingBanner() {
@@ -3289,6 +4134,14 @@ async function submitCheckIn() {
     }
   }
 
+  // Phase 2.6: Record daily quest resolution and process weekly evaluations
+  // (must happen BEFORE awardXP so stat bumps from quests are reflected, but
+  // we already called awardXP above — so do quest resolution here AFTER the
+  // base XP/stat award. This means quest stat bonuses stack on top.)
+  const questResolution = recordDailyQuestResolution(today, tags);
+  processWeeklyEvaluations(today);
+  pruneExpiredBanners();
+
   // Streak bump cooldown bookkeeping (only if it actually fired)
   if (milestones.streakBumpDay) {
     state.usage.lastFireDateRule6 = today;
@@ -3312,7 +4165,8 @@ async function submitCheckIn() {
     narrationAlternates: [],
     tokensUsed: null,
     pendingRenarration: false,
-    npcMentions: []
+    npcMentions: [],
+    questResolution                 // Phase 2.6: { questId: 'kept'|'broken' }
   };
 
   // Try AI narration if backend configured and budget available
@@ -3687,6 +4541,26 @@ function renderChronicle() {
   }
 }
 
+function reckoningHTML(entry) {
+  if (!entry.questResolution) return '';
+  const items = Object.entries(entry.questResolution);
+  if (items.length === 0) return '';
+  const parts = items.map(([qid, status]) => {
+    const q = state.quests.find(x => x.id === qid);
+    if (!q) return null;
+    const cls = status === 'kept' ? 'kept-mark' : 'broken-mark';
+    const mark = status === 'kept' ? '✓' : '✗';
+    return `<span class="${cls}">${mark} ${escapeHTML(q.name)}</span>`;
+  }).filter(Boolean);
+  if (parts.length === 0) return '';
+  return `
+    <div class="entry-reckoning">
+      <div class="entry-reckoning-label">Today's Reckoning</div>
+      <div class="entry-reckoning-line">${parts.join(' · ')}</div>
+    </div>
+  `;
+}
+
 function renderEntry(e) {
   const div = document.createElement('div');
   if (e.type === 'rest') {
@@ -3736,6 +4610,7 @@ function renderEntry(e) {
       <div class="entry-user-text">${escapeHTML(e.text)}</div>
       <div class="entry-narration">${escapeHTML(e.narration)}</div>
       ${altRowHTML}
+      ${reckoningHTML(e)}
       ${bumpsHTML}
       ${levelHTML}
     `;
@@ -3845,6 +4720,9 @@ function renderSettings() {
   // Backend
   renderBackendStatus();
 
+  // Phase 2.6: Quest stats + class progress
+  renderQuestStats();
+
   // Counts
   const realEntries = state.entries.filter(e => e.type !== 'rest').length;
   const restEntries = state.entries.filter(e => e.type === 'rest').length;
@@ -3911,6 +4789,46 @@ function renderBackendStatus() {
     dot = 'warn'; label = 'Configured but not yet tested';
   }
   statusEl.innerHTML = `<span class="status-dot ${dot}"></span>${escapeHTML(label)}`;
+}
+
+function renderQuestStats() {
+  const stats = computeQuestStats();
+  const c = state.character;
+  const nextLevel = c.level + 1;
+  const gate = CLASS_GATES[nextLevel];
+  const blocked = gate ? !gate() : false;
+
+  let nextGateInfo = '';
+  if (gate) {
+    const reqMap = {
+      5:  { minWeeks: 4,  dailyPct: 0.80, perfectWeeks: 1,  label: 'Squire → Knight-Errant' },
+      10: { minWeeks: 8,  dailyPct: 0.85, perfectWeeks: 4,  label: 'Knight-Errant → Knight' },
+      15: { minWeeks: 16, dailyPct: 0.85, perfectWeeks: 8,  label: 'Knight → Knight-Captain' },
+      20: { minWeeks: 30, dailyPct: 0.90, perfectWeeks: 16, label: 'Knight-Captain → Paladin' }
+    };
+    const r = reqMap[nextLevel];
+    if (r) {
+      nextGateInfo = `
+        <div class="ledger-divider"></div>
+        <div class="ledger-row"><span>Next gate</span><strong>${r.label}</strong></div>
+        <div class="ledger-row"><span>Weeks tracked</span><strong>${stats.weeksTracked} / ${r.minWeeks}</strong></div>
+        <div class="ledger-row"><span>Daily completion</span><strong>${(stats.dailyCompletionRate * 100).toFixed(0)}% / ${(r.dailyPct * 100).toFixed(0)}%</strong></div>
+        <div class="ledger-row"><span>Perfect weeks</span><strong>${stats.perfectWeeklyWeeks} / ${r.perfectWeeks}</strong></div>
+        <div class="ledger-row" style="margin-top: 0.4rem; font-style: italic; color: ${blocked ? 'var(--crimson)' : 'var(--gold-deep)'};">
+          <span>Status</span><strong style="color: inherit;">${blocked ? 'Held back' : 'Open'}</strong>
+        </div>
+      `;
+    }
+  } else {
+    nextGateInfo = `<div class="ledger-divider"></div><div class="ledger-row"><span>Next gate</span><strong>—</strong></div>`;
+  }
+
+  document.getElementById('quest-stats-content').innerHTML = `
+    <div class="ledger-row"><span>Active quests</span><strong>${getActiveQuests().length} / 6</strong></div>
+    <div class="ledger-row"><span>Daily quests tracked</span><strong>${Object.keys(state.questHistory.daily).length} days</strong></div>
+    <div class="ledger-row"><span>Weekly quests tracked</span><strong>${Object.keys(state.questHistory.weekly).length} weeks</strong></div>
+    ${nextGateInfo}
+  `;
 }
 
 function exportData() {
