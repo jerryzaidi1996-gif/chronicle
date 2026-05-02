@@ -294,15 +294,136 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
   margin-bottom: 1rem;
   box-shadow: 0 6px 24px var(--shadow-deep), inset 0 0 30px rgba(0,0,0,0.4);
   border: 1px solid var(--gold-deep);
+  isolation: isolate; /* contain blend modes */
 }
+/* Original scanline texture — kept */
 .scene-panel::after {
   content: '';
   position: absolute;
   inset: 0;
   background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.04) 1px, rgba(0,0,0,0.04) 2px);
   pointer-events: none;
+  z-index: 4;
 }
-.scene-svg { width: 100%; height: 100%; display: block; }
+
+/* Phase 2.5 polish: atmospheric layers stacked over the SVG */
+
+/* Heavy vignette — sells depth, hides hard edges of vector geometry */
+.scene-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 110% 80% at center, transparent 30%, rgba(15, 9, 5, 0.55) 85%, rgba(15, 9, 5, 0.85) 100%),
+    radial-gradient(ellipse 60% 100% at 50% 100%, rgba(15, 9, 5, 0.4), transparent 60%);
+  z-index: 3;
+  mix-blend-mode: multiply;
+}
+
+/* Drifting fog/haze layer — slow horizontal pan */
+.scene-fog {
+  position: absolute;
+  inset: -10% -20%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 40% 60% at 20% 50%, rgba(184, 137, 58, 0.10), transparent 70%),
+    radial-gradient(ellipse 50% 70% at 70% 60%, rgba(212, 175, 55, 0.08), transparent 70%),
+    radial-gradient(ellipse 30% 50% at 90% 40%, rgba(255, 200, 130, 0.06), transparent 70%);
+  z-index: 2;
+  animation: sceneFogDrift 38s linear infinite;
+  mix-blend-mode: screen;
+  opacity: 0.85;
+}
+@keyframes sceneFogDrift {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-15%); }
+}
+
+/* Parchment harmonization tint — pulls all scenes into the page palette */
+.scene-tint {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(184, 137, 58, 0.08);
+  z-index: 3;
+  mix-blend-mode: overlay;
+}
+
+/* Ambient dust motes — drift upward at varying speeds */
+.scene-motes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  overflow: hidden;
+}
+.scene-motes span {
+  position: absolute;
+  display: block;
+  width: 2px;
+  height: 2px;
+  background: rgba(255, 220, 160, 0.7);
+  border-radius: 50%;
+  filter: blur(0.3px);
+  box-shadow: 0 0 4px rgba(255, 220, 160, 0.5);
+  animation: moteRise linear infinite;
+  opacity: 0;
+}
+.scene-motes span:nth-child(1) { left: 12%; bottom: -10px; animation-duration: 14s; animation-delay: 0s;   }
+.scene-motes span:nth-child(2) { left: 28%; bottom: -10px; animation-duration: 19s; animation-delay: 3s;   width: 1.5px; height: 1.5px; }
+.scene-motes span:nth-child(3) { left: 44%; bottom: -10px; animation-duration: 16s; animation-delay: 7s;   }
+.scene-motes span:nth-child(4) { left: 58%; bottom: -10px; animation-duration: 22s; animation-delay: 1s;   width: 1.5px; height: 1.5px; }
+.scene-motes span:nth-child(5) { left: 73%; bottom: -10px; animation-duration: 17s; animation-delay: 9s;   }
+.scene-motes span:nth-child(6) { left: 88%; bottom: -10px; animation-duration: 20s; animation-delay: 5s;   width: 1.5px; height: 1.5px; }
+@keyframes moteRise {
+  0%   { transform: translate(0, 0);   opacity: 0; }
+  10%  { opacity: 0.9; }
+  50%  { transform: translate(-6px, -110px); opacity: 0.7; }
+  90%  { opacity: 0.4; }
+  100% { transform: translate(8px, -220px); opacity: 0; }
+}
+
+/* The SVG itself: slow ken-burns drift */
+.scene-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: relative;
+  z-index: 1;
+  animation: sceneKenBurns 42s ease-in-out infinite alternate;
+  transform-origin: 50% 60%;
+  /* Painterly color-grade via CSS filter — works on any scene */
+  filter: contrast(1.05) saturate(0.92) brightness(0.95);
+}
+/* Painted scene backdrop — overlays the SVG when a PNG exists for this scene.
+   When loaded, the SVG fallback is hidden via the .has-image class on the panel. */
+.scene-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: none;
+  z-index: 1;
+  animation: sceneKenBurns 42s ease-in-out infinite alternate;
+  transform-origin: 50% 60%;
+  /* Slight color-grade so painted scenes still harmonize with the page */
+  filter: contrast(1.02) saturate(0.96) brightness(0.97);
+}
+.scene-panel.has-image .scene-image { display: block; }
+.scene-panel.has-image .scene-svg   { display: none; }
+@keyframes sceneKenBurns {
+  0%   { transform: scale(1.00) translate(0, 0); }
+  100% { transform: scale(1.045) translate(-1.2%, -0.8%); }
+}
+
+/* Honor reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .scene-fog, .scene-svg, .scene-image { animation: none; }
+  .scene-motes span { display: none; }
+}
+
 .scene-caption {
   position: absolute;
   bottom: 0.5rem;
@@ -313,14 +434,209 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
   font-style: italic;
   color: var(--parchment);
   font-size: 0.85rem;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.95), 0 0 10px rgba(0,0,0,0.6);
   letter-spacing: 0.05em;
-  z-index: 2;
+  z-index: 5;
 }
 
 /* ============================================================
    CHARACTER HEADER
    ============================================================ */
+/* ============================================================
+   PHASE 2.5 — PORTRAIT CARD
+   ============================================================ */
+.portrait-card {
+  background: var(--parchment-dark);
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  padding: 0.6rem;
+  margin-bottom: 0.7rem;
+  position: relative;
+  box-shadow: 0 2px 10px var(--shadow);
+  overflow: hidden;
+}
+/* Inner gold corner ornaments to match .create-card flourish */
+.portrait-card::before, .portrait-card::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--gold);
+  pointer-events: none;
+  z-index: 3;
+}
+.portrait-card::before { top: 4px; left: 4px; border-right: none; border-bottom: none; }
+.portrait-card::after { bottom: 4px; right: 4px; border-left: none; border-top: none; }
+
+.portrait-frame {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background:
+    radial-gradient(ellipse at center, rgba(184, 137, 58, 0.15), transparent 70%),
+    var(--ink);
+  border: 1px solid var(--gold-deep);
+  border-radius: 2px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.portrait-img {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
+  /* Soft warm vignette via mask */
+  -webkit-mask-image: radial-gradient(ellipse 100% 95% at center, black 70%, transparent 100%);
+  mask-image: radial-gradient(ellipse 100% 95% at center, black 70%, transparent 100%);
+}
+/* Fallback when img fails to load — show a parchment placeholder */
+.portrait-fallback {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.18em;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  padding: 1rem;
+}
+.portrait-fallback .pf-mark { font-size: 2rem; color: var(--gold); margin-bottom: 0.4rem; opacity: 0.7; }
+.portrait-fallback .pf-hint { font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--ink-faded); font-size: 0.8rem; letter-spacing: 0.02em; text-transform: none; margin-top: 0.4rem; max-width: 80%; line-height: 1.3; }
+.portrait-card.no-image .portrait-img { display: none; }
+.portrait-card.no-image .portrait-fallback { display: flex; }
+
+.portrait-caption {
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  color: var(--gold-deep);
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+  padding-bottom: 0.1rem;
+}
+
+/* NPC portrait — small variant for cast list */
+.npc-portrait {
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--gold-deep);
+  border-radius: 2px;
+  background:
+    radial-gradient(ellipse at center, rgba(184, 137, 58, 0.15), transparent 70%),
+    var(--ink);
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.npc-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.npc-item.has-portrait {
+  display: flex;
+  gap: 0.7rem;
+  align-items: stretch;
+}
+.npc-item.has-portrait .npc-item-body { flex: 1; min-width: 0; }
+
+/* ============================================================
+   PHASE 2.5 — LEVEL UP PORTRAIT REVEAL
+   ============================================================ */
+.levelup-portrait-stack {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin: 0 auto 1.2rem;
+  border: 1px solid var(--gold-bright);
+  border-radius: 3px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at center, rgba(212, 175, 55, 0.25), transparent 70%),
+    var(--ink);
+  box-shadow:
+    0 0 30px rgba(212, 175, 55, 0.4),
+    0 0 60px rgba(212, 175, 55, 0.2),
+    inset 0 0 20px rgba(0, 0, 0, 0.4);
+}
+.levelup-portrait-stack::before, .levelup-portrait-stack::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--gold-bright);
+  z-index: 5;
+  pointer-events: none;
+}
+.levelup-portrait-stack::before { top: 3px; left: 3px; border-right: none; border-bottom: none; }
+.levelup-portrait-stack::after { bottom: 3px; right: 3px; border-left: none; border-top: none; }
+
+.levelup-portrait-old, .levelup-portrait-new {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.levelup-portrait-old img, .levelup-portrait-new img {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  -webkit-mask-image: radial-gradient(ellipse 100% 95% at center, black 70%, transparent 100%);
+  mask-image: radial-gradient(ellipse 100% 95% at center, black 70%, transparent 100%);
+}
+/* The reveal animation: old fades to gold-light, new wipes in from below */
+.levelup-portrait-old {
+  animation: portraitOldFade 2.2s ease-out forwards;
+  z-index: 1;
+}
+.levelup-portrait-new {
+  animation: portraitNewReveal 2.2s ease-out forwards;
+  z-index: 2;
+  /* The wipe: clip from bottom up */
+  clip-path: inset(100% 0 0 0);
+}
+@keyframes portraitOldFade {
+  0%   { opacity: 1; filter: brightness(1); }
+  35%  { opacity: 1; filter: brightness(1.6) saturate(1.3); }
+  70%  { opacity: 0.4; filter: brightness(2) saturate(0.5); }
+  100% { opacity: 0; filter: brightness(2.5) saturate(0); }
+}
+@keyframes portraitNewReveal {
+  0%   { clip-path: inset(100% 0 0 0); filter: brightness(1.4) saturate(0.6); }
+  40%  { clip-path: inset(40% 0 0 0); filter: brightness(1.4) saturate(0.6); }
+  70%  { clip-path: inset(0 0 0 0); filter: brightness(1.2) saturate(0.85); }
+  100% { clip-path: inset(0 0 0 0); filter: brightness(1) saturate(1); }
+}
+/* Glow sweep across the stack as the new portrait reveals */
+.levelup-portrait-stack .reveal-sweep {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(0deg, transparent 0%, rgba(212, 175, 55, 0.5) 48%, rgba(255, 240, 200, 0.7) 50%, rgba(212, 175, 55, 0.5) 52%, transparent 100%);
+  transform: translateY(100%);
+  animation: revealSweep 2.2s ease-out forwards;
+  mix-blend-mode: screen;
+}
+@keyframes revealSweep {
+  0%   { transform: translateY(100%); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(-100%); opacity: 0; }
+}
+
 .char-header {
   background: var(--parchment-dark);
   border: 1px solid var(--gold);
@@ -1583,7 +1899,14 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
 
   <!-- Scene panel -->
   <div class="scene-panel" id="scene-panel">
+    <img class="scene-image" id="scene-image" alt="" />
     <svg class="scene-svg" id="scene-svg" viewBox="0 0 560 200" preserveAspectRatio="xMidYMid slice"></svg>
+    <div class="scene-fog"></div>
+    <div class="scene-tint"></div>
+    <div class="scene-motes">
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="scene-vignette"></div>
     <div class="scene-caption" id="scene-caption">A new road unfolds...</div>
   </div>
 
@@ -1597,6 +1920,19 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
       <div class="quest-panel-day" id="quest-panel-day"></div>
     </div>
     <div id="quest-panel-body"></div>
+  </div>
+
+  <!-- Phase 2.5: Character portrait card -->
+  <div class="portrait-card" id="portrait-card">
+    <div class="portrait-frame">
+      <img class="portrait-img" id="portrait-img" alt="" />
+      <div class="portrait-fallback">
+        <div class="pf-mark">✦</div>
+        <div>Portrait Unwritten</div>
+        <div class="pf-hint">Add the file to /images/ to reveal it.</div>
+      </div>
+    </div>
+    <div class="portrait-caption" id="portrait-caption">Squire of the Twilight Watch</div>
   </div>
 
   <!-- Character header -->
@@ -1784,6 +2120,12 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
     <div class="levelup-flourish">✦  ✦  ✦</div>
     <div class="levelup-title">LEVEL UP</div>
     <div class="levelup-level" id="levelup-level"></div>
+    <!-- Phase 2.5: portrait reveal (only shown on class transition) -->
+    <div class="levelup-portrait-stack" id="levelup-portrait-stack" style="display: none;">
+      <div class="levelup-portrait-old" id="levelup-portrait-old"></div>
+      <div class="levelup-portrait-new" id="levelup-portrait-new"></div>
+      <div class="reveal-sweep"></div>
+    </div>
     <div class="levelup-boon" id="levelup-boon"></div>
     <button class="levelup-btn" id="levelup-close">Continue</button>
   </div>
@@ -1846,6 +2188,25 @@ function classForLevel(level) {
   for (const c of CLASSES) if (level >= c.level) cls = c;
   return cls;
 }
+
+/* ============================================================
+   PHASE 2.5 — PORTRAIT FILENAME HELPERS
+   ============================================================ */
+// Map a class name to the static image filename.
+// "Knight-Errant" → "images/jerry_knight_errant.png"
+function jerryPortraitPath(className) {
+  if (!className) return 'images/jerry_squire.png';
+  const slug = className.toLowerCase().replace(/[\s-]+/g, '_').replace(/[^a-z0-9_]/g, '');
+  return `images/jerry_${slug}.png`;
+}
+// Map an NPC name to its static image filename.
+// "Master Iven Thale" → "images/npc_master_iven_thale.png"
+function npcPortraitPath(npcName) {
+  if (!npcName) return 'images/silhouette.png';
+  const slug = npcName.toLowerCase().trim().replace(/[\s-]+/g, '_').replace(/[^a-z0-9_]/g, '');
+  return `images/npc_${slug}.png`;
+}
+const SILHOUETTE_PATH = 'images/silhouette.png';
 
 /* ============================================================
    DAY / DATE HELPERS — 4am boundary
@@ -3764,11 +4125,52 @@ function chooseScene() {
   }
 }
 
+// Phase 2.5 polish: shared SVG filter prepended to every scene render.
+// Softens hard polygon edges with a tiny turbulence + composite, plus a
+// gentle blur, giving vector geometry a more painted, atmospheric finish.
+const SCENE_PAINT_DEFS = `
+  <defs>
+    <filter id="paintFinish" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="0.35" result="soft"/>
+      <feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="1" seed="3" result="noise"/>
+      <feColorMatrix in="noise" type="matrix"
+        values="0 0 0 0 1
+                0 0 0 0 0.85
+                0 0 0 0 0.55
+                0 0 0 0.08 0" result="warmGrain"/>
+      <feComposite in="warmGrain" in2="soft" operator="in" result="grainOnImage"/>
+      <feMerge>
+        <feMergeNode in="soft"/>
+        <feMergeNode in="grainOnImage"/>
+      </feMerge>
+    </filter>
+    <filter id="atmosBlur" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur stdDeviation="0.6"/>
+    </filter>
+  </defs>
+`;
+
 function renderScene() {
   const sceneKey = chooseScene();
   const scene = SCENES[sceneKey];
-  document.getElementById('scene-svg').innerHTML = scene.svg;
+  const panel = document.getElementById('scene-panel');
+  const svg   = document.getElementById('scene-svg');
+  const img   = document.getElementById('scene-image');
+
+  // Always render the SVG fallback first — it's there if the painted image
+  // is missing or fails to load. The CSS hides it when .has-image is set.
+  svg.innerHTML =
+    SCENE_PAINT_DEFS +
+    `<g filter="url(#paintFinish)">${scene.svg}</g>`;
   document.getElementById('scene-caption').textContent = scene.caption;
+
+  // Phase 2.5: try the painted PNG. If it loads, swap to image; if not, keep SVG.
+  // Reset state — important when switching scenes.
+  panel.classList.remove('has-image');
+  img.alt = scene.caption || '';
+  img.onload  = () => panel.classList.add('has-image');
+  img.onerror = () => panel.classList.remove('has-image');
+  img.src = `images/scene_${sceneKey}.png`;
 }
 
 /* ============================================================
@@ -3838,6 +4240,30 @@ function renderTagButtons() {
   }
 }
 
+/* ============================================================
+   PHASE 2.5 — RENDER PORTRAIT CARD
+   ============================================================ */
+function renderPortraitCard() {
+  const card = document.getElementById('portrait-card');
+  const img = document.getElementById('portrait-img');
+  const caption = document.getElementById('portrait-caption');
+  if (!card || !img || !caption) return;
+
+  const cls = state.character.class || 'Squire';
+  const path = jerryPortraitPath(cls);
+  const order = (state.world && state.world.order) ? state.world.order : 'the Order';
+
+  caption.textContent = `${cls} of ${order}`;
+
+  // Reset to loading state, attach handlers BEFORE setting src
+  card.classList.remove('no-image');
+  img.alt = `${state.character.name || 'Jerry'}, ${cls}`;
+  img.onload = () => { card.classList.remove('no-image'); };
+  img.onerror = () => { card.classList.add('no-image'); };
+  // Cache-bust when portrait file might have been updated post-deploy
+  img.src = path;
+}
+
 function renderHome() {
   pruneExpiredBanners();
   // Process any pending weekly evaluations whenever home renders
@@ -3845,6 +4271,7 @@ function renderHome() {
   // Add miss banners for yesterday's broken quests if not already present
   checkAndAddDailyMissBanners(gameDate());
 
+  renderPortraitCard();
   renderScene();
   renderCharacterHeader();
   renderStats();
@@ -4517,11 +4944,47 @@ function showLevelUp(lu) {
     <span class="levelup-boon-name">${lu.boon.name}</span>
     ${lu.boon.desc}
   `;
+
+  // Phase 2.5: portrait reveal on class transition only
+  const stack    = document.getElementById('levelup-portrait-stack');
+  const oldSlot  = document.getElementById('levelup-portrait-old');
+  const newSlot  = document.getElementById('levelup-portrait-new');
+  if (stack && oldSlot && newSlot) {
+    // The level-up's class is the NEW class. The OLD class is whatever class
+    // the previous level corresponds to. If they differ, this is a class transition.
+    const newClass = lu.class;
+    const prevClass = classForLevel(Math.max(1, lu.level - 1)).name;
+    const isClassTransition = newClass !== prevClass;
+
+    if (isClassTransition) {
+      // Build the portrait stack — old fades, new wipes in
+      const oldPath = jerryPortraitPath(prevClass);
+      const newPath = jerryPortraitPath(newClass);
+      // Use innerHTML reset so the CSS keyframes restart cleanly each open
+      oldSlot.innerHTML = `<img src="${escapeHTML(oldPath)}" alt="" onerror="this.style.display='none'">`;
+      newSlot.innerHTML = `<img src="${escapeHTML(newPath)}" alt="" onerror="this.style.display='none'">`;
+      stack.style.display = 'block';
+      // Force animation restart by toggling a class
+      stack.classList.remove('animating');
+      // Reflow to reset keyframes
+      void stack.offsetWidth; // eslint-disable-line no-unused-expressions
+      stack.classList.add('animating');
+    } else {
+      stack.style.display = 'none';
+      oldSlot.innerHTML = '';
+      newSlot.innerHTML = '';
+    }
+  }
+
   document.getElementById('levelup-overlay').classList.add('show');
 }
 
 function closeLevelUp() {
   document.getElementById('levelup-overlay').classList.remove('show');
+  // Refresh portrait card in case the class changed
+  if (document.getElementById('screen-home').classList.contains('active')) {
+    renderPortraitCard();
+  }
 }
 
 /* ============================================================
@@ -4704,11 +5167,17 @@ function renderSettings() {
     );
     for (const npc of sorted) {
       const div = document.createElement('div');
-      div.className = 'npc-item';
+      div.className = 'npc-item has-portrait';
+      const npcImgPath = npcPortraitPath(npc.name);
       div.innerHTML = `
-        <div class="npc-item-name">${escapeHTML(npc.name)}</div>
-        <div class="npc-item-meta">${escapeHTML(npc.role || '')} — ${escapeHTML(npc.description || '')}</div>
-        <div class="npc-item-attr">Attitude: ${escapeHTML(npc.attitude || 'neutral')}${npc.lastMentionedDate ? ' · last mentioned ' + escapeHTML(npc.lastMentionedDate) : ''}</div>
+        <div class="npc-portrait">
+          <img src="${escapeHTML(npcImgPath)}" alt="" onerror="this.onerror=null; this.src='${SILHOUETTE_PATH}';">
+        </div>
+        <div class="npc-item-body">
+          <div class="npc-item-name">${escapeHTML(npc.name)}</div>
+          <div class="npc-item-meta">${escapeHTML(npc.role || '')} — ${escapeHTML(npc.description || '')}</div>
+          <div class="npc-item-attr">Attitude: ${escapeHTML(npc.attitude || 'neutral')}${npc.lastMentionedDate ? ' · last mentioned ' + escapeHTML(npc.lastMentionedDate) : ''}</div>
+        </div>
       `;
       castList.appendChild(div);
     }
