@@ -2874,7 +2874,7 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
   </div>
 
   <div style="text-align: center; font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.2em; color: var(--ink-faded); margin-top: 2rem; text-transform: uppercase;">
-    The Chronicle · Phase 2.8.2
+    The Chronicle · Phase 2.8.3
   </div>
 </div>
 
@@ -2929,6 +2929,26 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
    ============================================================ */
 const SCHEMA_VERSION = 1;
 const STORAGE_KEY = 'chronicle_state_v1';
+
+// ============================================================
+// PERSISTENCE SAFETY PATCH — rolling backups + boot recovery
+// ============================================================
+// The app is localStorage-only. These keys make patch/migration failures
+// recoverable instead of silently starting a new chronicle.
+const BACKUP_LATEST_KEY = 'chronicle_backup_latest';
+const BACKUP_PREVIOUS_KEY = 'chronicle_backup_previous';
+const RESCUE_PREFIX = 'chronicle_rescue_';
+const DAILY_BACKUP_PREFIX = 'chronicle_backup_';
+const MAX_DAILY_BACKUPS = 14;
+const LEGACY_STORAGE_KEYS = [
+  'chronicle_state_v0',
+  'chronicle_state',
+  'the_chronicle_state',
+  'the_chronicle_save',
+  'chronicleSave'
+];
+
+let bootRecoveryMessage = null;
 
 // Day boundary at 4am — a "day" runs 4am to 4am
 const DAY_BOUNDARY_HOUR = 4;
@@ -3097,17 +3117,120 @@ const DEFAULT_STATE = {
 
 let state = null;
 
-function loadState() {
+function safeStorageGet(key) {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    let parsed = JSON.parse(raw);
-    parsed = migrateState(parsed);
-    return parsed;
+    return localStorage.getItem(key);
   } catch (e) {
-    console.error('Load failed', e);
+    console.warn('Storage read failed for', key, e);
     return null;
   }
+}
+
+function safeStorageSet(key, value) {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch (e) {
+    console.warn('Storage write failed for', key, e);
+    return false;
+  }
+}
+
+function safeStorageRemove(key) {
+  try {
+    localStorage.removeItem(key);
+  } catch (e) {
+    console.warn('Storage remove failed for', key, e);
+  }
+}
+
+function todayBackupStamp() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function preserveRawStateCopy(reason = 'boot') {
+  const raw = safeStorageGet(STORAGE_KEY);
+  if (!raw) return;
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  safeStorageSet(`${RESCUE_PREFIX}${reason}_${stamp}`, raw);
+}
+
+function unwrapStatePayload(parsed) {
+  // Manual exports are shaped as { exported, state }. Raw localStorage is just state.
+  if (parsed && typeof parsed === 'object' && parsed.state && typeof parsed.state === 'object') {
+    return parsed.state;
+  }
+  return parsed;
+}
+
+function stateLooksMeaningful(s) {
+  if (!s || typeof s !== 'object') return false;
+  if (s.created === true) return true;
+  if (Array.isArray(s.entries) && s.entries.length > 0) return true;
+  if (s.character && typeof s.character.xp === 'number' && s.character.xp > 0) return true;
+  if (s.character && s.character.origin && s.character.oath && s.character.keepsake) return true;
+  return false;
+}
+
+function parseAndMigrateState(raw, sourceKey) {
+  if (!raw) return null;
+  const parsed = unwrapStatePayload(JSON.parse(raw));
+  const migrated = migrateState(parsed);
+  return { state: migrated, sourceKey };
+}
+
+function discoverBackupKeys() {
+  const keys = [STORAGE_KEY, BACKUP_LATEST_KEY, BACKUP_PREVIOUS_KEY, ...LEGACY_STORAGE_KEYS];
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (!k) continue;
+      if ((k.startsWith(DAILY_BACKUP_PREFIX) || k.startsWith(RESCUE_PREFIX)) && !keys.includes(k)) {
+        keys.push(k);
+      }
+    }
+  } catch (e) {
+    console.warn('Backup key discovery failed', e);
+  }
+
+  // Prefer main/latest/previous first, then newest dated/rescue keys.
+  const fixed = [STORAGE_KEY, BACKUP_LATEST_KEY, BACKUP_PREVIOUS_KEY, ...LEGACY_STORAGE_KEYS];
+  const dynamic = keys.filter(k => !fixed.includes(k)).sort().reverse();
+  return [...fixed, ...dynamic];
+}
+
+function loadState() {
+  // Snapshot the main key before any migration. If this boot fails, the raw save
+  // still exists under a rescue key for manual recovery.
+  preserveRawStateCopy('boot');
+
+  const candidates = discoverBackupKeys();
+  let sawExistingSave = false;
+
+  for (const key of candidates) {
+    const raw = safeStorageGet(key);
+    if (!raw) continue;
+    sawExistingSave = true;
+
+    try {
+      const recovered = parseAndMigrateState(raw, key);
+      if (!recovered || !stateLooksMeaningful(recovered.state)) continue;
+
+      if (key !== STORAGE_KEY) {
+        bootRecoveryMessage = `Recovered save from ${key}. Export a backup when you get a chance.`;
+        safeStorageSet(STORAGE_KEY, JSON.stringify(recovered.state));
+      }
+
+      return recovered.state;
+    } catch (e) {
+      console.warn(`Failed to load candidate save: ${key}`, e);
+    }
+  }
+
+  if (sawExistingSave) {
+    bootRecoveryMessage = 'A saved chronicle was found but could not be read. A raw rescue copy was preserved in localStorage.';
+  }
+  return null;
 }
 
 function migrateState(s) {
@@ -3271,9 +3394,42 @@ function slugifyName(name) {
   return String(name).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
 }
 
-function saveState() {
+function pruneDailyBackups() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    const dailyKeys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(DAILY_BACKUP_PREFIX) && /^chronicle_backup_\d{4}-\d{2}-\d{2}$/.test(k)) {
+        dailyKeys.push(k);
+      }
+    }
+    dailyKeys.sort();
+    while (dailyKeys.length > MAX_DAILY_BACKUPS) {
+      safeStorageRemove(dailyKeys.shift());
+    }
+  } catch (e) {
+    console.warn('Backup pruning failed', e);
+  }
+}
+
+function writeRollingBackups(raw) {
+  const latest = safeStorageGet(BACKUP_LATEST_KEY);
+  if (latest && latest !== raw) {
+    safeStorageSet(BACKUP_PREVIOUS_KEY, latest);
+  }
+  safeStorageSet(BACKUP_LATEST_KEY, raw);
+  safeStorageSet(`${DAILY_BACKUP_PREFIX}${todayBackupStamp()}`, raw);
+  pruneDailyBackups();
+}
+
+function saveState(options = {}) {
+  try {
+    const raw = JSON.stringify(state);
+    if (!options.skipBackup) {
+      writeRollingBackups(raw);
+    }
+    const ok = safeStorageSet(STORAGE_KEY, raw);
+    if (!ok) throw new Error('localStorage.setItem failed');
   } catch (e) {
     console.error('Save failed', e);
     showToast('Storage error — export your data');
@@ -3281,9 +3437,11 @@ function saveState() {
 }
 
 function resetState() {
+  // Keep a rescue copy of the current real save before deliberately wiping main.
+  preserveRawStateCopy('manual_reset');
   state = JSON.parse(JSON.stringify(DEFAULT_STATE));
   state.createdAt = new Date().toISOString();
-  saveState();
+  saveState({ skipBackup: true });
 }
 
 /* ============================================================
@@ -4403,50 +4561,29 @@ async function callWorker({ model, kind, context, timeoutMs = SHIMMER_TIMEOUT_MS
    ============================================================ */
 function buildWorkerContext(tags, text, milestones) {
   const today = gameDate();
-  ensureWorldProgress();
-
-  // Phase 2.6/2.8: build active quest snapshot for prompt.
-  // This now includes the Today Watch draft state so the Worker can narrate
-  // tap-first check-ins without assuming missing prose = missing effort.
+  // Phase 2.6: build active quest snapshot for prompt
   const activeQuests = getActiveQuests().map(q => {
-    const todayDraft = state.todayWatchDrafts?.[today]?.quests?.[q.id] || null;
-    const draftState = todayDraft?.state || 'none';
-    const draftChips = Array.isArray(todayDraft?.chips) ? todayDraft.chips.slice(0, 6) : [];
-    const draftNote = typeof todayDraft?.note === 'string' ? todayDraft.note.trim().slice(0, 180) : '';
-
+    const todayRes = state.questHistory.daily[today]?.[q.id];
     if (q.cadence === 'daily') {
-      const todayRes = state.questHistory.daily[today]?.[q.id];
       return {
-        id: q.id,
         name: q.name,
-        description: q.desc || '',
         cadence: 'daily',
         category: q.category || '(any non-work)',
-        todayStatus: todayRes || (tags.some(t => questCreditsCategory(q, t)) ? 'kept (about to be)' : 'pending'),
-        todayWatchState: draftState,
-        proofChips: draftChips,
-        note: draftNote
+        todayStatus: todayRes || (tags.some(t => questCreditsCategory(q, t)) ? 'kept (about to be)' : 'pending')
+      };
+    } else {
+      const wk = weekKeyForDate(today);
+      const wkRes = state.questHistory.weekly[wk]?.[q.id] || evaluateWeeklyQuestsForWeek(wk)[q.id];
+      return {
+        name: q.name,
+        cadence: 'weekly',
+        category: q.category,
+        target: q.target,
+        currentHits: wkRes?.hits || 0,
+        weekStatus: wkRes?.status || 'open'
       };
     }
-
-    const wk = weekKeyForDate(today);
-    const wkRes = state.questHistory.weekly[wk]?.[q.id] || evaluateWeeklyQuestsForWeek(wk)[q.id];
-    const draftHit = (draftState === 'done' || draftState === 'heroic') ? 1 : 0;
-    return {
-      id: q.id,
-      name: q.name,
-      description: q.desc || '',
-      cadence: 'weekly',
-      category: q.category || '(flex)',
-      target: q.target,
-      currentHits: Math.min(q.target || 0, (wkRes?.hits || 0) + draftHit),
-      weekStatus: wkRes?.status || 'open',
-      todayWatchState: draftState,
-      proofChips: draftChips,
-      note: draftNote
-    };
   });
-
   return {
     character: {
       name: state.character.name,
@@ -4463,129 +4600,7 @@ function buildWorkerContext(tags, text, milestones) {
     recentEntries: trimmedRecentEntriesForPrompt(),
     todaysEntry: { gameDate: today, tags, text },
     milestones,
-    activeQuests,
-    todayWatch: buildTodayWatchContext(today, tags, text),
-    worldProgress: buildWorldProgressContext(),
-    campaignQuests: buildCampaignQuestContext(),
-    bodyForge: buildBodyForgeContext(today)
-  };
-}
-
-function buildTodayWatchContext(today, tags, text) {
-  const draft = state.todayWatchDrafts?.[today] || null;
-  const completed = [];
-  const heroic = [];
-
-  if (draft && draft.quests) {
-    for (const [questId, qState] of Object.entries(draft.quests)) {
-      if (!qState || !['done', 'heroic'].includes(qState.state)) continue;
-      const quest = state.quests.find(q => q.id === questId);
-      if (!quest) continue;
-      const item = {
-        id: quest.id,
-        name: quest.name,
-        cadence: quest.cadence,
-        category: quest.category || questToCategoryTag(quest) || '(flex)',
-        state: qState.state,
-        proofChips: Array.isArray(qState.chips) ? qState.chips.slice(0, 6) : [],
-        note: typeof qState.note === 'string' ? qState.note.trim().slice(0, 220) : ''
-      };
-      completed.push(item);
-      if (qState.state === 'heroic') heroic.push(item);
-    }
-  }
-
-  return {
-    mode: 'tap_first_optional_notes',
-    date: today,
-    completedCount: completed.length,
-    completed,
-    heroic,
-    generatedText: text || '',
-    tags,
-    instruction: 'Treat checked quests/chips as real day evidence. Optional prose may be sparse; do not moralize or imply failure because the journal text is short.'
-  };
-}
-
-function buildWorldProgressContext() {
-  ensureWorldProgress();
-  const locations = [];
-  for (const locDef of WORLD_LOCATIONS) {
-    const loc = state.worldProgress.locations[locDef.category] || { xp: 0, level: 1, unlocked: [] };
-    locations.push({
-      category: locDef.category,
-      name: locDef.name,
-      level: loc.level || 1,
-      xp: loc.xp || 0,
-      nextAt: nextLocationThreshold(loc.level || 1),
-      unlocked: Array.isArray(loc.unlocked) ? loc.unlocked.slice(-4) : []
-    });
-  }
-
-  const npcBonds = [];
-  for (const npc of state.npcs || []) {
-    const id = npc.id || ('npc_' + slugifyName(npc.name));
-    const bond = state.worldProgress.npcBonds?.[id];
-    if (!bond) continue;
-    npcBonds.push({
-      name: npc.name,
-      role: npc.role || '',
-      relationship: npc.relationship || '',
-      affinity: bond.affinity || 0,
-      rank: bond.rank || 'Acquaintance',
-      lastShift: bond.lastShift || null
-    });
-  }
-
-  return {
-    locations,
-    npcBonds: npcBonds.slice(0, 12),
-    greyrot: {
-      pressure: state.worldProgress.bosses?.greyrot?.pressure || 0,
-      lastUpdated: state.worldProgress.bosses?.greyrot?.lastUpdated || null
-    },
-    recentEvents: (state.worldProgress.recentEvents || []).slice(0, 5).map(e => ({
-      date: e.date,
-      text: e.text
-    }))
-  };
-}
-
-function buildCampaignQuestContext() {
-  ensureWorldProgress();
-  return (state.campaignQuests || []).map(q => ({
-    id: q.id,
-    name: q.name,
-    description: q.desc || '',
-    categories: q.categories || [],
-    progress: q.progress || 0,
-    target: q.target || 0,
-    complete: !!q.complete,
-    completedAt: q.completedAt || null,
-    rewardText: q.rewardText || ''
-  }));
-}
-
-function buildBodyForgeContext(today) {
-  // Phase-forward guard: Phase 2.8 does not require Body Forge, but the Worker
-  // can use this if a future/current localStorage save already has bodyStats.
-  const bs = state.bodyStats;
-  if (!bs || typeof bs !== 'object' || !bs.configured) return null;
-  const history = Array.isArray(bs.weightHistory) ? bs.weightHistory : [];
-  const latest = history.length ? history[history.length - 1] : null;
-  const startWeight = typeof bs.startWeight === 'number' ? bs.startWeight : null;
-  const latestWeight = latest && typeof latest.weight === 'number' ? latest.weight : null;
-  const lost = startWeight !== null && latestWeight !== null ? +(startWeight - latestWeight).toFixed(1) : null;
-  const todayCheckIn = bs.dailyCheckIns?.[today] || null;
-  return {
-    configured: true,
-    startWeight,
-    goalWeight: typeof bs.goalWeight === 'number' ? bs.goalWeight : null,
-    latestWeight,
-    weightLost: lost,
-    lastLoggedDate: latest?.date || null,
-    todayCheckIn,
-    unlockedMilestones: Array.isArray(state.bodyBossesUnlocked) ? state.bodyBossesUnlocked.slice(-8) : []
+    activeQuests   // Phase 2.6
   };
 }
 
@@ -6983,6 +6998,7 @@ function importData(file) {
         'Replace current chronicle?',
         `This will overwrite your current state with the backup. ${(migrated.entries || []).filter(e => e.type !== 'rest').length} entries will be loaded.`,
         () => {
+          preserveRawStateCopy('before_import');
           state = migrated;
           saveState();
           renderHome();
@@ -7126,6 +7142,10 @@ function init() {
     showScreen('create');
   } else {
     showScreen('home');
+  }
+
+  if (bootRecoveryMessage) {
+    setTimeout(() => showToast(bootRecoveryMessage), 350);
   }
 }
 
