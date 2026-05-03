@@ -2151,6 +2151,378 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
   font-weight: 700;
 }
 
+
+
+
+/* ============================================================
+   PHASE 2.8.2 — TAB ART PANELS
+   ============================================================ */
+.tab-art-card {
+  position: relative;
+  height: 168px;
+  margin: 0.15rem 0 1rem;
+  border: 1px solid var(--gold-deep);
+  border-radius: 7px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 90% 80% at 50% 20%, rgba(212, 175, 55, 0.18), transparent 65%),
+    linear-gradient(180deg, rgba(42,24,16,0.86), rgba(31,18,9,0.98));
+  box-shadow: 0 8px 24px rgba(42,24,16,0.24), inset 0 0 24px rgba(0,0,0,0.25);
+  isolation: isolate;
+}
+.tab-art-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 105% 85% at center, transparent 42%, rgba(15,9,5,0.48) 100%),
+    repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.045) 1px, rgba(0,0,0,0.045) 2px);
+  pointer-events: none;
+  z-index: 2;
+}
+.tab-art-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+  z-index: 3;
+}
+.tab-art-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  filter: contrast(1.03) saturate(0.96) brightness(0.96);
+  transform-origin: 50% 55%;
+  animation: tabArtDrift 36s ease-in-out infinite alternate;
+}
+@keyframes tabArtDrift {
+  0%   { transform: scale(1.00) translate(0, 0); }
+  100% { transform: scale(1.04) translate(-0.8%, -0.6%); }
+}
+.tab-art-caption {
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.55rem;
+  z-index: 4;
+  color: var(--parchment);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.98rem;
+  font-style: italic;
+  letter-spacing: 0.03em;
+  text-align: center;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.95), 0 0 10px rgba(0,0,0,0.55);
+}
+.tab-art-fallback {
+  display: none;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1rem 1.4rem;
+  color: var(--gold-bright);
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 4;
+}
+.tab-art-card.missing-art .tab-art-fallback { display: flex; }
+.tab-art-card.missing-art .tab-art-caption { color: var(--gold-bright); opacity: 0.75; }
+@media (prefers-reduced-motion: reduce) {
+  .tab-art-img { animation: none; }
+}
+
+/* ============================================================
+   PHASE 2.7 — APP SHELL, PAGES, WORLD MAP
+   ============================================================ */
+.screen { padding-bottom: 6.2rem; }
+.page-kicker {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  color: var(--gold-deep);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 0.3rem;
+}
+.page-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  text-align: center;
+  margin-bottom: 0.85rem;
+}
+.page-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--ink-faded);
+  text-align: center;
+  line-height: 1.45;
+  margin: -0.3rem auto 1rem;
+  max-width: 34rem;
+}
+.app-bottom-nav {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom) + 0.6rem);
+  transform: translateX(-50%);
+  width: min(560px, calc(100vw - 1rem));
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.25rem;
+  background: rgba(42, 24, 16, 0.92);
+  border: 1px solid var(--gold-deep);
+  border-radius: 8px;
+  padding: 0.35rem;
+  z-index: 80;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.35), inset 0 0 14px rgba(212,175,55,0.08);
+  backdrop-filter: blur(8px);
+}
+.app-nav-btn {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--parchment-dark);
+  border-radius: 6px;
+  min-height: 48px;
+  padding: 0.28rem 0.1rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.54rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.12rem;
+  cursor: pointer;
+}
+.app-nav-btn .nav-icon { font-size: 1rem; line-height: 1; }
+.app-nav-btn.active {
+  color: var(--gold-bright);
+  border-color: rgba(212,175,55,0.75);
+  background: rgba(212,175,55,0.10);
+  box-shadow: 0 0 10px rgba(212,175,55,0.16);
+}
+.character-grid, .world-grid, .quest-dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.8rem;
+}
+.game-card {
+  background: var(--parchment-dark);
+  border: 1px solid var(--gold);
+  border-radius: 5px;
+  padding: 0.9rem 1rem;
+  box-shadow: 0 2px 12px var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.game-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+}
+.game-card-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--gold-deep);
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+.game-card-text {
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--ink-soft);
+  font-size: 1rem;
+  line-height: 1.45;
+}
+.location-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+}
+.location-card {
+  background: var(--parchment);
+  border: 1px solid rgba(139,100,32,0.45);
+  border-radius: 5px;
+  padding: 0.65rem;
+  min-height: 88px;
+}
+.location-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.4rem;
+  align-items: baseline;
+  margin-bottom: 0.35rem;
+}
+.location-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.11em;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+.location-level {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  color: var(--gold-deep);
+  white-space: nowrap;
+}
+.location-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  line-height: 1.28;
+}
+.location-meter {
+  margin-top: 0.45rem;
+  height: 5px;
+  background: var(--parchment-dark);
+  border: 1px solid rgba(107,74,50,0.35);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.location-meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright));
+}
+
+.location-unlock {
+  margin-top: 0.42rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.64rem;
+  color: var(--gold-deep);
+  line-height: 1.25;
+}
+.location-card.upgraded {
+  border-color: rgba(212, 175, 55, 0.9);
+  box-shadow: 0 0 0 1px rgba(212,175,55,0.25), 0 4px 16px rgba(212,175,55,0.16);
+}
+.campaign-row {
+  border: 1px solid rgba(139,100,32,0.45);
+  background: var(--parchment);
+  border-radius: 5px;
+  padding: 0.65rem;
+  margin-bottom: 0.55rem;
+}
+.campaign-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: 0.25rem;
+}
+.campaign-meta {
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--ink-soft);
+  font-size: 0.94rem;
+  font-style: italic;
+  line-height: 1.32;
+}
+.campaign-bar {
+  height: 6px;
+  background: var(--parchment-dark);
+  border: 1px solid rgba(107,74,50,0.35);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 0.45rem;
+}
+.campaign-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright));
+  box-shadow: 0 0 6px rgba(212,175,55,0.4);
+}
+.campaign-row.complete {
+  border-color: rgba(58,90,58,0.55);
+  background: linear-gradient(90deg, rgba(58,90,58,0.08), var(--parchment));
+}
+.bond-meter {
+  height: 5px;
+  background: var(--parchment);
+  border: 1px solid rgba(107,74,50,0.35);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 0.35rem;
+}
+.bond-meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright));
+}
+.boss-meter {
+  height: 8px;
+  background: rgba(122,40,40,0.12);
+  border: 1px solid rgba(122,40,40,0.38);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 0.45rem 0 0.65rem;
+}
+.boss-meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--crimson), var(--gold));
+}
+.world-event-line {
+  margin-top: 0.65rem;
+  padding-left: 0.7rem;
+  border-left: 2px solid var(--gold);
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--ink-soft);
+  line-height: 1.35;
+}
+.boss-card {
+  border-left: 3px solid var(--crimson);
+  background: linear-gradient(90deg, rgba(122,40,40,0.10), rgba(232,216,184,0.7));
+}
+.quest-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px dashed rgba(107,74,50,0.35);
+}
+.quest-summary-row:last-child { border-bottom: none; }
+.quest-summary-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 1rem;
+}
+.quest-summary-meta {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.68rem;
+  color: var(--ink-faded);
+  margin-top: 0.1rem;
+}
+.quest-summary-pill {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  color: var(--gold-deep);
+  border: 1px solid rgba(139,100,32,0.45);
+  border-radius: 999px;
+  padding: 0.28rem 0.42rem;
+  white-space: nowrap;
+}
+.character-gate-panel { margin-top: 0.75rem; }
+@media (max-width: 390px) {
+  .app-nav-btn { font-size: 0.48rem; min-height: 44px; }
+  .app-nav-btn .nav-icon { font-size: 0.92rem; }
+  .location-grid { grid-template-columns: 1fr; }
+}
+
 </style>
 </head>
 <body>
@@ -2235,6 +2607,59 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
     <div id="quest-panel-body"></div>
   </div>
 
+  <!-- Today stays focused: quests, notes, and end-of-day narration. Character progression now lives on the Character page. -->
+
+  <!-- Pending re-narration banner -->
+  <div class="pending-banner" id="pending-banner" style="display: none;">
+    <div class="pending-banner-text" id="pending-banner-text"></div>
+    <button class="pending-banner-btn" id="pending-banner-btn">Re-narrate</button>
+  </div>
+
+  <!-- Shimmer card (during AI call) -->
+  <div class="shimmer-card" id="shimmer-card" style="display: none;">
+    <div class="shimmer-prompt">The Chronicler Considers</div>
+    <div class="shimmer-line"></div>
+    <div class="shimmer-line"></div>
+    <div class="shimmer-line"></div>
+    <div class="shimmer-line"></div>
+    <div class="shimmer-status" id="shimmer-status">Pen finds parchment...</div>
+  </div>
+
+  <!-- Check-in card -->
+  <div class="checkin-card" id="checkin-card" style="display: none;">
+    <div class="checkin-prompt">What happened today?</div>
+    <textarea id="checkin-text" class="checkin-textarea" placeholder="A line, a paragraph, a fragment — whatever you wish to set down..."></textarea>
+
+    <div class="tag-grid" id="tag-grid"></div>
+    <div class="tag-counter" id="tag-counter">Choose 1–3</div>
+
+    <button id="submit-btn" class="btn" disabled>✦ Set It Down ✦</button>
+  </div>
+
+  <!-- Today's narration card (shown after submit) -->
+  <div id="todays-narration-card" style="display: none;" class="checkin-card">
+    <div class="checkin-prompt">The Chronicler Writes</div>
+    <div id="todays-narration" class="entry-narration" style="margin-top: 0.5rem;"></div>
+    <div id="todays-event" class="entry-event" style="display: none;"></div>
+  </div>
+
+</div>
+
+
+<!-- ============================================================
+     CHARACTER SCREEN — Phase 2.7
+     ============================================================ -->
+<div id="screen-character" class="screen">
+  <div class="page-kicker">Character Sheet</div>
+  <div class="page-title">The Watcher</div>
+  <div class="page-subtitle">Your class, portrait, stats, boons, and the next trial gate.</div>
+
+  <div class="tab-art-card tab-art-hero">
+    <img class="tab-art-img" src="images/tabs/hero.png" alt="" onerror="this.closest('.tab-art-card').classList.add('missing-art'); this.remove();">
+    <div class="tab-art-fallback">Add /images/tabs/hero.png to reveal this tab art.</div>
+    <div class="tab-art-caption">The Watcher stands between who he was and what he is becoming.</div>
+  </div>
+
   <!-- Phase 2.5: Character portrait card -->
   <div class="portrait-card" id="portrait-card">
     <div class="portrait-frame">
@@ -2277,44 +2702,71 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
     <span id="rival-text"></span>
   </div>
 
-  <!-- Pending re-narration banner -->
-  <div class="pending-banner" id="pending-banner" style="display: none;">
-    <div class="pending-banner-text" id="pending-banner-text"></div>
-    <button class="pending-banner-btn" id="pending-banner-btn">Re-narrate</button>
+
+
+  <div class="game-card character-gate-panel">
+    <div class="game-card-title">Next Class Trial</div>
+    <div id="character-gate-content"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     QUESTS SCREEN — Phase 2.7
+     ============================================================ -->
+<div id="screen-quests" class="screen">
+  <div class="page-kicker">Oath Ledger</div>
+  <div class="page-title">Quests</div>
+  <div class="page-subtitle">The planning layer: daily oaths, weekly oaths, and campaign progress without cluttering the daily check-in.</div>
+
+  <div class="tab-art-card tab-art-quests">
+    <img class="tab-art-img" src="images/tabs/quests.png" alt="" onerror="this.closest('.tab-art-card').classList.add('missing-art'); this.remove();">
+    <div class="tab-art-fallback">Add /images/tabs/quests.png to reveal this tab art.</div>
+    <div class="tab-art-caption">Oaths pinned beneath candlelight; the week waits to be answered.</div>
   </div>
 
-  <!-- Shimmer card (during AI call) -->
-  <div class="shimmer-card" id="shimmer-card" style="display: none;">
-    <div class="shimmer-prompt">The Chronicler Considers</div>
-    <div class="shimmer-line"></div>
-    <div class="shimmer-line"></div>
-    <div class="shimmer-line"></div>
-    <div class="shimmer-line"></div>
-    <div class="shimmer-status" id="shimmer-status">Pen finds parchment...</div>
+  <div class="quest-dashboard-grid">
+    <div class="game-card">
+      <div class="game-card-title">Daily Oaths</div>
+      <div id="daily-quest-summary"></div>
+    </div>
+    <div class="game-card">
+      <div class="game-card-title">Weekly Oaths</div>
+      <div id="weekly-quest-summary"></div>
+    </div>
+    <div class="game-card">
+      <div class="game-card-title">Campaign Hooks</div>
+      <div id="campaign-hook-summary" class="game-card-text"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     WORLD SCREEN — Phase 2.7
+     ============================================================ -->
+<div id="screen-world" class="screen">
+  <div class="page-kicker">Avenmark</div>
+  <div class="page-title">The World</div>
+  <div class="page-subtitle">Your habits now upgrade places in the chapterhouse, move NPC relationships, and pressure rival/boss threats.</div>
+
+  <div class="tab-art-card tab-art-world">
+    <img class="tab-art-img" src="images/tabs/world.png" alt="" onerror="this.closest('.tab-art-card').classList.add('missing-art'); this.remove();">
+    <div class="tab-art-fallback">Add /images/tabs/world.png to reveal this tab art.</div>
+    <div class="tab-art-caption">Avenmark shifts quietly around the choices you repeat.</div>
   </div>
 
-  <!-- Check-in card -->
-  <div class="checkin-card" id="checkin-card" style="display: none;">
-    <div class="checkin-prompt">What happened today?</div>
-    <textarea id="checkin-text" class="checkin-textarea" placeholder="A line, a paragraph, a fragment — whatever you wish to set down..."></textarea>
-
-    <div class="tag-grid" id="tag-grid"></div>
-    <div class="tag-counter" id="tag-counter">Choose 1–3</div>
-
-    <button id="submit-btn" class="btn" disabled>✦ Set It Down ✦</button>
-  </div>
-
-  <!-- Today's narration card (shown after submit) -->
-  <div id="todays-narration-card" style="display: none;" class="checkin-card">
-    <div class="checkin-prompt">The Chronicler Writes</div>
-    <div id="todays-narration" class="entry-narration" style="margin-top: 0.5rem;"></div>
-    <div id="todays-event" class="entry-event" style="display: none;"></div>
-  </div>
-
-  <!-- Footer nav -->
-  <div class="footer-nav">
-    <button class="btn btn-secondary" id="nav-chronicle">📜 Chronicle</button>
-    <button class="btn btn-secondary" id="nav-settings">⚙ Settings</button>
+  <div class="world-grid">
+    <div class="game-card">
+      <div class="game-card-title">Chapterhouse Map</div>
+      <div class="location-grid" id="location-grid"></div>
+    </div>
+    <div class="game-card">
+      <div class="game-card-title">Cast of the Realm</div>
+      <div id="world-cast-list"></div>
+    </div>
+    <div class="game-card boss-card">
+      <div class="game-card-title">Nemesis Pressure</div>
+      <div id="world-boss-content" class="game-card-text"></div>
+    </div>
   </div>
 </div>
 
@@ -2326,6 +2778,12 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
     <div class="chronicle-title">The Chronicle</div>
     <button class="btn-ghost" id="back-from-chronicle">← Back</button>
   </div>
+  <div class="tab-art-card tab-art-book">
+    <img class="tab-art-img" src="images/tabs/book.png" alt="" onerror="this.closest('.tab-art-card').classList.add('missing-art'); this.remove();">
+    <div class="tab-art-fallback">Add /images/tabs/book.png to reveal this tab art.</div>
+    <div class="tab-art-caption">The book remembers what the day tried to forget.</div>
+  </div>
+
   <div id="chronicle-list"></div>
 </div>
 
@@ -2336,6 +2794,11 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
   <div class="chronicle-header">
     <div class="chronicle-title">Settings</div>
     <button class="btn-ghost" id="back-from-settings">← Back</button>
+  </div>
+  <div class="tab-art-card tab-art-gear">
+    <img class="tab-art-img" src="images/tabs/gear.png" alt="" onerror="this.closest('.tab-art-card').classList.add('missing-art'); this.remove();">
+    <div class="tab-art-fallback">Add /images/tabs/gear.png to reveal this tab art.</div>
+    <div class="tab-art-caption">The machinery beneath the myth: quiet, useful, dangerous if mishandled.</div>
   </div>
 
   <div class="settings-section">
@@ -2411,9 +2874,21 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
   </div>
 
   <div style="text-align: center; font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.2em; color: var(--ink-faded); margin-top: 2rem; text-transform: uppercase;">
-    The Chronicle · Phase 2.6
+    The Chronicle · Phase 2.8.2
   </div>
 </div>
+
+<!-- ============================================================
+     APP BOTTOM NAV — Phase 2.7
+     ============================================================ -->
+<nav class="app-bottom-nav" id="app-bottom-nav" style="display: none;">
+  <button class="app-nav-btn" data-screen="home"><span class="nav-icon">☀</span><span>Today</span></button>
+  <button class="app-nav-btn" data-screen="character"><span class="nav-icon">⚔</span><span>Hero</span></button>
+  <button class="app-nav-btn" data-screen="quests"><span class="nav-icon">✦</span><span>Quests</span></button>
+  <button class="app-nav-btn" data-screen="world"><span class="nav-icon">🜂</span><span>World</span></button>
+  <button class="app-nav-btn" data-screen="chronicle"><span class="nav-icon">📜</span><span>Book</span></button>
+  <button class="app-nav-btn" data-screen="settings"><span class="nav-icon">⚙</span><span>Gear</span></button>
+</nav>
 
 <!-- ============================================================
      OVERLAYS
@@ -2613,6 +3088,8 @@ const DEFAULT_STATE = {
   },
   questBanners: [],            // [{ id, kind: 'miss'|'weekly-fail'|'win', text, expiresAt: 'YYYY-MM-DD' }]
   todayWatchDrafts: {},         // { 'YYYY-MM-DD': { quests: { questId: { state, chips, note } } } }
+  worldProgress: null,          // Phase 2.8: location XP, NPC bonds, boss pressure
+  campaignQuests: null,         // Phase 2.8: lightweight long-arc quests
   entries: [],         // { id, gameDate, isoTime, text, tags, narration, event, statBumps, levelUp, type, narrationSource, narrationAlternates, tokensUsed, pendingRenarration, npcMentions, questResolution }
   lastCheckInDate: null,
   createdAt: null
@@ -2763,10 +3240,22 @@ function migrateState(s) {
   if (!s.questHistory.weekly || typeof s.questHistory.weekly !== 'object') s.questHistory.weekly = {};
   if (!Array.isArray(s.questBanners)) s.questBanners = [];
   if (!s.todayWatchDrafts || typeof s.todayWatchDrafts !== 'object') s.todayWatchDrafts = {};
+  s.worldProgress = migrateWorldProgress(s.worldProgress);
+  s.campaignQuests = migrateCampaignQuests(s.campaignQuests);
 
-  // Seed default quests if none exist
-  if (s.quests.length === 0) {
+  // Seed/repair default quests. Older saves or failed test builds can end up
+  // with no active Today quests, which makes the Today page look empty.
+  const activeSavedQuests = s.quests.filter(q => !q.archived && (q.cadence === 'daily' || q.cadence === 'weekly'));
+  if (s.quests.length === 0 || activeSavedQuests.length === 0) {
     s.quests = DEFAULT_QUESTS.map(q => ({ ...q, archived: false, createdAt: new Date().toISOString() }));
+    s.todayWatchDrafts = {};
+  } else {
+    const savedQuestIds = new Set(s.quests.map(q => q.id));
+    for (const q of DEFAULT_QUESTS) {
+      if (!savedQuestIds.has(q.id)) {
+        s.quests.push({ ...q, archived: false, createdAt: new Date().toISOString() });
+      }
+    }
   }
 
   // Per-entry questResolution field (Phase 2.6)
@@ -3500,7 +3989,33 @@ function checkClassGate(reqs) {
 }
 
 /* ----- Quest helpers ----- */
+function ensureActiveDefaultQuests() {
+  // Self-healing guard for legacy/localStorage states. The Today page depends
+  // on at least one active daily/weekly quest existing.
+  if (!state) return;
+  if (!Array.isArray(state.quests)) state.quests = [];
+  const activeUsable = state.quests.filter(q => !q.archived && (q.cadence === 'daily' || q.cadence === 'weekly'));
+  let changed = false;
+
+  if (activeUsable.length === 0) {
+    state.quests = DEFAULT_QUESTS.map(q => ({ ...q, archived: false, createdAt: new Date().toISOString() }));
+    state.todayWatchDrafts = {};
+    changed = true;
+  } else {
+    const ids = new Set(state.quests.map(q => q.id));
+    for (const q of DEFAULT_QUESTS) {
+      if (!ids.has(q.id)) {
+        state.quests.push({ ...q, archived: false, createdAt: new Date().toISOString() });
+        changed = true;
+      }
+    }
+  }
+
+  if (changed) saveState();
+}
+
 function getActiveQuests() {
+  ensureActiveDefaultQuests();
   return (state.quests || []).filter(q => !q.archived);
 }
 function getDailyQuests() {
@@ -3888,29 +4403,50 @@ async function callWorker({ model, kind, context, timeoutMs = SHIMMER_TIMEOUT_MS
    ============================================================ */
 function buildWorkerContext(tags, text, milestones) {
   const today = gameDate();
-  // Phase 2.6: build active quest snapshot for prompt
+  ensureWorldProgress();
+
+  // Phase 2.6/2.8: build active quest snapshot for prompt.
+  // This now includes the Today Watch draft state so the Worker can narrate
+  // tap-first check-ins without assuming missing prose = missing effort.
   const activeQuests = getActiveQuests().map(q => {
-    const todayRes = state.questHistory.daily[today]?.[q.id];
+    const todayDraft = state.todayWatchDrafts?.[today]?.quests?.[q.id] || null;
+    const draftState = todayDraft?.state || 'none';
+    const draftChips = Array.isArray(todayDraft?.chips) ? todayDraft.chips.slice(0, 6) : [];
+    const draftNote = typeof todayDraft?.note === 'string' ? todayDraft.note.trim().slice(0, 180) : '';
+
     if (q.cadence === 'daily') {
+      const todayRes = state.questHistory.daily[today]?.[q.id];
       return {
+        id: q.id,
         name: q.name,
+        description: q.desc || '',
         cadence: 'daily',
         category: q.category || '(any non-work)',
-        todayStatus: todayRes || (tags.some(t => questCreditsCategory(q, t)) ? 'kept (about to be)' : 'pending')
-      };
-    } else {
-      const wk = weekKeyForDate(today);
-      const wkRes = state.questHistory.weekly[wk]?.[q.id] || evaluateWeeklyQuestsForWeek(wk)[q.id];
-      return {
-        name: q.name,
-        cadence: 'weekly',
-        category: q.category,
-        target: q.target,
-        currentHits: wkRes?.hits || 0,
-        weekStatus: wkRes?.status || 'open'
+        todayStatus: todayRes || (tags.some(t => questCreditsCategory(q, t)) ? 'kept (about to be)' : 'pending'),
+        todayWatchState: draftState,
+        proofChips: draftChips,
+        note: draftNote
       };
     }
+
+    const wk = weekKeyForDate(today);
+    const wkRes = state.questHistory.weekly[wk]?.[q.id] || evaluateWeeklyQuestsForWeek(wk)[q.id];
+    const draftHit = (draftState === 'done' || draftState === 'heroic') ? 1 : 0;
+    return {
+      id: q.id,
+      name: q.name,
+      description: q.desc || '',
+      cadence: 'weekly',
+      category: q.category || '(flex)',
+      target: q.target,
+      currentHits: Math.min(q.target || 0, (wkRes?.hits || 0) + draftHit),
+      weekStatus: wkRes?.status || 'open',
+      todayWatchState: draftState,
+      proofChips: draftChips,
+      note: draftNote
+    };
   });
+
   return {
     character: {
       name: state.character.name,
@@ -3927,7 +4463,129 @@ function buildWorkerContext(tags, text, milestones) {
     recentEntries: trimmedRecentEntriesForPrompt(),
     todaysEntry: { gameDate: today, tags, text },
     milestones,
-    activeQuests   // Phase 2.6
+    activeQuests,
+    todayWatch: buildTodayWatchContext(today, tags, text),
+    worldProgress: buildWorldProgressContext(),
+    campaignQuests: buildCampaignQuestContext(),
+    bodyForge: buildBodyForgeContext(today)
+  };
+}
+
+function buildTodayWatchContext(today, tags, text) {
+  const draft = state.todayWatchDrafts?.[today] || null;
+  const completed = [];
+  const heroic = [];
+
+  if (draft && draft.quests) {
+    for (const [questId, qState] of Object.entries(draft.quests)) {
+      if (!qState || !['done', 'heroic'].includes(qState.state)) continue;
+      const quest = state.quests.find(q => q.id === questId);
+      if (!quest) continue;
+      const item = {
+        id: quest.id,
+        name: quest.name,
+        cadence: quest.cadence,
+        category: quest.category || questToCategoryTag(quest) || '(flex)',
+        state: qState.state,
+        proofChips: Array.isArray(qState.chips) ? qState.chips.slice(0, 6) : [],
+        note: typeof qState.note === 'string' ? qState.note.trim().slice(0, 220) : ''
+      };
+      completed.push(item);
+      if (qState.state === 'heroic') heroic.push(item);
+    }
+  }
+
+  return {
+    mode: 'tap_first_optional_notes',
+    date: today,
+    completedCount: completed.length,
+    completed,
+    heroic,
+    generatedText: text || '',
+    tags,
+    instruction: 'Treat checked quests/chips as real day evidence. Optional prose may be sparse; do not moralize or imply failure because the journal text is short.'
+  };
+}
+
+function buildWorldProgressContext() {
+  ensureWorldProgress();
+  const locations = [];
+  for (const locDef of WORLD_LOCATIONS) {
+    const loc = state.worldProgress.locations[locDef.category] || { xp: 0, level: 1, unlocked: [] };
+    locations.push({
+      category: locDef.category,
+      name: locDef.name,
+      level: loc.level || 1,
+      xp: loc.xp || 0,
+      nextAt: nextLocationThreshold(loc.level || 1),
+      unlocked: Array.isArray(loc.unlocked) ? loc.unlocked.slice(-4) : []
+    });
+  }
+
+  const npcBonds = [];
+  for (const npc of state.npcs || []) {
+    const id = npc.id || ('npc_' + slugifyName(npc.name));
+    const bond = state.worldProgress.npcBonds?.[id];
+    if (!bond) continue;
+    npcBonds.push({
+      name: npc.name,
+      role: npc.role || '',
+      relationship: npc.relationship || '',
+      affinity: bond.affinity || 0,
+      rank: bond.rank || 'Acquaintance',
+      lastShift: bond.lastShift || null
+    });
+  }
+
+  return {
+    locations,
+    npcBonds: npcBonds.slice(0, 12),
+    greyrot: {
+      pressure: state.worldProgress.bosses?.greyrot?.pressure || 0,
+      lastUpdated: state.worldProgress.bosses?.greyrot?.lastUpdated || null
+    },
+    recentEvents: (state.worldProgress.recentEvents || []).slice(0, 5).map(e => ({
+      date: e.date,
+      text: e.text
+    }))
+  };
+}
+
+function buildCampaignQuestContext() {
+  ensureWorldProgress();
+  return (state.campaignQuests || []).map(q => ({
+    id: q.id,
+    name: q.name,
+    description: q.desc || '',
+    categories: q.categories || [],
+    progress: q.progress || 0,
+    target: q.target || 0,
+    complete: !!q.complete,
+    completedAt: q.completedAt || null,
+    rewardText: q.rewardText || ''
+  }));
+}
+
+function buildBodyForgeContext(today) {
+  // Phase-forward guard: Phase 2.8 does not require Body Forge, but the Worker
+  // can use this if a future/current localStorage save already has bodyStats.
+  const bs = state.bodyStats;
+  if (!bs || typeof bs !== 'object' || !bs.configured) return null;
+  const history = Array.isArray(bs.weightHistory) ? bs.weightHistory : [];
+  const latest = history.length ? history[history.length - 1] : null;
+  const startWeight = typeof bs.startWeight === 'number' ? bs.startWeight : null;
+  const latestWeight = latest && typeof latest.weight === 'number' ? latest.weight : null;
+  const lost = startWeight !== null && latestWeight !== null ? +(startWeight - latestWeight).toFixed(1) : null;
+  const todayCheckIn = bs.dailyCheckIns?.[today] || null;
+  return {
+    configured: true,
+    startWeight,
+    goalWeight: typeof bs.goalWeight === 'number' ? bs.goalWeight : null,
+    latestWeight,
+    weightLost: lost,
+    lastLoggedDate: latest?.date || null,
+    todayCheckIn,
+    unlockedMilestones: Array.isArray(state.bodyBossesUnlocked) ? state.bodyBossesUnlocked.slice(-8) : []
   };
 }
 
@@ -4774,6 +5432,7 @@ function renderTodayQuestCard(quest, alreadyLogged) {
 
 function renderHome() {
   pruneExpiredBanners();
+  ensureActiveDefaultQuests();
   // Process any pending weekly evaluations whenever home renders
   processWeeklyEvaluations(gameDate());
   // Add miss banners for yesterday's broken quests if not already present
@@ -4815,8 +5474,17 @@ function renderQuestPanel() {
   const weeklyQuests = getWeeklyQuests();
   const activeQuests = [...dailyQuests, ...weeklyQuests];
   if (activeQuests.length === 0) {
-    panel.style.display = 'none';
-    return;
+    ensureActiveDefaultQuests();
+    const repairedQuests = [...getDailyQuests(), ...getWeeklyQuests()];
+    if (repairedQuests.length === 0) {
+      panel.style.display = 'block';
+      document.getElementById('quest-panel-day').textContent = 'Setup needed';
+      document.getElementById('quest-panel-body').innerHTML = `
+        <div class="today-watch-intro">The Watch has no active oaths loaded. Open Gear → Reset Character only if this persists after refresh.</div>
+      `;
+      return;
+    }
+    return renderQuestPanel();
   }
   panel.style.display = 'block';
 
@@ -5178,6 +5846,8 @@ async function submitCheckIn() {
     }
     state.usage.lifetimeCallsByModel.template = (state.usage.lifetimeCallsByModel.template || 0) + 1;
   }
+
+  processWorldMechanicsForEntry(entry);
 
   state.entries.push(entry);
   state.lastCheckInDate = today;
@@ -5619,6 +6289,476 @@ function escapeHTML(s) {
 /* ============================================================
    SETTINGS / EXPORT / IMPORT / RESET
    ============================================================ */
+
+function renderCharacterPage() {
+  renderPortraitCard();
+  renderCharacterHeader();
+  renderStats();
+  renderRivalStrip();
+  renderCharacterGateContent();
+}
+
+function classGateHTML() {
+  const stats = computeQuestStats();
+  const nextLevel = state.character.level + 1;
+  const gate = CLASS_GATES[nextLevel];
+  const reqMap = {
+    5:  { minWeeks: 4,  dailyPct: 0.80, perfectWeeks: 1,  label: 'Squire → Knight-Errant' },
+    10: { minWeeks: 8,  dailyPct: 0.85, perfectWeeks: 4,  label: 'Knight-Errant → Knight' },
+    15: { minWeeks: 16, dailyPct: 0.85, perfectWeeks: 8,  label: 'Knight → Knight-Captain' },
+    20: { minWeeks: 30, dailyPct: 0.90, perfectWeeks: 16, label: 'Knight-Captain → Paladin' }
+  };
+  if (!gate || !reqMap[nextLevel]) {
+    return `<div class="game-card-text">No formal class trial is currently blocking the road. Gain XP and keep the Watch.</div>`;
+  }
+  const r = reqMap[nextLevel];
+  const blocked = !gate();
+  return `
+    <div class="ledger-row"><span>Trial</span><strong>${r.label}</strong></div>
+    <div class="ledger-row"><span>Weeks tracked</span><strong>${stats.weeksTracked} / ${r.minWeeks}</strong></div>
+    <div class="ledger-row"><span>Daily completion</span><strong>${(stats.dailyCompletionRate * 100).toFixed(0)}% / ${(r.dailyPct * 100).toFixed(0)}%</strong></div>
+    <div class="ledger-row"><span>Perfect weeks</span><strong>${stats.perfectWeeklyWeeks} / ${r.perfectWeeks}</strong></div>
+    <div class="ledger-divider"></div>
+    <div class="game-card-text" style="color: ${blocked ? 'var(--crimson)' : 'var(--gold-deep)'};">
+      ${blocked ? 'The gate is still shut. XP can bring you to the threshold, but consistency opens the door.' : 'The gate is open. The next level-up can carry you through.'}
+    </div>
+  `;
+}
+
+function renderCharacterGateContent() {
+  const el = document.getElementById('character-gate-content');
+  if (el) el.innerHTML = classGateHTML();
+}
+
+function renderQuestsPage() {
+  ensureWorldProgress();
+  renderQuestSummaryList('daily-quest-summary', getDailyQuests());
+  renderQuestSummaryList('weekly-quest-summary', getWeeklyQuests());
+  renderCampaignQuestSummary();
+}
+
+function renderCampaignQuestSummary() {
+  const hooks = document.getElementById('campaign-hook-summary');
+  if (!hooks) return;
+  ensureWorldProgress();
+  const realEntries = state.entries.filter(e => e.type !== 'rest').length;
+  const top = dominantRecentCategory(30).top || 'Study';
+  let html = `
+    <p><strong>Current arc:</strong> ${escapeHTML(top)} is shaping the recent chapter.</p>
+    <p><strong>Logged days:</strong> ${realEntries}. Campaign quests advance automatically from completed categories — no extra task management.</p>
+  `;
+  for (const cq of state.campaignQuests) {
+    const progress = Math.min(cq.target, cq.categories.reduce((sum, cat) => sum + (state.worldProgress.locations[cat]?.xp || 0), 0));
+    cq.progress = Math.max(cq.progress || 0, progress);
+    const pct = Math.min(100, Math.round((progress / cq.target) * 100));
+    html += `
+      <div class="campaign-row ${cq.complete ? 'complete' : ''}">
+        <div class="campaign-name">${escapeHTML(cq.complete ? '✓ ' + cq.name : cq.name)}</div>
+        <div class="campaign-meta">${escapeHTML(cq.desc)} · ${progress}/${cq.target} · reward ${cq.rewardXp} XP</div>
+        <div class="campaign-bar"><div class="campaign-bar-fill" style="width: ${pct}%;"></div></div>
+      </div>
+    `;
+  }
+  hooks.innerHTML = html;
+}
+
+function renderQuestSummaryList(containerId, quests) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  if (!quests || quests.length === 0) {
+    el.innerHTML = `<div class="game-card-text">No oaths written yet.</div>`;
+    return;
+  }
+  const today = gameDate();
+  const week = weekKeyForDate(today);
+  let html = '';
+  for (const q of quests) {
+    let pill = '';
+    let meta = q.desc || '';
+    if (q.cadence === 'daily') {
+      const status = state.questHistory.daily[today]?.[q.id] || 'open';
+      pill = status === 'kept' ? 'Kept today' : status === 'broken' ? 'Broken' : 'Open';
+    } else {
+      const wk = state.questHistory.weekly[week]?.[q.id] || evaluateWeeklyQuestsForWeek(week)[q.id];
+      pill = `${wk?.hits || 0}/${q.target} this week`;
+    }
+    html += `
+      <div class="quest-summary-row">
+        <div>
+          <div class="quest-summary-name">${escapeHTML(q.name)}</div>
+          <div class="quest-summary-meta">${escapeHTML(meta)}</div>
+        </div>
+        <div class="quest-summary-pill">${escapeHTML(pill)}</div>
+      </div>
+    `;
+  }
+  el.innerHTML = html;
+}
+
+
+/* ============================================================
+   PHASE 2.8 — WORLD MECHANICS
+   ============================================================ */
+const LOCATION_THRESHOLDS = [0, 3, 8, 16, 30]; // levels 1-5
+const LOCATION_MAX_LEVEL = 5;
+
+const LOCATION_UNLOCKS = {
+  Work:     ['Reliable Shift', 'Steady Hands', 'Senior Watch', 'Command Presence'],
+  Study:    ['Quiet Candle', 'Marked Margins', 'Codex Discipline', 'Lantern-Mind'],
+  Research: ['First Thread', 'Pattern Seen', 'Question Named', 'Archive Authority'],
+  Train:    ['Warm-Up Ritual', 'Iron Reps', 'Yard Respect', 'Knight’s Conditioning'],
+  Health:   ['Water & Sleep', 'Recovery Fire', 'Body Kept', 'Hearth-Strong'],
+  Chores:   ['Room Reclaimed', 'Systems Hold', 'Order Made Visible', 'Armory Mind'],
+  Social:   ['Bench at Table', 'Names Remembered', 'Bonds Kept', 'Party Forming']
+};
+
+const DEFAULT_CAMPAIGN_QUESTS = [
+  {
+    id: 'camp_exam_lantern',
+    name: 'The Exam Lantern',
+    desc: 'Study consistency arc. Built from Study completions.',
+    categories: ['Study'],
+    target: 20,
+    rewardXp: 125,
+    rewardText: 'A new study chapter opens.'
+  },
+  {
+    id: 'camp_slow_work',
+    name: 'The Slow Work',
+    desc: 'Research momentum arc. Built from Research completions.',
+    categories: ['Research'],
+    target: 12,
+    rewardXp: 125,
+    rewardText: 'The archive yields a useful thread.'
+  },
+  {
+    id: 'camp_body_forge',
+    name: 'The Body Forge',
+    desc: 'Physical transformation arc. Built from Train and Health completions.',
+    categories: ['Train', 'Health'],
+    target: 24,
+    rewardXp: 150,
+    rewardText: 'The body becomes a more reliable weapon.'
+  },
+  {
+    id: 'camp_order_restored',
+    name: 'Order Restored',
+    desc: 'Life-admin stability arc. Built from Work and Chores completions.',
+    categories: ['Work', 'Chores'],
+    target: 20,
+    rewardXp: 100,
+    rewardText: 'The chapterhouse runs cleaner because of you.'
+  },
+  {
+    id: 'camp_party_table',
+    name: 'The Long Table',
+    desc: 'Relationship arc. Built from Social completions.',
+    categories: ['Social'],
+    target: 10,
+    rewardXp: 100,
+    rewardText: 'The party feels less theoretical.'
+  }
+];
+
+function migrateWorldProgress(wp) {
+  if (!wp || typeof wp !== 'object') wp = {};
+  if (!wp.locations || typeof wp.locations !== 'object') wp.locations = {};
+  for (const cat of CATEGORY_ORDER) {
+    const existing = wp.locations[cat] || {};
+    wp.locations[cat] = {
+      xp: typeof existing.xp === 'number' ? existing.xp : categoryCompletionCount(cat),
+      level: typeof existing.level === 'number' ? existing.level : locationLevelForPoints(typeof existing.xp === 'number' ? existing.xp : categoryCompletionCount(cat)),
+      unlocked: Array.isArray(existing.unlocked) ? existing.unlocked : []
+    };
+  }
+  if (!Array.isArray(wp.processedEntryIds)) wp.processedEntryIds = [];
+  if (!Array.isArray(wp.recentEvents)) wp.recentEvents = [];
+  if (!wp.npcBonds || typeof wp.npcBonds !== 'object') wp.npcBonds = {};
+  if (!wp.bosses || typeof wp.bosses !== 'object') wp.bosses = {};
+  wp.bosses.greyrot = Object.assign({ pressure: 0, lastUpdated: null }, wp.bosses.greyrot || {});
+  return wp;
+}
+
+function migrateCampaignQuests(cqs) {
+  if (!Array.isArray(cqs) || cqs.length === 0) return DEFAULT_CAMPAIGN_QUESTS.map(q => ({ ...q, progress: 0, complete: false, rewarded: false }));
+  const byId = Object.fromEntries(cqs.map(q => [q.id, q]));
+  return DEFAULT_CAMPAIGN_QUESTS.map(def => {
+    const existing = byId[def.id] || {};
+    return Object.assign({}, def, {
+      progress: typeof existing.progress === 'number' ? existing.progress : 0,
+      complete: !!existing.complete,
+      rewarded: !!existing.rewarded,
+      completedAt: existing.completedAt || null
+    });
+  });
+}
+
+function ensureWorldProgress() {
+  state.worldProgress = migrateWorldProgress(state.worldProgress);
+  state.campaignQuests = migrateCampaignQuests(state.campaignQuests);
+}
+
+function locationLevelForPoints(points) {
+  if (points >= LOCATION_THRESHOLDS[4]) return 5;
+  if (points >= LOCATION_THRESHOLDS[3]) return 4;
+  if (points >= LOCATION_THRESHOLDS[2]) return 3;
+  if (points >= LOCATION_THRESHOLDS[1]) return 2;
+  return 1;
+}
+
+function nextLocationThreshold(level) {
+  if (level >= LOCATION_MAX_LEVEL) return LOCATION_THRESHOLDS[LOCATION_THRESHOLDS.length - 1];
+  return LOCATION_THRESHOLDS[level];
+}
+
+function heroicCategoriesForEntry(entry) {
+  const draft = state.todayWatchDrafts?.[entry.gameDate];
+  if (!draft || !draft.quests) return [];
+  const cats = [];
+  for (const [questId, qState] of Object.entries(draft.quests)) {
+    if (qState.state !== 'heroic') continue;
+    const quest = state.quests.find(q => q.id === questId);
+    const tag = quest ? questToCategoryTag(quest) : null;
+    if (tag && !cats.includes(tag)) cats.push(tag);
+  }
+  return cats;
+}
+
+function pushWorldEvent(text) {
+  ensureWorldProgress();
+  state.worldProgress.recentEvents.unshift({ id: 'we_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5), text, date: gameDate() });
+  state.worldProgress.recentEvents = state.worldProgress.recentEvents.slice(0, 6);
+}
+
+function addStatXPFromWorld(stat, amount) {
+  if (!stat) return;
+  state.character.statXP[stat] = (state.character.statXP[stat] || 0) + amount;
+  while (state.character.statXP[stat] >= STAT_XP_PER_BUMP) {
+    state.character.statXP[stat] -= STAT_XP_PER_BUMP;
+    state.character.stats[stat] += 1;
+  }
+}
+
+function processWorldMechanicsForEntry(entry) {
+  if (!entry || entry.type === 'rest') return;
+  ensureWorldProgress();
+  if (state.worldProgress.processedEntryIds.includes(entry.id)) return;
+
+  const heroicCats = heroicCategoriesForEntry(entry);
+  const tags = Array.isArray(entry.tags) ? entry.tags : [];
+  for (const tag of tags) {
+    const loc = state.worldProgress.locations[tag];
+    if (!loc) continue;
+    const oldLevel = loc.level || 1;
+    loc.xp += heroicCats.includes(tag) ? 2 : 1;
+    loc.level = locationLevelForPoints(loc.xp);
+    if (loc.level > oldLevel) {
+      const unlock = LOCATION_UNLOCKS[tag]?.[loc.level - 2] || 'New chapterhouse feature';
+      if (!loc.unlocked.includes(unlock)) loc.unlocked.push(unlock);
+      const stat = CATEGORIES[tag]?.stat;
+      state.character.xp += 25;
+      addStatXPFromWorld(stat, 10);
+      pushWorldEvent(`${locationNameForCategory(tag)} reached Level ${loc.level}: ${unlock}. +25 XP.`);
+      addQuestBanner('win', `${locationNameForCategory(tag)} improves: ${unlock}.`, entry.gameDate);
+    }
+  }
+
+  updateNpcBondsForEntry(entry);
+  updateBossPressureAfterEntry(entry);
+  updateCampaignQuestsFromWorld(entry);
+  state.worldProgress.processedEntryIds.push(entry.id);
+  state.worldProgress.processedEntryIds = state.worldProgress.processedEntryIds.slice(-500);
+}
+
+function locationNameForCategory(category) {
+  return WORLD_LOCATIONS.find(l => l.category === category)?.name || category;
+}
+
+function updateNpcBondsForEntry(entry) {
+  ensureWorldProgress();
+  const tags = Array.isArray(entry.tags) ? entry.tags : [];
+  for (const npc of state.npcs || []) {
+    const id = npc.id || ('npc_' + slugifyName(npc.name));
+    const current = state.worldProgress.npcBonds[id] || { affinity: npc.relationship === 'mentor' ? 18 : 8, rank: 'Acquaintance', lastShift: null };
+    let delta = 0;
+    const role = String(npc.role || '').toLowerCase();
+    const rel = String(npc.relationship || '').toLowerCase();
+    if (rel.includes('mentor') || role.includes('mentor')) {
+      if (tags.includes('Work')) delta += 2;
+      if (tags.includes('Study')) delta += 2;
+      if (tags.includes('Train')) delta += 1;
+    } else if (rel.includes('rival') || role.includes('rival')) {
+      if (tags.length >= 2) delta += 1;
+      if (tags.includes('Train') || tags.includes('Study')) delta += 1;
+    } else {
+      if (tags.includes('Social')) delta += 2;
+      if (tags.includes('Health')) delta += 1;
+    }
+    if (delta > 0) {
+      current.affinity = Math.min(100, current.affinity + delta);
+      current.rank = bondRank(current.affinity);
+      current.lastShift = entry.gameDate;
+    }
+    state.worldProgress.npcBonds[id] = current;
+  }
+}
+
+function bondRank(value) {
+  if (value >= 80) return 'Sworn Ally';
+  if (value >= 55) return 'Trusted';
+  if (value >= 30) return 'Known';
+  return 'Acquaintance';
+}
+
+function updateBossPressureAfterEntry(entry) {
+  ensureWorldProgress();
+  const tags = Array.isArray(entry.tags) ? entry.tags : [];
+  const keptCount = Object.values(entry.questResolution || {}).filter(v => v === 'kept').length;
+  const brokenCount = Object.values(entry.questResolution || {}).filter(v => v === 'broken').length;
+  let pressure = state.worldProgress.bosses.greyrot.pressure || 0;
+  pressure -= 4;
+  pressure -= Math.max(0, tags.length - 1) * 2;
+  pressure -= keptCount;
+  pressure += brokenCount * 3;
+  state.worldProgress.bosses.greyrot.pressure = Math.max(0, Math.min(100, pressure));
+  state.worldProgress.bosses.greyrot.lastUpdated = entry.gameDate;
+}
+
+function updateBossPressureForRest(restEntry) {
+  ensureWorldProgress();
+  const days = restEntry.daysSkipped || 1;
+  const boss = state.worldProgress.bosses.greyrot;
+  boss.pressure = Math.max(0, Math.min(100, (boss.pressure || 0) + days * 8));
+  boss.lastUpdated = restEntry.gameDate;
+  pushWorldEvent(`The Greyrot gained ground during ${days} quiet day${days === 1 ? '' : 's'}.`);
+}
+
+function updateCampaignQuestsFromWorld(entry) {
+  ensureWorldProgress();
+  for (const cq of state.campaignQuests) {
+    if (cq.complete) continue;
+    cq.progress = cq.categories.reduce((sum, cat) => sum + (state.worldProgress.locations[cat]?.xp || 0), 0);
+    if (cq.progress >= cq.target) {
+      cq.complete = true;
+      cq.rewarded = true;
+      cq.completedAt = entry.gameDate;
+      state.character.xp += cq.rewardXp || 0;
+      pushWorldEvent(`${cq.name} completed: ${cq.rewardText} +${cq.rewardXp || 0} XP.`);
+      addQuestBanner('win', `Campaign quest complete: ${cq.name}.`, entry.gameDate);
+    }
+  }
+}
+
+const WORLD_LOCATIONS = [
+  { category: 'Work',     name: 'Watch Post',     desc: ['A lonely desk and cold coffee.', 'Lanterns lit; the watch remembers your name.', 'A disciplined post, orderly and respected.', 'A command station of the Twilight Watch.'] },
+  { category: 'Study',    name: 'Library',        desc: ['Bare shelves and a stubborn candle.', 'Useful notes gather in the margins.', 'The tables are crowded with open codices.', 'A living archive of hard-won knowledge.'] },
+  { category: 'Research', name: 'War Room',       desc: ['One map. One unanswered question.', 'Pins and citations begin to form a pattern.', 'The walls fill with threads of inquiry.', 'A strategy chamber where unknowns become targets.'] },
+  { category: 'Train',    name: 'Training Yard',  desc: ['Mud, rust, and honest embarrassment.', 'Weapon racks appear. The yard starts to answer.', 'A hard place where weakness gets negotiated.', 'A forge-yard worthy of a knight.'] },
+  { category: 'Health',   name: 'Hearth',         desc: ['A low fire and neglected provisions.', 'The room smells of broth, herbs, and recovery.', 'Restoration becomes part of the order.', 'A sanctuary for the body that carries the quest.'] },
+  { category: 'Chores',   name: 'Quarters',       desc: ['A room in mild rebellion.', 'The floor has been rediscovered.', 'Order holds. Chaos circles outside.', 'A clean armory of domestic command.'] },
+  { category: 'Social',   name: 'Long Table',     desc: ['Empty benches. Quiet spoons.', 'A few companions linger after supper.', 'Laughter returns to the chapterhouse.', 'A table where bonds become armor.'] }
+];
+
+function categoryCompletionCount(category) {
+  return state.entries.filter(e => e.type !== 'rest' && Array.isArray(e.tags) && e.tags.includes(category)).length;
+}
+
+function locationLevelForCount(count) {
+  if (count >= 30) return 4;
+  if (count >= 15) return 3;
+  if (count >= 5) return 2;
+  return 1;
+}
+
+function renderWorldPage() {
+  ensureWorldProgress();
+  renderLocations();
+  renderWorldCast();
+  renderWorldBoss();
+}
+
+function renderLocations() {
+  ensureWorldProgress();
+  const grid = document.getElementById('location-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  for (const locDef of WORLD_LOCATIONS) {
+    const loc = state.worldProgress.locations[locDef.category] || { xp: 0, level: 1, unlocked: [] };
+    const level = Math.max(1, Math.min(LOCATION_MAX_LEVEL, loc.level || 1));
+    const nextAt = nextLocationThreshold(level);
+    const previousAt = LOCATION_THRESHOLDS[level - 1] || 0;
+    const pct = level >= LOCATION_MAX_LEVEL ? 100 : Math.min(100, Math.round(((loc.xp - previousAt) / (nextAt - previousAt)) * 100));
+    const unlock = loc.unlocked && loc.unlocked.length ? loc.unlocked[loc.unlocked.length - 1] : 'No unlock yet';
+    const div = document.createElement('div');
+    div.className = 'location-card' + (level > 1 ? ' upgraded' : '');
+    div.innerHTML = `
+      <div class="location-top">
+        <div class="location-name">${escapeHTML(locDef.name)}</div>
+        <div class="location-level">LV ${level}</div>
+      </div>
+      <div class="location-desc">${escapeHTML(locDef.desc[Math.min(level - 1, locDef.desc.length - 1)])}</div>
+      <div class="location-meter"><div class="location-meter-fill" style="width: ${pct}%;"></div></div>
+      <div class="location-unlock">${level >= LOCATION_MAX_LEVEL ? 'Mastered' : `${loc.xp}/${nextAt} toward next level`} · ${escapeHTML(unlock)}</div>
+    `;
+    grid.appendChild(div);
+  }
+}
+
+function renderWorldCast() {
+  ensureWorldProgress();
+  const el = document.getElementById('world-cast-list');
+  if (!el) return;
+  if (!state.npcs || state.npcs.length === 0) {
+    el.innerHTML = `<div class="game-card-text">No named characters yet beyond the chapterhouse shadows.</div>`;
+    return;
+  }
+  const sorted = [...state.npcs].slice(0, 8);
+  el.innerHTML = sorted.map(npc => {
+    const id = npc.id || ('npc_' + slugifyName(npc.name));
+    const bond = state.worldProgress.npcBonds[id] || { affinity: npc.relationship === 'mentor' ? 18 : 8, rank: 'Acquaintance' };
+    return `
+      <div class="npc-item has-portrait">
+        <div class="npc-portrait"><img src="${escapeHTML(npcPortraitPath(npc.name))}" alt="" onerror="this.onerror=null; this.src='${SILHOUETTE_PATH}';"></div>
+        <div class="npc-item-body">
+          <div class="npc-item-name">${escapeHTML(npc.name)}</div>
+          <div class="npc-item-meta">${escapeHTML(npc.role || 'Unknown')} — ${escapeHTML(bond.rank || npc.relationship || 'acquaintance')}</div>
+          <div class="npc-item-attr">Bond ${Math.round(bond.affinity || 0)}/100${bond.lastShift ? ' · shifted ' + escapeHTML(bond.lastShift) : ''}</div>
+          <div class="bond-meter"><div class="bond-meter-fill" style="width: ${Math.max(0, Math.min(100, bond.affinity || 0))}%;"></div></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderWorldBoss() {
+  ensureWorldProgress();
+  const el = document.getElementById('world-boss-content');
+  if (!el) return;
+  const missed = state.entries.filter(e => e.type === 'rest').reduce((sum, e) => sum + (e.daysSkipped || 1), 0);
+  const brokenDaily = Object.values(state.questHistory.daily || {}).reduce((sum, day) => sum + Object.values(day).filter(v => v === 'broken').length, 0);
+  const livePressure = Math.min(100, Math.max(state.worldProgress.bosses.greyrot.pressure || 0, Math.round((state.rival.progress || 0) * 0.5)));
+  const bossName = livePressure >= 70 ? 'The Hollow Week' : livePressure >= 30 ? 'The Greyrot' : 'The Quiet Road';
+  const recentEvents = (state.worldProgress.recentEvents || []).slice(0, 3).map(ev => `<div class="world-event-line">${escapeHTML(ev.text)}</div>`).join('');
+  el.innerHTML = `
+    <p><strong>${bossName}</strong></p>
+    <div class="boss-meter"><div class="boss-meter-fill" style="width: ${livePressure}%;"></div></div>
+    <p>Threat pressure: <strong>${livePressure}%</strong>. Kept oaths reduce it; missed days, broken oaths, and rival pressure feed it.</p>
+    <p>${livePressure >= 70 ? 'The realm is actively pushing back. A clean week matters now.' : livePressure >= 30 ? 'There is resistance, but it is manageable.' : 'The road is mostly clear. Keep it that way.'}</p>
+    <p style="margin-top:0.45rem;">Lifetime quiet days: <strong>${missed}</strong>. Broken daily oaths: <strong>${brokenDaily}</strong>.</p>
+    ${recentEvents || '<div class="world-event-line">No world events yet. Upgrade a location or complete a campaign quest to write one.</div>'}
+  `;
+}
+
+function renderBottomNav(activeName) {
+  const nav = document.getElementById('app-bottom-nav');
+  if (!nav) return;
+  const visible = state && state.created && !['create', 'prologue'].includes(activeName);
+  nav.style.display = visible ? 'grid' : 'none';
+  nav.querySelectorAll('.app-nav-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.screen === activeName);
+  });
+}
+
 function renderSettings() {
   document.getElementById('settings-name').textContent = state.character.name;
   document.getElementById('settings-class').textContent = `${state.character.class} of ${state.world.order} · Level ${state.character.level}`;
@@ -5907,7 +7047,11 @@ function showConfirm(title, body, onConfirm) {
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + name).classList.add('active');
+  renderBottomNav(name);
   if (name === 'home') renderHome();
+  if (name === 'character') renderCharacterPage();
+  if (name === 'quests') renderQuestsPage();
+  if (name === 'world') renderWorldPage();
   if (name === 'chronicle') renderChronicle();
   if (name === 'settings') renderSettings();
   window.scrollTo(0, 0);
@@ -5942,8 +7086,9 @@ function init() {
   document.getElementById('submit-btn').addEventListener('click', submitCheckIn);
 
   // Wire navigation
-  document.getElementById('nav-chronicle').addEventListener('click', () => showScreen('chronicle'));
-  document.getElementById('nav-settings').addEventListener('click', () => showScreen('settings'));
+  document.querySelectorAll('.app-nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => showScreen(btn.dataset.screen));
+  });
   document.getElementById('back-from-chronicle').addEventListener('click', () => showScreen('home'));
   document.getElementById('back-from-settings').addEventListener('click', () => showScreen('home'));
 
