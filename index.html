@@ -1635,6 +1635,217 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
   75%  { content: '...'; }
 }
 
+
+
+/* ============================================================
+   QUESTBOARD CHECK-IN — tap-first daily loop
+   ============================================================ */
+.today-watch-intro {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  margin-bottom: 0.75rem;
+  font-style: italic;
+}
+.today-watch-list { display: flex; flex-direction: column; gap: 0.65rem; }
+.today-quest-card {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(212, 175, 55, 0.10), transparent 60%),
+    var(--parchment);
+  border: 1px solid rgba(139, 100, 32, 0.45);
+  border-left: 3px solid var(--gold-deep);
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(42, 24, 16, 0.10);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.today-quest-card.done {
+  border-left-color: var(--forest);
+  border-color: rgba(58, 90, 58, 0.45);
+  box-shadow: 0 3px 12px rgba(58, 90, 58, 0.12);
+}
+.today-quest-card.heroic {
+  border-left-color: var(--gold-bright);
+  border-color: rgba(212, 175, 55, 0.85);
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.35), 0 4px 18px rgba(212, 175, 55, 0.22);
+}
+.today-quest-head {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  gap: 0.65rem;
+  align-items: center;
+  padding: 0.75rem 0.75rem 0.7rem;
+  cursor: pointer;
+}
+.today-quest-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 4px;
+  border: 1px solid rgba(139, 100, 32, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--parchment-dark);
+}
+.today-quest-icon svg { width: 22px; height: 22px; fill: var(--gold-deep); }
+.today-quest-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+.today-quest-meta {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.68rem;
+  color: var(--ink-faded);
+  margin-top: 0.15rem;
+}
+.today-quest-reward {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.64rem;
+  color: var(--gold-deep);
+  margin-top: 0.15rem;
+}
+.today-quest-state-btn {
+  border: 1px solid var(--gold-deep);
+  background: var(--ink);
+  color: var(--gold-bright);
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 0.45rem 0.55rem;
+  min-width: 78px;
+  cursor: pointer;
+}
+.today-quest-card.done .today-quest-state-btn {
+  border-color: var(--forest);
+  color: var(--forest);
+  background: rgba(58, 90, 58, 0.08);
+}
+.today-quest-card.heroic .today-quest-state-btn {
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
+  background: var(--ink);
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.28);
+}
+.today-quest-body {
+  display: none;
+  padding: 0.75rem;
+  border-top: 1px dashed rgba(107, 74, 50, 0.35);
+  background: rgba(232, 216, 184, 0.45);
+}
+.today-quest-card.open .today-quest-body { display: block; }
+.today-quest-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  color: var(--ink-soft);
+  font-style: italic;
+  margin-bottom: 0.55rem;
+}
+.today-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.65rem;
+}
+.today-chip {
+  border: 1px solid rgba(107, 74, 50, 0.45);
+  background: var(--parchment);
+  color: var(--ink-faded);
+  border-radius: 999px;
+  padding: 0.38rem 0.55rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.today-chip.on {
+  background: var(--ink);
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
+}
+.today-note {
+  width: 100%;
+  min-height: 62px;
+  resize: vertical;
+  background: var(--parchment);
+  border: 1px solid rgba(107, 74, 50, 0.45);
+  border-radius: 4px;
+  padding: 0.6rem 0.7rem;
+  color: var(--ink);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  line-height: 1.35;
+  outline: none;
+}
+.today-note:focus { border-color: var(--gold); }
+.today-note::placeholder { color: var(--ink-faded); font-style: italic; }
+.today-watch-actions {
+  margin-top: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.today-watch-summary {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border-left: 3px solid var(--gold);
+  background: rgba(184, 137, 58, 0.08);
+  border-radius: 0 3px 3px 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+.weekly-oath-panel {
+  margin-top: 0.9rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed rgba(107, 74, 50, 0.45);
+}
+.weekly-oath-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.45rem 0;
+}
+.weekly-oath-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.weekly-oath-count {
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  color: var(--gold-deep);
+  letter-spacing: 0.08em;
+}
+.weekly-oath-pips { display: flex; gap: 3px; margin-top: 0.25rem; }
+.weekly-oath-pip {
+  height: 8px;
+  flex: 1;
+  min-width: 18px;
+  background: var(--parchment);
+  border: 1px solid rgba(107, 74, 50, 0.35);
+  border-radius: 999px;
+}
+.weekly-oath-pip.filled {
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright));
+  border-color: var(--gold-deep);
+  box-shadow: 0 0 5px rgba(212, 175, 55, 0.35);
+}
+@media (max-width: 360px) {
+  .today-quest-head { grid-template-columns: 30px 1fr; }
+  .today-quest-state-btn { grid-column: 1 / -1; width: 100%; }
+}
+
 /* ============================================================
    PHASE 2.6 — QUEST PANEL & BANNERS
    ============================================================ */
@@ -2083,7 +2294,7 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
   </div>
 
   <!-- Check-in card -->
-  <div class="checkin-card" id="checkin-card">
+  <div class="checkin-card" id="checkin-card" style="display: none;">
     <div class="checkin-prompt">What happened today?</div>
     <textarea id="checkin-text" class="checkin-textarea" placeholder="A line, a paragraph, a fragment — whatever you wish to set down..."></textarea>
 
@@ -2261,7 +2472,7 @@ const CATEGORIES = {
 const CATEGORY_ORDER = ['Work', 'Study', 'Research', 'Train', 'Health', 'Chores', 'Social'];
 
 // XP values
-const XP_PER_TAG = { 1: 10, 2: 15, 3: 20 };
+const XP_PER_TAG = { 1: 10, 2: 15, 3: 20, 4: 25, 5: 30, 6: 35, 7: 40 };
 // Bonus: 50 stat-XP per category gives +1 to that stat
 const STAT_XP_PER_BUMP = 50;
 // Each tag also contributes 10 stat-XP to its mapped stat
@@ -2401,6 +2612,7 @@ const DEFAULT_STATE = {
     weekly: {}                 // { 'YYYY-WW': { questId: { hits: N, target: N, status: 'complete'|'fail'|'open' } } }
   },
   questBanners: [],            // [{ id, kind: 'miss'|'weekly-fail'|'win', text, expiresAt: 'YYYY-MM-DD' }]
+  todayWatchDrafts: {},         // { 'YYYY-MM-DD': { quests: { questId: { state, chips, note } } } }
   entries: [],         // { id, gameDate, isoTime, text, tags, narration, event, statBumps, levelUp, type, narrationSource, narrationAlternates, tokensUsed, pendingRenarration, npcMentions, questResolution }
   lastCheckInDate: null,
   createdAt: null
@@ -2550,6 +2762,7 @@ function migrateState(s) {
   if (!s.questHistory.daily || typeof s.questHistory.daily !== 'object') s.questHistory.daily = {};
   if (!s.questHistory.weekly || typeof s.questHistory.weekly !== 'object') s.questHistory.weekly = {};
   if (!Array.isArray(s.questBanners)) s.questBanners = [];
+  if (!s.todayWatchDrafts || typeof s.todayWatchDrafts !== 'object') s.todayWatchDrafts = {};
 
   // Seed default quests if none exist
   if (s.quests.length === 0) {
@@ -4380,6 +4593,185 @@ function renderPortraitCard() {
   img.src = path;
 }
 
+
+/* ============================================================
+   QUESTBOARD CHECK-IN FLOW — tap-first, writing optional
+   ============================================================ */
+const QUESTBOARD_CHIPS = {
+  q_long_reading: ['UWorld', 'Anki', 'Cards', 'Reading', 'Notes', 'Cardio'],
+  q_bodys_due: ['Sleep', 'Protein', 'Walk', 'Water', 'Recovery', 'Food log'],
+  q_hour_unspent: ['Reading', 'Date night', 'Cooking', 'Gaming cleanly', 'Family', 'No scroll'],
+  q_forge: ['Lift', 'Run', 'Gym', 'Mobility', 'Hard walk', 'Workout'],
+  q_bonds_kept: ['Call', 'Dinner', 'Friend', 'Family', 'Date', 'Hangout'],
+  q_slow_work: ['Lit search', 'Drafting', 'Data', 'Email PI', 'Table', 'Submission']
+};
+
+function ensureTodayWatchDraft(gd = gameDate()) {
+  if (!state.todayWatchDrafts || typeof state.todayWatchDrafts !== 'object') state.todayWatchDrafts = {};
+  if (!state.todayWatchDrafts[gd]) state.todayWatchDrafts[gd] = { date: gd, quests: {} };
+  const draft = state.todayWatchDrafts[gd];
+  if (!draft.quests || typeof draft.quests !== 'object') draft.quests = {};
+  for (const q of getActiveQuests()) {
+    if (!draft.quests[q.id]) draft.quests[q.id] = { state: 'none', chips: [], note: '' };
+    if (!Array.isArray(draft.quests[q.id].chips)) draft.quests[q.id].chips = [];
+    if (typeof draft.quests[q.id].note !== 'string') draft.quests[q.id].note = '';
+    if (!['none', 'done', 'heroic'].includes(draft.quests[q.id].state)) draft.quests[q.id].state = 'none';
+  }
+  return draft;
+}
+
+function todayQuestState(questId) {
+  const draft = ensureTodayWatchDraft();
+  return draft.quests[questId] || { state: 'none', chips: [], note: '' };
+}
+
+function completedTodayQuestIds() {
+  const draft = ensureTodayWatchDraft();
+  return Object.entries(draft.quests)
+    .filter(([_, v]) => v.state === 'done' || v.state === 'heroic')
+    .map(([id]) => id);
+}
+
+function todayHeroicExists(exceptQuestId = null) {
+  const draft = ensureTodayWatchDraft();
+  return Object.entries(draft.quests)
+    .some(([id, v]) => id !== exceptQuestId && v.state === 'heroic');
+}
+
+function cycleTodayQuest(questId) {
+  const today = gameDate();
+  if (state.entries.some(e => e.gameDate === today && e.type !== 'rest')) {
+    showToast('Watch already closed');
+    return;
+  }
+  const draft = ensureTodayWatchDraft(today);
+  const q = draft.quests[questId];
+  if (q.state === 'none') q.state = 'done';
+  else if (q.state === 'done') {
+    if (todayHeroicExists(questId)) {
+      showToast('One heroic effort per day');
+      return;
+    }
+    q.state = 'heroic';
+  } else {
+    q.state = 'none';
+  }
+  saveState();
+  renderQuestPanel();
+}
+
+function toggleTodayQuestOpen(questId) {
+  const el = document.querySelector(`[data-today-quest-id="${questId}"]`);
+  if (el) el.classList.toggle('open');
+}
+
+function toggleTodayQuestChip(questId, chip) {
+  const today = gameDate();
+  if (state.entries.some(e => e.gameDate === today && e.type !== 'rest')) return;
+  const draft = ensureTodayWatchDraft(today);
+  const q = draft.quests[questId];
+  const idx = q.chips.indexOf(chip);
+  if (idx >= 0) q.chips.splice(idx, 1);
+  else q.chips.push(chip);
+  if (q.state === 'none') q.state = 'done';
+  saveState();
+  renderQuestPanel();
+  const el = document.querySelector(`[data-today-quest-id="${questId}"]`);
+  if (el) el.classList.add('open');
+}
+
+function updateTodayQuestNote(questId, value) {
+  const draft = ensureTodayWatchDraft();
+  if (!draft.quests[questId]) return;
+  draft.quests[questId].note = value;
+  saveState();
+}
+
+function questToCategoryTag(quest) {
+  if (quest.category && CATEGORIES[quest.category]) return quest.category;
+  // The Hour Unspent is intentionally category-flexible in the quest system.
+  // Map it to Chores by default so it credits the flexible daily quest without falsely completing Body's Due.
+  if (quest.id === 'q_hour_unspent') return 'Chores';
+  return null;
+}
+
+function buildQuestboardPayload() {
+  const draft = ensureTodayWatchDraft();
+  const completedIds = completedTodayQuestIds();
+  const tags = [];
+  const parts = [];
+  for (const questId of completedIds) {
+    const quest = state.quests.find(q => q.id === questId);
+    if (!quest) continue;
+    const qState = draft.quests[questId];
+    const tag = questToCategoryTag(quest);
+    if (tag && !tags.includes(tag)) tags.push(tag);
+    const chips = (qState.chips || []).length ? ` (${qState.chips.join(', ')})` : '';
+    const note = qState.note && qState.note.trim() ? ` — ${qState.note.trim()}` : '';
+    const effort = qState.state === 'heroic' ? 'Heroic effort' : 'Completed';
+    parts.push(`${effort}: ${quest.name}${chips}${note}`);
+  }
+  const text = parts.length ? parts.join('\n') : '';
+  return { completedIds, tags, text };
+}
+
+async function closeTodayWatch() {
+  const today = gameDate();
+  if (state.entries.some(e => e.gameDate === today && e.type !== 'rest')) {
+    showTodayCardIfLogged();
+    showToast('Already logged today');
+    return;
+  }
+  const payload = buildQuestboardPayload();
+  if (payload.completedIds.length === 0 || payload.tags.length === 0) {
+    showToast('Complete at least one quest');
+    return;
+  }
+  selectedTags = payload.tags;
+  const hiddenText = document.getElementById('checkin-text');
+  if (hiddenText) hiddenText.value = payload.text || 'The Watch was kept.';
+  await submitCheckIn();
+}
+
+function sourceQuestRewardLabel(quest, stateName) {
+  const tag = questToCategoryTag(quest);
+  const stat = tag ? CATEGORIES[tag].stat : 'WIS';
+  const xp = quest.cadence === 'weekly' ? 'weekly oath credit' : '+daily credit';
+  return `${xp} · ${stat}`;
+}
+
+function renderTodayQuestCard(quest, alreadyLogged) {
+  const draftState = todayQuestState(quest.id);
+  const stateClass = draftState.state === 'done' ? 'done' : draftState.state === 'heroic' ? 'heroic' : '';
+  const stateLabel = draftState.state === 'heroic' ? '✦ Heroic' : draftState.state === 'done' ? '✓ Done' : '○ Tap';
+  const iconSvg = ICONS[quest.icon] || ICONS.book;
+  const chips = QUESTBOARD_CHIPS[quest.id] || [];
+  const chipHtml = chips.map(chip => `
+    <button class="today-chip ${draftState.chips.includes(chip) ? 'on' : ''}" ${alreadyLogged ? 'disabled' : ''} onclick="event.stopPropagation(); toggleTodayQuestChip('${quest.id}', '${escapeHTML(chip)}')">${escapeHTML(chip)}</button>
+  `).join('');
+  const tag = questToCategoryTag(quest);
+  const stat = tag ? CATEGORIES[tag].stat : 'WIS';
+  const meta = `${quest.category || 'Any non-work'} · ${stat} · ${quest.cadence}`;
+  return `
+    <div class="today-quest-card ${stateClass}" data-today-quest-id="${quest.id}">
+      <div class="today-quest-head" onclick="toggleTodayQuestOpen('${quest.id}')">
+        <div class="today-quest-icon">${iconSvg}</div>
+        <div>
+          <div class="today-quest-title">${escapeHTML(quest.name)}</div>
+          <div class="today-quest-meta">${escapeHTML(meta)}</div>
+          <div class="today-quest-reward">${escapeHTML(sourceQuestRewardLabel(quest, draftState.state))}</div>
+        </div>
+        <button class="today-quest-state-btn" ${alreadyLogged ? 'disabled' : ''} onclick="event.stopPropagation(); cycleTodayQuest('${quest.id}')">${stateLabel}</button>
+      </div>
+      <div class="today-quest-body">
+        <div class="today-quest-desc">${escapeHTML(quest.desc || '')}</div>
+        <div class="today-chip-row">${chipHtml}</div>
+        <textarea class="today-note" ${alreadyLogged ? 'disabled' : ''} placeholder="Optional detail. Example: 20 UWorld, lifted, called family, drafted methods..." oninput="updateTodayQuestNote('${quest.id}', this.value)">${escapeHTML(draftState.note || '')}</textarea>
+      </div>
+    </div>
+  `;
+}
+
 function renderHome() {
   pruneExpiredBanners();
   // Process any pending weekly evaluations whenever home renders
@@ -4421,69 +4813,74 @@ function renderQuestPanel() {
   const panel = document.getElementById('quest-panel');
   const dailyQuests = getDailyQuests();
   const weeklyQuests = getWeeklyQuests();
-  if (dailyQuests.length === 0 && weeklyQuests.length === 0) {
+  const activeQuests = [...dailyQuests, ...weeklyQuests];
+  if (activeQuests.length === 0) {
     panel.style.display = 'none';
     return;
   }
   panel.style.display = 'block';
 
   const today = gameDate();
+  const alreadyLogged = state.entries.some(e => e.gameDate === today && e.type !== 'rest');
+  const draft = ensureTodayWatchDraft(today);
+  const completed = completedTodayQuestIds();
   const dayName = new Date(today + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' });
-  const wk = weekKeyForDate(today);
   const startWk = startOfWeekDate(today);
   const dayInWeek = daysBetweenGameDates(startWk, today) + 1;
-  document.getElementById('quest-panel-day').textContent = `${dayName} · Day ${dayInWeek} of 7`;
+  document.getElementById('quest-panel-day').textContent = `${dayName} · ${completed.length}/${activeQuests.length} kept`;
 
-  let html = '';
-  // Daily section
-  if (dailyQuests.length > 0) {
-    html += '<div class="quest-section-label">Today</div>';
-    const todayRes = state.questHistory.daily[today] || {};
-    for (const q of dailyQuests) {
-      const status = todayRes[q.id]; // 'kept' | 'broken' | undefined
-      const stateClass = status === 'kept' ? 'kept' : status === 'broken' ? 'broken' : 'pending';
-      const statusLabel = status === 'kept' ? 'kept' : status === 'broken' ? 'broken' : 'pending';
-      const iconSvg = ICONS[q.icon] || ICONS.book;
-      html += `
-        <div class="quest-row ${stateClass}" data-quest-id="${q.id}">
-          <div class="quest-icon">${iconSvg}</div>
-          <div class="quest-name">${escapeHTML(q.name)}</div>
-          <div class="quest-status ${stateClass}">${statusLabel}</div>
-        </div>
-      `;
-    }
-  }
+  let html = `
+    <div class="today-watch-intro">
+      Tap a quest to keep the oath. Open the card only if you want to add proof chips or a note. The chronicle can be written with zero journaling.
+    </div>
+    <div class="quest-section-label">Today’s Watch</div>
+    <div class="today-watch-list">
+  `;
 
-  // Weekly section
+  for (const q of dailyQuests) html += renderTodayQuestCard(q, alreadyLogged);
+  for (const q of weeklyQuests) html += renderTodayQuestCard(q, alreadyLogged);
+
+  html += `</div>`;
+
+  // Weekly oath progress preview
   if (weeklyQuests.length > 0) {
-    html += '<div class="quest-section-label">This Week</div>';
+    const wk = weekKeyForDate(today);
     const weekRes = state.questHistory.weekly[wk] || evaluateWeeklyQuestsForWeek(wk);
+    html += `<div class="weekly-oath-panel"><div class="quest-section-label">Weekly Oaths · Day ${dayInWeek} of 7</div>`;
     for (const q of weeklyQuests) {
+      const draftHit = draft.quests[q.id] && (draft.quests[q.id].state === 'done' || draft.quests[q.id].state === 'heroic') && !alreadyLogged ? 1 : 0;
       const r = weekRes[q.id] || { hits: 0, target: q.target, status: 'open' };
-      const stateClass = r.status === 'complete' ? 'complete' : r.status === 'fail' ? 'broken' : '';
-      const cells = Array.from({ length: q.target }, (_, i) =>
-        `<div class="quest-progress-cell ${i < r.hits ? 'filled' : ''}"></div>`
-      ).join('');
-      const iconSvg = ICONS[q.icon] || ICONS.sword;
+      const hits = Math.min(q.target, (r.hits || 0) + draftHit);
+      const cells = Array.from({ length: q.target }, (_, i) => `<div class="weekly-oath-pip ${i < hits ? 'filled' : ''}"></div>`).join('');
       html += `
-        <div class="quest-row ${stateClass}" data-quest-id="${q.id}">
-          <div class="quest-icon">${iconSvg}</div>
-          <div class="quest-name">${escapeHTML(q.name)}</div>
-          <div class="quest-progress">
-            <div class="quest-progress-bar">${cells}</div>
-            <div class="quest-progress-count">${r.hits} of ${q.target}</div>
+        <div class="weekly-oath-row">
+          <div>
+            <div class="weekly-oath-name">${escapeHTML(q.name)}</div>
+            <div class="weekly-oath-pips">${cells}</div>
           </div>
+          <div class="weekly-oath-count">${hits}/${q.target}</div>
         </div>
       `;
     }
+    html += `</div>`;
   }
+
+  const payload = buildQuestboardPayload();
+  const closeDisabled = alreadyLogged || payload.completedIds.length === 0;
+  const summary = payload.completedIds.length > 0
+    ? `${payload.completedIds.length} oath${payload.completedIds.length === 1 ? '' : 's'} ready. Tags: ${payload.tags.join(', ') || 'none'}.`
+    : 'No oaths kept yet. Tap at least one quest to close the Watch.';
+
+  html += `
+    <div class="today-watch-actions">
+      <button class="btn" id="close-watch-btn" ${closeDisabled ? 'disabled' : ''}>✦ Close the Watch ✦</button>
+      <div class="today-watch-summary">${alreadyLogged ? 'The Watch is already closed for today.' : escapeHTML(summary)}</div>
+    </div>
+  `;
 
   document.getElementById('quest-panel-body').innerHTML = html;
-
-  // Wire quest row taps to open detail modal
-  document.querySelectorAll('#quest-panel-body .quest-row').forEach(row => {
-    row.addEventListener('click', () => showQuestDetail(row.dataset.questId));
-  });
+  const closeBtn = document.getElementById('close-watch-btn');
+  if (closeBtn) closeBtn.addEventListener('click', closeTodayWatch);
 }
 
 function showQuestDetail(questId) {
