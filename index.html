@@ -1134,11 +1134,18 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
    ============================================================ */
 .toast {
   position: fixed;
-  top: calc(env(safe-area-inset-top) + 3.25rem);
+
+  /* Hard-safe notch clearance for iPhone PWA.
+     env() helps when available; 72px is the practical fallback. */
+  top: max(72px, calc(env(safe-area-inset-top) + 1.25rem));
   left: 50%;
-  transform: translateX(-50%) scale(0.96);
+
+  /* Do NOT animate from above the screen — it causes notch clipping. */
+  transform: translateX(-50%) translateY(-8px);
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
+
   background: var(--ink);
   color: var(--gold-bright);
   padding: 0.7rem 1.2rem;
@@ -1148,18 +1155,20 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
   font-size: 0.75rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  z-index: 100;
+  z-index: 1000;
   transition:
     opacity 0.25s ease,
-    transform 0.25s ease;
-  max-width: 90vw;
+    transform 0.25s ease,
+    visibility 0.25s ease;
+  max-width: min(90vw, 520px);
   text-align: center;
   box-shadow: 0 4px 20px rgba(0,0,0,0.4);
 }
 
 .toast.show {
-  transform: translateX(-50%) scale(1);
+  transform: translateX(-50%) translateY(0);
   opacity: 1;
+  visibility: visible;
 }
 
 .modal-backdrop {
