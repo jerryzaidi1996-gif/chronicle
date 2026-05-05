@@ -2767,6 +2767,10 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
       <div class="game-card-title">Nemesis Pressure</div>
       <div id="world-boss-content" class="game-card-text"></div>
     </div>
+    <div class="game-card">
+      <div class="game-card-title">Campaign State</div>
+      <div id="campaign-state-content" class="game-card-text"></div>
+    </div>
   </div>
 </div>
 
@@ -2874,7 +2878,7 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
   </div>
 
   <div style="text-align: center; font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.2em; color: var(--ink-faded); margin-top: 2rem; text-transform: uppercase;">
-    The Chronicle · Phase 2.8.4
+    The Chronicle · Phase 2.8.2
   </div>
 </div>
 
@@ -2929,11 +2933,6 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
    ============================================================ */
 const SCHEMA_VERSION = 1;
 const STORAGE_KEY = 'chronicle_state_v1';
-
-// AI usage caps — local app-side guardrails. Worker also has its own backstop.
-const APP_DAILY_CALL_CAP = 50;
-const APP_DAILY_REGEN_CAP = 20;
-const APP_AI_CAP_UPGRADE_VERSION = 1;
 
 // Day boundary at 4am — a "day" runs 4am to 4am
 const DAY_BOUNDARY_HOUR = 4;
@@ -3065,8 +3064,8 @@ const DEFAULT_STATE = {
   config: {
     workerUrl: null,
     workerSecret: null,
-    dailyCallCap: APP_DAILY_CALL_CAP,
-    dailyRegenCap: APP_DAILY_REGEN_CAP,
+    dailyCallCap: 5,
+    dailyRegenCap: 2,
     backendStatus: 'not_configured',  // 'not_configured' | 'ok' | 'error'
     lastTestAt: null,
     lastTestResult: null
@@ -3095,7 +3094,8 @@ const DEFAULT_STATE = {
   todayWatchDrafts: {},         // { 'YYYY-MM-DD': { quests: { questId: { state, chips, note } } } }
   worldProgress: null,          // Phase 2.8: location XP, NPC bonds, boss pressure
   campaignQuests: null,         // Phase 2.8: lightweight long-arc quests
-  entries: [],         // { id, gameDate, isoTime, text, tags, narration, event, statBumps, levelUp, type, narrationSource, narrationAlternates, tokensUsed, pendingRenarration, npcMentions, questResolution }
+  campaignState: null,          // Phase 2.9: persistent campaign continuity state
+  entries: [],         // { id, gameDate, isoTime, text, tags, narration, event, statBumps, levelUp, type, narrationSource, narrationAlternates, tokensUsed, pendingRenarration, npcMentions, questResolution, campaignChanges, campaignSnapshot }
   lastCheckInDate: null,
   createdAt: null
 };
@@ -3153,25 +3153,12 @@ function migrateState(s) {
   s.config = Object.assign({
     workerUrl: null,
     workerSecret: null,
-    dailyCallCap: APP_DAILY_CALL_CAP,
-    dailyRegenCap: APP_DAILY_REGEN_CAP,
+    dailyCallCap: 5,
+    dailyRegenCap: 2,
     backendStatus: 'not_configured',
     lastTestAt: null,
-    lastTestResult: null,
-    aiCapUpgradeVersion: 0
+    lastTestResult: null
   }, s.config || {});
-
-  // Phase 2.8.4: bump old local installs from the tiny test caps (5 calls / 2 regens)
-  // to practical daily limits. Existing saved configs keep higher custom limits.
-  if ((s.config.aiCapUpgradeVersion || 0) < APP_AI_CAP_UPGRADE_VERSION) {
-    if (typeof s.config.dailyCallCap !== 'number' || s.config.dailyCallCap < APP_DAILY_CALL_CAP) {
-      s.config.dailyCallCap = APP_DAILY_CALL_CAP;
-    }
-    if (typeof s.config.dailyRegenCap !== 'number' || s.config.dailyRegenCap < APP_DAILY_REGEN_CAP) {
-      s.config.dailyRegenCap = APP_DAILY_REGEN_CAP;
-    }
-    s.config.aiCapUpgradeVersion = APP_AI_CAP_UPGRADE_VERSION;
-  }
 
   if (!Array.isArray(s.npcs)) s.npcs = [];
 
@@ -3260,6 +3247,7 @@ function migrateState(s) {
   if (!s.todayWatchDrafts || typeof s.todayWatchDrafts !== 'object') s.todayWatchDrafts = {};
   s.worldProgress = migrateWorldProgress(s.worldProgress);
   s.campaignQuests = migrateCampaignQuests(s.campaignQuests);
+  s.campaignState = migrateCampaignState(s.campaignState, s);
 
   // Seed/repair default quests. Older saves or failed test builds can end up
   // with no active Today quests, which makes the Today page look empty.
@@ -3278,8 +3266,9 @@ function migrateState(s) {
 
   // Per-entry questResolution field (Phase 2.6)
   for (const e of s.entries) {
-    if (e.type === 'rest') continue;
-    if (e.questResolution === undefined) e.questResolution = null;
+    if (e.type !== 'rest' && e.questResolution === undefined) e.questResolution = null;
+    if (e.campaignChanges === undefined) e.campaignChanges = [];
+    if (e.campaignSnapshot === undefined) e.campaignSnapshot = null;
   }
 
   return s;
@@ -4369,6 +4358,446 @@ function shouldUnlockNpc(milestones, tags) {
   return false;
 }
 
+
+/* ============================================================
+   PHASE 2.9 — CAMPAIGN STATE
+   Persistent story machinery for long-form campaign continuity.
+   The app mutates this deterministically. The Worker only narrates it.
+   ============================================================ */
+const CAMPAIGN_TAG_EFFECTS = {
+  Study:    { locations: { recordsLoft: 14 }, arc: 8, threads: { chapterhouse_stirs: 1 }, thaleTrust: 1 },
+  Research: { locations: { recordsLoft: 12 }, arc: 9, threads: { east_road_silence: 2, chapterhouse_stirs: 1 }, thaleTrust: 1 },
+  Train:    { locations: { trainingYard: 14 }, arc: 7, rivalPressure: 2, threads: { chapterhouse_stirs: 1 } },
+  Health:   { locations: { infirmary: 8, kitchens: 6 }, arc: 6, threads: { chapterhouse_stirs: 1 } },
+  Chores:   { locations: { kitchens: 12, commonHall: 5 }, arc: 7, threads: { chapterhouse_stirs: 1 } },
+  Social:   { locations: { commonHall: 14 }, arc: 7, thaleTrust: 1, threads: { chapterhouse_stirs: 1 } },
+  Work:     { locations: { infirmary: 10, commonHall: 4 }, arc: 8, thaleTrust: 2, threads: { chapterhouse_stirs: 1 } }
+};
+
+const CAMPAIGN_PHASES = [
+  { min: 0, phase: 'opening' },
+  { min: 25, phase: 'rising' },
+  { min: 50, phase: 'complication' },
+  { min: 75, phase: 'reckoning' },
+  { min: 95, phase: 'closing' }
+];
+
+function defaultCampaignState(existingState = state) {
+  const threads = [
+    {
+      id: 'letter_unopened',
+      title: 'The Unopened Letter',
+      type: 'personal',
+      heat: 1,
+      status: 'active',
+      lastTouched: null,
+      description: 'A folded letter from Jerry’s old life remains unopened above his bed.'
+    },
+    {
+      id: 'east_road_silence',
+      title: 'Silence on the Eastern Road',
+      type: 'world',
+      heat: 1,
+      status: 'active',
+      lastTouched: null,
+      description: 'Reports from the eastern chapterhouses have grown thin and delayed.'
+    },
+    {
+      id: 'chapterhouse_stirs',
+      title: 'The Chapterhouse Stirs',
+      type: 'chapterhouse',
+      heat: 1,
+      status: 'active',
+      lastTouched: null,
+      description: 'Calenhal has begun to feel less like a relic and more like a place with a future.'
+    }
+  ];
+
+  return {
+    chapter: {
+      number: 1,
+      title: 'Ashes at Calenhal',
+      theme: 'discipline, recovery, first belonging',
+      day: 1,
+      phase: 'opening'
+    },
+    currentArc: {
+      id: 'arc_calenhal_reawakens',
+      title: 'Calenhal Reawakens',
+      premise: 'The old chapterhouse begins to stir as Jerry proves useful in small, repeated ways.',
+      progress: 0,
+      status: 'active'
+    },
+    openThreads: threads,
+    locationStates: {
+      recordsLoft: {
+        name: 'Records Loft',
+        level: 0,
+        progress: 0,
+        description: 'Dusty ledgers and old Watch doctrine.'
+      },
+      trainingYard: {
+        name: 'Training Yard',
+        level: 0,
+        progress: 0,
+        description: 'Scuffed stone, old posts, and the daily embarrassment of honest effort.'
+      },
+      infirmary: {
+        name: 'Infirmary',
+        level: 0,
+        progress: 0,
+        description: 'A narrow room of herbs, bandages, and practical mercy.'
+      },
+      kitchens: {
+        name: 'Kitchens',
+        level: 0,
+        progress: 0,
+        description: 'Neglected stores, stubborn pots, and the morale of anyone who has to eat.'
+      },
+      commonHall: {
+        name: 'Common Hall',
+        level: 0,
+        progress: 0,
+        description: 'Where strangers slowly become a company.'
+      }
+    },
+    npcBonds: {
+      npc_iven_thale: {
+        trust: 0,
+        tension: 0,
+        lastInteraction: null,
+        currentImpression: 'watchful but unconvinced'
+      }
+    },
+    rivalState: {
+      active: false,
+      npcId: null,
+      pressure: 0,
+      lastMove: null
+    },
+    lastWorldChange: null,
+    recentConsequences: []
+  };
+}
+
+function migrateCampaignState(cs, existingState = state) {
+  const def = defaultCampaignState(existingState);
+  if (!cs || typeof cs !== 'object') cs = {};
+
+  cs.chapter = Object.assign({}, def.chapter, cs.chapter || {});
+  if (typeof cs.chapter.number !== 'number') cs.chapter.number = 1;
+  if (typeof cs.chapter.day !== 'number') {
+    const loggedDays = Array.isArray(existingState?.entries) ? existingState.entries.filter(e => e.type !== 'rest').length : 0;
+    cs.chapter.day = Math.max(1, loggedDays + 1);
+  }
+  if (!['opening', 'rising', 'complication', 'reckoning', 'closing'].includes(cs.chapter.phase)) cs.chapter.phase = 'opening';
+
+  cs.currentArc = Object.assign({}, def.currentArc, cs.currentArc || {});
+  cs.currentArc.progress = clampNumber(cs.currentArc.progress, 0, 100);
+  cs.currentArc.status = cs.currentArc.status || 'active';
+
+  if (!Array.isArray(cs.openThreads)) cs.openThreads = [];
+  const byThreadId = new Map(cs.openThreads.filter(t => t && t.id).map(t => [t.id, t]));
+  for (const t of def.openThreads) if (!byThreadId.has(t.id)) byThreadId.set(t.id, t);
+  cs.openThreads = Array.from(byThreadId.values()).map(t => ({
+    id: t.id,
+    title: t.title || 'Untitled Thread',
+    type: t.type || 'world',
+    heat: clampNumber(t.heat ?? 1, 0, 10),
+    status: t.status || 'active',
+    lastTouched: t.lastTouched || null,
+    description: t.description || ''
+  }));
+
+  cs.locationStates = cs.locationStates && typeof cs.locationStates === 'object' ? cs.locationStates : {};
+  for (const [key, loc] of Object.entries(def.locationStates)) {
+    cs.locationStates[key] = Object.assign({}, loc, cs.locationStates[key] || {});
+    cs.locationStates[key].level = clampNumber(cs.locationStates[key].level, 0, 10);
+    cs.locationStates[key].progress = clampNumber(cs.locationStates[key].progress, 0, 100);
+  }
+
+  cs.npcBonds = cs.npcBonds && typeof cs.npcBonds === 'object' ? cs.npcBonds : {};
+  cs.npcBonds.npc_iven_thale = Object.assign({}, def.npcBonds.npc_iven_thale, cs.npcBonds.npc_iven_thale || {});
+  normalizeBond(cs.npcBonds.npc_iven_thale);
+
+  cs.rivalState = Object.assign({}, def.rivalState, cs.rivalState || {});
+  cs.rivalState.pressure = clampNumber(cs.rivalState.pressure, 0, 100);
+  cs.rivalState.active = !!cs.rivalState.active;
+  if (!cs.rivalState.npcId && existingState?.rival?.name) {
+    cs.rivalState.active = true;
+    cs.rivalState.npcId = 'npc_' + slugifyName(existingState.rival.name);
+    cs.rivalState.pressure = clampNumber(existingState.rival.progress || 0, 0, 100);
+  }
+
+  cs.lastWorldChange = cs.lastWorldChange || null;
+  if (!Array.isArray(cs.recentConsequences)) cs.recentConsequences = [];
+  cs.recentConsequences = cs.recentConsequences.slice(-12);
+  return cs;
+}
+
+function clampNumber(n, min, max) {
+  n = Number(n);
+  if (!Number.isFinite(n)) n = min;
+  return Math.max(min, Math.min(max, n));
+}
+
+function normalizeBond(bond) {
+  bond.trust = clampNumber(bond.trust || 0, -10, 10);
+  bond.tension = clampNumber(bond.tension || 0, 0, 10);
+  bond.lastInteraction = bond.lastInteraction || null;
+  bond.currentImpression = bond.currentImpression || bondImpression(bond);
+  return bond;
+}
+
+function bondImpression(bond) {
+  const trust = Number(bond.trust || 0);
+  const tension = Number(bond.tension || 0);
+  if (trust >= 8 && tension <= 2) return 'quietly proud';
+  if (trust >= 5 && tension <= 4) return 'measured approval';
+  if (trust >= 2) return 'watchful, with growing confidence';
+  if (tension >= 6) return 'concerned but not dismissive';
+  if (trust <= -2) return 'unconvinced';
+  return 'watchful but unconvinced';
+}
+
+function updateCampaignStateForEntry(entryContext) {
+  state.campaignState = migrateCampaignState(state.campaignState, state);
+  const cs = state.campaignState;
+  const gd = entryContext.gameDate || gameDate();
+  const kind = entryContext.kind || 'checkin';
+  const tags = Array.isArray(entryContext.tags) ? [...new Set(entryContext.tags)] : [];
+  const completedQuestCategories = Array.isArray(entryContext.completedQuestCategories) ? [...new Set(entryContext.completedQuestCategories)] : [];
+  const daysSkipped = Math.max(0, Number(entryContext.daysSkipped || 0));
+  const changes = [];
+
+  if (kind === 'rest') {
+    applyCampaignRestMovement(cs, gd, daysSkipped, changes);
+  } else {
+    cs.chapter.day = Math.max(1, Number(cs.chapter.day || 1) + 1);
+    for (const tag of tags) applyCampaignTagEffect(cs, tag, gd, 1, changes);
+    for (const cat of completedQuestCategories) applyCampaignTagEffect(cs, cat, gd, 0.45, changes);
+    if (tags.length === 0 && completedQuestCategories.length === 0) {
+      addCampaignArcProgress(cs, 3, gd, changes, 'The day entered the record, and Calenhal moved by a finger-width.');
+    }
+  }
+
+  updateCampaignPhase(cs, gd, changes);
+  updateCampaignConsequences(cs, changes);
+  return changes;
+}
+
+function applyCampaignTagEffect(cs, tag, gd, multiplier, changes) {
+  const effect = CAMPAIGN_TAG_EFFECTS[tag];
+  if (!effect) return;
+  for (const [locKey, amount] of Object.entries(effect.locations || {})) {
+    addCampaignLocationProgress(cs, locKey, Math.max(1, Math.round(amount * multiplier)), gd, changes);
+  }
+  if (effect.arc) addCampaignArcProgress(cs, Math.max(1, Math.round(effect.arc * multiplier)), gd, changes, `${tag} pushed the current arc forward.`);
+  for (const [threadId, heat] of Object.entries(effect.threads || {})) {
+    addCampaignThreadHeat(cs, threadId, Math.max(1, Math.round(heat * multiplier)), gd, changes);
+  }
+  if (effect.thaleTrust) addNpcBondTrust(cs, 'npc_iven_thale', Math.max(1, Math.round(effect.thaleTrust * multiplier)), gd, changes);
+  if (effect.rivalPressure) moveCampaignRivalPressure(cs, Math.round(effect.rivalPressure * multiplier), gd, 'training pressure sharpened rather than softened', changes);
+}
+
+function applyCampaignRestMovement(cs, gd, daysSkipped, changes) {
+  const n = Math.max(1, daysSkipped || 1);
+  cs.chapter.day = Math.max(1, Number(cs.chapter.day || 1) + n);
+  addCampaignThreadHeat(cs, 'east_road_silence', Math.min(3, n), gd, changes);
+  if (n >= 2) addCampaignThreadHeat(cs, 'chapterhouse_stirs', 1, gd, changes);
+  moveCampaignRivalPressure(cs, Math.min(10, n * 3), gd, `${n} quiet day${n === 1 ? '' : 's'} gave others room to move`, changes);
+  const change = {
+    date: gd,
+    kind: 'rest',
+    title: 'The World Moved Without Malice',
+    text: `The chronicle was quiet for ${n} day${n === 1 ? '' : 's'}, but Calenhal and the roads did not freeze in place.`
+  };
+  cs.lastWorldChange = change;
+  changes.push(change);
+}
+
+function addCampaignLocationProgress(cs, locKey, amount, gd, changes) {
+  const loc = cs.locationStates?.[locKey];
+  if (!loc || amount <= 0) return;
+  loc.progress = clampNumber((loc.progress || 0) + amount, 0, 100);
+  if (loc.progress >= 100) {
+    loc.level = clampNumber((loc.level || 0) + 1, 0, 10);
+    loc.progress = 0;
+    const change = {
+      date: gd,
+      kind: 'location',
+      id: locKey,
+      title: `${loc.name} Improved`,
+      text: `${loc.name} reached level ${loc.level}. ${locationUpgradeText(locKey, loc.level)}`
+    };
+    changes.push(change);
+    cs.lastWorldChange = change;
+  }
+}
+
+function locationUpgradeText(locKey, level) {
+  const lines = {
+    recordsLoft: ['The old ledgers are no longer merely stacked; they have begun to answer questions.', 'A usable index emerges from the dust.', 'The loft becomes a true strategic archive.'],
+    trainingYard: ['The yard gains rhythm: scuffed stone, cleaned racks, fewer excuses.', 'The drills begin attracting witnesses.', 'The yard feels less like punishment and more like tradition.'],
+    infirmary: ['The infirmary is easier to work in and harder to neglect.', 'Supplies find their shelves; small mercies become faster.', 'The room begins to feel prepared rather than merely hopeful.'],
+    kitchens: ['The stores are cleaner, the pots less hostile, and morale noticeably less doomed.', 'The kitchen starts feeding the chapterhouse instead of merely tolerating it.', 'A proper hearth culture begins to form.'],
+    commonHall: ['The hall is less empty now; people linger after meals.', 'Conversation starts surviving the end of supper.', 'The company begins to feel like a company.']
+  };
+  const arr = lines[locKey] || [];
+  return arr[Math.min(level - 1, arr.length - 1)] || 'The place is tangibly better than it was.';
+}
+
+function addCampaignArcProgress(cs, amount, gd, changes, text) {
+  if (!cs.currentArc || amount <= 0) return;
+  const before = Number(cs.currentArc.progress || 0);
+  cs.currentArc.progress = clampNumber(before + amount, 0, 100);
+  const crossed = [25, 50, 75, 95, 100].find(t => before < t && cs.currentArc.progress >= t);
+  if (crossed) {
+    const change = { date: gd, kind: 'arc', id: cs.currentArc.id, title: `${cs.currentArc.title}: ${crossed}%`, text: arcThresholdText(crossed, cs.currentArc.title) };
+    changes.push(change);
+    cs.lastWorldChange = change;
+  } else if (text && amount >= 5) {
+    cs.lastWorldChange = { date: gd, kind: 'arc_progress', id: cs.currentArc.id, title: cs.currentArc.title, text };
+  }
+}
+
+function arcThresholdText(threshold, title) {
+  if (threshold >= 100) return `${title} has reached its closing beat; the next chapter can begin soon.`;
+  if (threshold >= 95) return `${title} is nearly ready to resolve, though not cleanly.`;
+  if (threshold >= 75) return `${title} has entered its reckoning. Small choices now carry larger shadows.`;
+  if (threshold >= 50) return `${title} has revealed its complication. Calenhal is awake enough to have problems.`;
+  if (threshold >= 25) return `${title} has moved beyond introduction. The chapterhouse has begun to expect something from Jerry.`;
+  return `${title} has shifted.`;
+}
+
+function updateCampaignPhase(cs, gd, changes) {
+  const oldPhase = cs.chapter.phase;
+  const progress = Number(cs.currentArc?.progress || 0);
+  const next = [...CAMPAIGN_PHASES].reverse().find(p => progress >= p.min)?.phase || 'opening';
+  if (oldPhase !== next) {
+    cs.chapter.phase = next;
+    const change = { date: gd, kind: 'phase', title: `Chapter Phase: ${campaignTitleCase(next)}`, text: `Chapter ${cs.chapter.number}, ${cs.chapter.title}, moved from ${oldPhase} to ${next}.` };
+    changes.push(change);
+    cs.lastWorldChange = change;
+  }
+}
+
+function addCampaignThreadHeat(cs, threadId, amount, gd, changes) {
+  const thread = (cs.openThreads || []).find(t => t.id === threadId);
+  if (!thread || thread.status !== 'active') return;
+  const before = Number(thread.heat || 0);
+  thread.heat = clampNumber(before + amount, 0, 10);
+  thread.lastTouched = gd;
+  const crossed = [3, 6, 9].find(t => before < t && thread.heat >= t);
+  if (crossed) {
+    const change = { date: gd, kind: 'thread', id: thread.id, title: thread.title, text: threadHeatText(thread, crossed) };
+    changes.push(change);
+    cs.lastWorldChange = change;
+  }
+}
+
+function threadHeatText(thread, heat) {
+  if (thread.id === 'east_road_silence') {
+    if (heat >= 9) return 'A road-rumor has become difficult to dismiss: the eastern messages are not merely late.';
+    if (heat >= 6) return 'Someone in the hall mentioned the eastern chapterhouses, then stopped when Master Thale looked over.';
+    return 'A small rumor returns: the eastern roads have been too quiet.';
+  }
+  if (thread.id === 'letter_unopened') {
+    if (heat >= 9) return 'The unopened letter has begun to feel less like an object and more like an appointment.';
+    if (heat >= 6) return 'The letter above the bed caught Jerry’s eye again and did not explain itself.';
+    return 'The old letter remains where it was, which is not the same as being forgotten.';
+  }
+  if (thread.id === 'chapterhouse_stirs') {
+    if (heat >= 9) return 'Calenhal is no longer merely housing its few Watchers. It is beginning to gather them.';
+    if (heat >= 6) return 'The chapterhouse has developed small routines around Jerry’s repeated usefulness.';
+    return 'A subtle change moves through Calenhal: people begin assuming Jerry will show up.';
+  }
+  return `${thread.title} grew warmer in the background.`;
+}
+
+function addNpcBondTrust(cs, npcId, amount, gd, changes) {
+  cs.npcBonds[npcId] = cs.npcBonds[npcId] || { trust: 0, tension: 0, lastInteraction: null, currentImpression: 'watchful but unconvinced' };
+  const bond = cs.npcBonds[npcId];
+  const oldImpression = bond.currentImpression || bondImpression(bond);
+  bond.trust = clampNumber((bond.trust || 0) + amount, -10, 10);
+  bond.tension = clampNumber((bond.tension || 0) - 1, 0, 10);
+  bond.lastInteraction = gd;
+  bond.currentImpression = bondImpression(bond);
+  if (oldImpression !== bond.currentImpression) {
+    const change = { date: gd, kind: 'npc_bond', id: npcId, title: 'Master Thale Reconsidered', text: `Master Thale’s impression shifted: ${bond.currentImpression}.` };
+    changes.push(change);
+    cs.lastWorldChange = change;
+  }
+}
+
+function moveCampaignRivalPressure(cs, amount, gd, reason, changes) {
+  if (!cs.rivalState || amount <= 0) return;
+  if (!cs.rivalState.active && state.rival?.name) {
+    cs.rivalState.active = true;
+    cs.rivalState.npcId = 'npc_' + slugifyName(state.rival.name);
+  }
+  const before = Number(cs.rivalState.pressure || 0);
+  cs.rivalState.pressure = clampNumber(before + amount, 0, 100);
+  cs.rivalState.lastMove = { date: gd, reason };
+  const crossed = [25, 50, 75].find(t => before < t && cs.rivalState.pressure >= t);
+  if (crossed) {
+    const change = { date: gd, kind: 'rival', title: `Rival Pressure: ${crossed}%`, text: `The rival thread sharpened: ${reason}.` };
+    changes.push(change);
+    cs.lastWorldChange = change;
+  }
+}
+
+function updateCampaignConsequences(cs, changes) {
+  if (!Array.isArray(changes) || changes.length === 0) return;
+  cs.recentConsequences = [...(cs.recentConsequences || []), ...changes].slice(-12);
+}
+
+function campaignTitleCase(s) {
+  return String(s || '').replace(/\b\w/g, ch => ch.toUpperCase());
+}
+
+function completedQuestCategoriesForToday(gd = gameDate()) {
+  const cats = [];
+  const daily = state.questHistory?.daily?.[gd] || {};
+  if (typeof getDailyQuests === 'function') {
+    for (const q of getDailyQuests()) {
+      if (daily[q.id] === 'kept') cats.push(questToCategoryTag(q) || q.category);
+    }
+  }
+  const wk = weekKeyForDate(gd);
+  const weekly = state.questHistory?.weekly?.[wk] || {};
+  if (typeof getWeeklyQuests === 'function') {
+    const evaluated = evaluateWeeklyQuestsForWeek(wk) || {};
+    for (const q of getWeeklyQuests()) {
+      const rec = weekly[q.id] || evaluated[q.id];
+      if (rec?.status === 'complete') cats.push(questToCategoryTag(q) || q.category);
+    }
+  }
+  return [...new Set(cats)].filter(Boolean);
+}
+
+function summarizeCampaignStateForWorker(cs) {
+  cs = migrateCampaignState(cs || state.campaignState, state);
+  const activeThreads = [...(cs.openThreads || [])]
+    .filter(t => t.status === 'active')
+    .sort((a, b) => {
+      const heatDiff = Number(b.heat || 0) - Number(a.heat || 0);
+      if (heatDiff !== 0) return heatDiff;
+      return String(b.lastTouched || '').localeCompare(String(a.lastTouched || ''));
+    })
+    .slice(0, 5);
+  return {
+    chapter: cs.chapter,
+    currentArc: cs.currentArc,
+    openThreads: activeThreads,
+    locationStates: cs.locationStates,
+    npcBonds: cs.npcBonds,
+    rivalState: cs.rivalState,
+    recentConsequences: (cs.recentConsequences || []).slice(-6),
+    lastWorldChange: cs.lastWorldChange || null
+  };
+}
+
 /* ============================================================
    PHASE 2 — WORKER CLIENT
    ============================================================ */
@@ -4419,7 +4848,7 @@ async function callWorker({ model, kind, context, timeoutMs = SHIMMER_TIMEOUT_MS
 /* ============================================================
    PHASE 2 — CONTEXT BUILDER (sent to Worker)
    ============================================================ */
-function buildWorkerContext(tags, text, milestones) {
+function buildWorkerContext(tags, text, milestones, options = {}) {
   const today = gameDate();
   // Phase 2.6: build active quest snapshot for prompt
   const activeQuests = getActiveQuests().map(q => {
@@ -4460,7 +4889,8 @@ function buildWorkerContext(tags, text, milestones) {
     recentEntries: trimmedRecentEntriesForPrompt(),
     todaysEntry: { gameDate: today, tags, text },
     milestones,
-    activeQuests   // Phase 2.6
+    activeQuests,   // Phase 2.6
+    campaignState: summarizeCampaignStateForWorker(options.campaignStateOverride || state.campaignState)
   };
 }
 
@@ -5625,6 +6055,16 @@ async function submitCheckIn() {
   processWeeklyEvaluations(today);
   pruneExpiredBanners();
 
+  // Phase 2.9: deterministic campaign-state update BEFORE narration context is built.
+  const campaignChanges = updateCampaignStateForEntry({
+    kind: 'checkin',
+    gameDate: today,
+    tags,
+    text,
+    completedQuestCategories: completedQuestCategoriesForToday(today),
+    daysSkipped: 0
+  });
+
   // Streak bump cooldown bookkeeping (only if it actually fired)
   if (milestones.streakBumpDay) {
     state.usage.lastFireDateRule6 = today;
@@ -5649,7 +6089,9 @@ async function submitCheckIn() {
     tokensUsed: null,
     pendingRenarration: false,
     npcMentions: [],
-    questResolution                 // Phase 2.6: { questId: 'kept'|'broken' }
+    questResolution,                // Phase 2.6: { questId: 'kept'|'broken' }
+    campaignChanges,                // Phase 2.9: deterministic world/campaign changes from this day
+    campaignSnapshot: JSON.parse(JSON.stringify(state.campaignState))
   };
 
   // Try AI narration if backend configured and budget available
@@ -5765,6 +6207,14 @@ async function insertRestEntriesIfNeeded(todayGD) {
 
   const skipped = daysGap - 1;
   const rivalEvent = maybeAdvanceRival(skipped);
+  const campaignChanges = updateCampaignStateForEntry({
+    kind: 'rest',
+    gameDate: todayGD,
+    tags: [],
+    text: '',
+    completedQuestCategories: [],
+    daysSkipped: skipped
+  });
 
   // Default templated narration
   let restNarration = generateRestNarration(skipped);
@@ -5811,7 +6261,9 @@ async function insertRestEntriesIfNeeded(todayGD) {
     event: rivalEvent || null,
     type: 'rest',
     narrationSource: source,
-    tokensUsed
+    tokensUsed,
+    campaignChanges,
+    campaignSnapshot: JSON.parse(JSON.stringify(state.campaignState))
   };
   state.entries.push(restEntry);
 }
@@ -5819,25 +6271,36 @@ async function insertRestEntriesIfNeeded(todayGD) {
 /* ============================================================
    PHASE 2 — REGENERATE AND PENDING RE-NARRATION
    ============================================================ */
-function regenBlockedReason(entry) {
-  rolloverUsageIfNewDay();
-
-  if (!entry || entry.type === 'rest') return 'Cannot regenerate this entry';
-  if (!state.config.workerUrl || !state.config.workerSecret) return 'Backend not configured';
-  if (callBudgetRemaining() <= 0) return 'Daily AI call cap reached';
-  if (regenBudgetRemaining() <= 0) return 'Daily regen cap reached';
-
-  return null;
-}
-
 async function regenerateEntry(entryId) {
   const entry = state.entries.find(e => e.id === entryId);
-  const blocked = regenBlockedReason(entry);
-  if (blocked) {
-    showToast(blocked);
+  if (!entry || entry.type === 'rest') {
+    showToast('Cannot regenerate this entry');
     return;
   }
   rolloverUsageIfNewDay();
+
+  const backendOk = state.config.workerUrl && state.config.workerSecret;
+  if (!backendOk) {
+    showToast('Backend not configured');
+    return;
+  }
+  if (callBudgetRemaining() <= 0) {
+    showToast('Daily call cap reached');
+    return;
+  }
+  if (regenBudgetRemaining() <= 0) {
+    showToast('Daily regeneration cap reached');
+    return;
+  }
+
+  // Was this entry already regenerated today?
+  const todayStart = gameDate();
+  const alreadyRegenedToday = (entry.narrationAlternates || [])
+    .some(a => (a.ts || '').slice(0, 10) === todayStart);
+  if (alreadyRegenedToday) {
+    showToast('Already regenerated today');
+    return;
+  }
 
   // Build context. Treat as a regenerate kind so prompt can vary if needed.
   const tags = entry.tags || [];
@@ -5856,7 +6319,9 @@ async function regenerateEntry(entryId) {
 
   showToast('Regenerating...');
   try {
-    const context = buildWorkerContext(tags, entry.text, milestones);
+    const context = buildWorkerContext(tags, entry.text, milestones, {
+      campaignStateOverride: entry.campaignSnapshot || state.campaignState
+    });
     // Override todaysEntry with the historical date
     context.todaysEntry = { gameDate: entry.gameDate, tags, text: entry.text };
     const resp = await callWorker({ model, kind: 'regenerate', context });
@@ -5866,7 +6331,7 @@ async function regenerateEntry(entryId) {
     entry.narrationAlternates.push({
       text: entry.narration,
       source: entry.narrationSource,
-      ts: new Date().toISOString()
+      ts: entry.isoTime || new Date().toISOString()
     });
     entry.narration = resp.narration;
     entry.narrationSource = model;
@@ -5950,7 +6415,9 @@ async function processPendingRenarrations() {
         streakBumpDay: false
       };
       const model = entry.levelUp ? 'sonnet' : 'haiku';
-      const context = buildWorkerContext(entry.tags || [], entry.text || '', milestones);
+      const context = buildWorkerContext(entry.tags || [], entry.text || '', milestones, {
+        campaignStateOverride: entry.campaignSnapshot || state.campaignState
+      });
       context.todaysEntry = { gameDate: entry.gameDate, tags: entry.tags || [], text: entry.text || '' };
       const resp = await callWorker({ model, kind: 'regenerate', context });
 
@@ -6092,11 +6559,14 @@ function renderEntry(e) {
       : '';
     const indicator = sourceIndicatorHTML(e.narrationSource || 'template', e.id);
 
-    // Regenerate button — always tappable if backend exists.
-    // If blocked, the click handler explains why instead of silently doing nothing.
+    // Regenerate button — show if backend configured
     const backendOk = state.config.workerUrl && state.config.workerSecret;
+    const today = gameDate();
+    const alreadyRegenedToday = (e.narrationAlternates || [])
+      .some(a => (a.ts || '').slice(0, 10) === today);
+    const canRegen = backendOk && !alreadyRegenedToday && callBudgetRemaining() > 0 && regenBudgetRemaining() > 0;
     const regenBtn = backendOk
-      ? `<button class="entry-regen" data-entry-id="${e.id}" title="Regenerate this passage">↻ Regen</button>`
+      ? `<button class="entry-regen" data-entry-id="${e.id}" ${canRegen ? '' : 'disabled'} title="${canRegen ? 'Regenerate this passage' : 'Cannot regenerate (cap reached or already done today)'}">↻ Regen</button>`
       : '';
 
     // Alternates selector
@@ -6124,19 +6594,11 @@ function renderEntry(e) {
 
     // Wire regenerate button
     const regBtn = div.querySelector('.entry-regen');
-    if (regBtn) {
+    if (regBtn && !regBtn.disabled) {
       regBtn.addEventListener('click', () => {
-        const reason = regenBlockedReason(e);
-        if (reason) {
-          showToast(reason);
-          return;
-        }
-
-        showConfirm(
-          'Regenerate this passage?',
+        showConfirm('Regenerate this passage?',
           `The current narration will become an alternate. This costs 1 of your ${callBudgetRemaining()} remaining calls today.`,
-          () => regenerateEntry(e.id)
-        );
+          () => regenerateEntry(e.id));
       });
     }
 
@@ -6544,6 +7006,47 @@ function renderWorldPage() {
   renderLocations();
   renderWorldCast();
   renderWorldBoss();
+  renderCampaignStatePanel();
+}
+
+function renderCampaignStatePanel() {
+  const el = document.getElementById('campaign-state-content');
+  if (!el) return;
+  state.campaignState = migrateCampaignState(state.campaignState, state);
+  const cs = state.campaignState;
+  const topThreads = [...(cs.openThreads || [])]
+    .filter(t => t.status === 'active')
+    .sort((a, b) => Number(b.heat || 0) - Number(a.heat || 0))
+    .slice(0, 3);
+
+  let html = `
+    <p><strong>Chapter ${cs.chapter.number}: ${escapeHTML(cs.chapter.title)}</strong></p>
+    <p>Phase: <strong>${escapeHTML(cs.chapter.phase)}</strong> · Day ${cs.chapter.day}</p>
+    <p><em>${escapeHTML(cs.chapter.theme)}</em></p>
+    <div class="campaign-row">
+      <div class="campaign-name">${escapeHTML(cs.currentArc.title)}</div>
+      <div class="campaign-meta">${escapeHTML(cs.currentArc.premise)} · ${cs.currentArc.progress}/100</div>
+      <div class="campaign-bar"><div class="campaign-bar-fill" style="width: ${clampNumber(cs.currentArc.progress, 0, 100)}%;"></div></div>
+    </div>
+  `;
+
+  if (cs.lastWorldChange) {
+    html += `<div class="world-event-line">${escapeHTML(cs.lastWorldChange.title)} — ${escapeHTML(cs.lastWorldChange.text)}</div>`;
+  }
+
+  if (topThreads.length > 0) {
+    html += `<div class="game-card-title" style="margin-top: 0.8rem;">Warm Threads</div>`;
+    for (const t of topThreads) {
+      html += `
+        <div class="campaign-row">
+          <div class="campaign-name">${escapeHTML(t.title)} · heat ${t.heat}/10</div>
+          <div class="campaign-meta">${escapeHTML(t.description || '')}</div>
+        </div>
+      `;
+    }
+  }
+
+  el.innerHTML = html;
 }
 
 function renderLocations() {
@@ -7015,18 +7518,8 @@ function showBackendConfigModal() {
       <input id="backend-secret-input" type="text" placeholder="paste hex string"
              value="${escapeHTML(cfg.workerSecret || '')}" autocomplete="off" autocapitalize="none" spellcheck="false">
     </div>
-    <div class="modal-input-group">
-      <label>Daily AI Call Cap</label>
-      <input id="backend-call-cap-input" type="number" min="1" max="500" step="1"
-             value="${Number(cfg.dailyCallCap || APP_DAILY_CALL_CAP)}" inputmode="numeric">
-    </div>
-    <div class="modal-input-group">
-      <label>Daily Regen Cap</label>
-      <input id="backend-regen-cap-input" type="number" min="0" max="200" step="1"
-             value="${Number(cfg.dailyRegenCap || APP_DAILY_REGEN_CAP)}" inputmode="numeric">
-    </div>
     <div style="font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--ink-faded); font-size: 0.85rem; margin-top: 0.5rem;">
-      Stored locally only. Test connection does not use the app-side narration cap.
+      Stored locally only. Leave empty to revert to template-only mode.
     </div>
   `;
   const actions = document.getElementById('modal-actions');
@@ -7043,13 +7536,8 @@ function showBackendConfigModal() {
     const secret = document.getElementById('backend-secret-input').value.trim();
     // Strip trailing slash
     if (url.endsWith('/')) url = url.slice(0, -1);
-    const callCap = parseInt(document.getElementById('backend-call-cap-input').value, 10);
-    const regenCap = parseInt(document.getElementById('backend-regen-cap-input').value, 10);
-
     state.config.workerUrl = url || null;
     state.config.workerSecret = secret || null;
-    state.config.dailyCallCap = Number.isFinite(callCap) && callCap > 0 ? callCap : APP_DAILY_CALL_CAP;
-    state.config.dailyRegenCap = Number.isFinite(regenCap) && regenCap >= 0 ? regenCap : APP_DAILY_REGEN_CAP;
     state.config.backendStatus = (url && secret) ? 'configured' : 'not_configured';
     saveState();
     document.getElementById('modal-backdrop').classList.remove('show');
@@ -7085,14 +7573,15 @@ async function testBackendConnection() {
     state.config.backendStatus = 'ok';
     state.config.lastTestAt = new Date().toISOString();
     state.config.lastTestResult = 'ok';
-    // Count token usage, but do NOT burn the app's daily narration budget.
+    // Count this as a real call (it consumed tokens)
     rolloverUsageIfNewDay();
+    state.usage.callsToday += 1;
     state.usage.lifetimeCallsByModel.haiku = (state.usage.lifetimeCallsByModel.haiku || 0) + 1;
     state.usage.monthlyTokens.input  += resp.tokensUsed?.input  || 0;
     state.usage.monthlyTokens.output += resp.tokensUsed?.output || 0;
     saveState();
     renderSettings();
-    showToast('Connection ✓');
+    showToast('Connection ✓ (used 1 call)');
   } catch (err) {
     state.config.backendStatus = 'error';
     state.config.lastTestAt = new Date().toISOString();
