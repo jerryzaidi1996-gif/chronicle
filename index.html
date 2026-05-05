@@ -2874,7 +2874,7 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
   </div>
 
   <div style="text-align: center; font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.2em; color: var(--ink-faded); margin-top: 2rem; text-transform: uppercase;">
-    The Chronicle · Phase 2.8.2
+    The Chronicle · Phase 2.8.4
   </div>
 </div>
 
@@ -2929,6 +2929,11 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
    ============================================================ */
 const SCHEMA_VERSION = 1;
 const STORAGE_KEY = 'chronicle_state_v1';
+
+// AI usage caps — local app-side guardrails. Worker also has its own backstop.
+const APP_DAILY_CALL_CAP = 50;
+const APP_DAILY_REGEN_CAP = 20;
+const APP_AI_CAP_UPGRADE_VERSION = 1;
 
 // Day boundary at 4am — a "day" runs 4am to 4am
 const DAY_BOUNDARY_HOUR = 4;
@@ -3060,8 +3065,8 @@ const DEFAULT_STATE = {
   config: {
     workerUrl: null,
     workerSecret: null,
-    dailyCallCap: 5,
-    dailyRegenCap: 2,
+    dailyCallCap: APP_DAILY_CALL_CAP,
+    dailyRegenCap: APP_DAILY_REGEN_CAP,
     backendStatus: 'not_configured',  // 'not_configured' | 'ok' | 'error'
     lastTestAt: null,
     lastTestResult: null
@@ -3148,12 +3153,25 @@ function migrateState(s) {
   s.config = Object.assign({
     workerUrl: null,
     workerSecret: null,
-    dailyCallCap: 5,
-    dailyRegenCap: 2,
+    dailyCallCap: APP_DAILY_CALL_CAP,
+    dailyRegenCap: APP_DAILY_REGEN_CAP,
     backendStatus: 'not_configured',
     lastTestAt: null,
-    lastTestResult: null
+    lastTestResult: null,
+    aiCapUpgradeVersion: 0
   }, s.config || {});
+
+  // Phase 2.8.4: bump old local installs from the tiny test caps (5 calls / 2 regens)
+  // to practical daily limits. Existing saved configs keep higher custom limits.
+  if ((s.config.aiCapUpgradeVersion || 0) < APP_AI_CAP_UPGRADE_VERSION) {
+    if (typeof s.config.dailyCallCap !== 'number' || s.config.dailyCallCap < APP_DAILY_CALL_CAP) {
+      s.config.dailyCallCap = APP_DAILY_CALL_CAP;
+    }
+    if (typeof s.config.dailyRegenCap !== 'number' || s.config.dailyRegenCap < APP_DAILY_REGEN_CAP) {
+      s.config.dailyRegenCap = APP_DAILY_REGEN_CAP;
+    }
+    s.config.aiCapUpgradeVersion = APP_AI_CAP_UPGRADE_VERSION;
+  }
 
   if (!Array.isArray(s.npcs)) s.npcs = [];
 
@@ -6997,8 +7015,18 @@ function showBackendConfigModal() {
       <input id="backend-secret-input" type="text" placeholder="paste hex string"
              value="${escapeHTML(cfg.workerSecret || '')}" autocomplete="off" autocapitalize="none" spellcheck="false">
     </div>
+    <div class="modal-input-group">
+      <label>Daily AI Call Cap</label>
+      <input id="backend-call-cap-input" type="number" min="1" max="500" step="1"
+             value="${Number(cfg.dailyCallCap || APP_DAILY_CALL_CAP)}" inputmode="numeric">
+    </div>
+    <div class="modal-input-group">
+      <label>Daily Regen Cap</label>
+      <input id="backend-regen-cap-input" type="number" min="0" max="200" step="1"
+             value="${Number(cfg.dailyRegenCap || APP_DAILY_REGEN_CAP)}" inputmode="numeric">
+    </div>
     <div style="font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--ink-faded); font-size: 0.85rem; margin-top: 0.5rem;">
-      Stored locally only. Leave empty to revert to template-only mode.
+      Stored locally only. Test connection does not use the app-side narration cap.
     </div>
   `;
   const actions = document.getElementById('modal-actions');
@@ -7015,8 +7043,13 @@ function showBackendConfigModal() {
     const secret = document.getElementById('backend-secret-input').value.trim();
     // Strip trailing slash
     if (url.endsWith('/')) url = url.slice(0, -1);
+    const callCap = parseInt(document.getElementById('backend-call-cap-input').value, 10);
+    const regenCap = parseInt(document.getElementById('backend-regen-cap-input').value, 10);
+
     state.config.workerUrl = url || null;
     state.config.workerSecret = secret || null;
+    state.config.dailyCallCap = Number.isFinite(callCap) && callCap > 0 ? callCap : APP_DAILY_CALL_CAP;
+    state.config.dailyRegenCap = Number.isFinite(regenCap) && regenCap >= 0 ? regenCap : APP_DAILY_REGEN_CAP;
     state.config.backendStatus = (url && secret) ? 'configured' : 'not_configured';
     saveState();
     document.getElementById('modal-backdrop').classList.remove('show');
