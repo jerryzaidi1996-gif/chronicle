@@ -2639,6 +2639,742 @@ textarea.field { resize: vertical; min-height: 70px; line-height: 1.4; }
   .location-grid { grid-template-columns: 1fr; }
 }
 
+
+
+/* ============================================================
+   STORY ENGINE 3.0A — lore-first campaign state/UI patch
+   ============================================================ */
+.today-quest-card.rewarded {
+  animation: rewardPulse 0.55s ease-out;
+}
+@keyframes rewardPulse {
+  0% { transform: scale(1); box-shadow: 0 2px 8px rgba(42,24,16,0.10); }
+  45% { transform: scale(1.012); box-shadow: 0 0 0 1px rgba(212,175,55,0.36), 0 6px 22px rgba(212,175,55,0.20); }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) { .today-quest-card.rewarded { animation: none; } }
+.today-quest-domain {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.56rem;
+  letter-spacing: 0.12em;
+  color: var(--gold-deep);
+  text-transform: uppercase;
+  margin-top: 0.16rem;
+}
+.today-quest-micro {
+  margin: 0.2rem 0.75rem 0.7rem 3.3rem;
+  padding: 0.42rem 0.55rem;
+  border-left: 2px solid var(--gold-bright);
+  background: rgba(212, 175, 55, 0.10);
+  border-radius: 0 3px 3px 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.92rem;
+  line-height: 1.3;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+.today-quest-micro strong {
+  font-family: 'Inter', sans-serif;
+  color: var(--gold-deep);
+  font-style: normal;
+  font-size: 0.74rem;
+}
+.heroic-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22rem;
+  margin-top: 0.24rem;
+  border: 1px solid rgba(212,175,55,0.85);
+  color: var(--gold-bright);
+  background: var(--ink);
+  border-radius: 999px;
+  padding: 0.18rem 0.42rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.52rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: 0 0 8px rgba(212,175,55,0.22);
+}
+.scene-anchor-line {
+  padding: 0.68rem 0.78rem;
+  border: 1px solid rgba(212,175,55,0.65);
+  border-left: 3px solid var(--gold-bright);
+  background: linear-gradient(90deg, rgba(212,175,55,0.18), rgba(184,137,58,0.04));
+  border-radius: 4px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.98rem;
+  color: var(--ink-soft);
+  font-style: italic;
+  line-height: 1.35;
+}
+.scene-anchor-line strong {
+  color: var(--ink);
+  font-style: normal;
+}
+.domain-chip {
+  display: inline-block;
+  border: 1px solid rgba(139,100,32,0.45);
+  border-radius: 999px;
+  padding: 0.16rem 0.42rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.52rem;
+  letter-spacing: 0.1em;
+  color: var(--gold-deep);
+  text-transform: uppercase;
+}
+.pressure-grid { display: flex; flex-direction: column; gap: 0.65rem; }
+.pressure-row {
+  padding: 0.58rem 0.62rem;
+  background: rgba(244,232,208,0.60);
+  border: 1px solid rgba(107,74,50,0.30);
+  border-radius: 5px;
+}
+.pressure-top { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
+.pressure-name { font-family: 'Cinzel', serif; font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); }
+.pressure-value { font-family: 'Cinzel', serif; font-size: 0.62rem; color: var(--gold-deep); }
+.pressure-meter { height: 7px; margin: 0.38rem 0 0.28rem; background: var(--parchment-dark); border: 1px solid rgba(107,74,50,0.35); border-radius: 999px; overflow: hidden; }
+.pressure-fill { height: 100%; background: linear-gradient(90deg, var(--forest), var(--gold), var(--crimson)); }
+.pressure-note { font-family: 'Cormorant Garamond', serif; font-size: 0.88rem; color: var(--ink-soft); font-style: italic; line-height: 1.25; }
+.campfire-panel, .council-panel, .lore-unlock-panel {
+  margin-top: 0.9rem;
+  padding: 0.85rem 0.9rem;
+  background: radial-gradient(ellipse 85% 70% at 50% 0%, rgba(212,175,55,0.12), transparent 70%), rgba(232,216,184,0.74);
+  border: 1px solid rgba(139,100,32,0.55);
+  border-left: 3px solid var(--gold-deep);
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(42,24,16,0.10);
+}
+.campfire-title, .council-title, .lore-unlock-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin-bottom: 0.45rem;
+}
+.campfire-prompt, .council-summary {
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--ink-soft);
+  font-size: 0.97rem;
+  line-height: 1.35;
+  font-style: italic;
+  margin-bottom: 0.62rem;
+}
+.choice-option, .council-option {
+  width: 100%;
+  text-align: left;
+  margin-top: 0.42rem;
+  padding: 0.62rem 0.68rem;
+  background: var(--parchment);
+  border: 1px solid rgba(107,74,50,0.42);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--ink);
+}
+.choice-option:disabled, .council-option:disabled { cursor: default; opacity: 0.72; }
+.choice-option.selected, .council-option.selected {
+  border-color: var(--gold-bright);
+  background: rgba(212,175,55,0.13);
+  box-shadow: 0 0 0 1px rgba(212,175,55,0.22);
+}
+.choice-label, .council-label {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.10em;
+  color: var(--ink);
+  text-transform: uppercase;
+  margin-bottom: 0.18rem;
+}
+.choice-desc, .council-desc {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.92rem;
+  line-height: 1.28;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+.campaign-card-list { display: flex; flex-direction: column; gap: 0.58rem; }
+.campaign-card {
+  border: 1px solid rgba(139,100,32,0.48);
+  background: rgba(244,232,208,0.70);
+  border-radius: 5px;
+  padding: 0.66rem;
+}
+.campaign-card-title { font-family: 'Cinzel', serif; font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); }
+.campaign-card-sub { font-family: 'Cormorant Garamond', serif; font-size: 0.92rem; color: var(--ink-soft); font-style: italic; margin-top: 0.14rem; line-height: 1.28; }
+.campaign-card-meta { font-family: 'Inter', sans-serif; font-size: 0.64rem; color: var(--ink-faded); margin-top: 0.36rem; line-height: 1.3; }
+.lore-unlock-item {
+  padding: 0.56rem 0;
+  border-bottom: 1px dashed rgba(107,74,50,0.35);
+}
+.lore-unlock-item:last-child { border-bottom: none; }
+.lore-unlock-item-title { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.1em; color: var(--ink); text-transform: uppercase; }
+.lore-unlock-item-text { font-family: 'Cormorant Garamond', serif; font-size: 0.93rem; color: var(--ink-soft); line-height: 1.32; font-style: italic; margin-top: 0.18rem; }
+.quest-anchor-row {
+  padding: 0.46rem 0;
+  border-bottom: 1px dashed rgba(107,74,50,0.30);
+}
+.quest-anchor-row:last-child { border-bottom: none; }
+.quest-anchor-name { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); }
+.quest-anchor-real { font-family: 'Cormorant Garamond', serif; font-size: 0.91rem; color: var(--ink-soft); font-style: italic; margin-top: 0.1rem; }
+
+
+/* ============================================================
+   STORY ENGINE 3.0A.1 — REAL TASK ANCHORS
+   Daily buttons stay readable; lore becomes the translation layer.
+   ============================================================ */
+.today-quest-real-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+.today-quest-lore-line {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.93rem;
+  color: var(--gold-deep);
+  font-style: italic;
+  line-height: 1.25;
+  margin-top: 0.12rem;
+}
+.today-quest-lore-line strong {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  font-style: normal;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faded);
+  margin-right: 0.25rem;
+}
+.today-quest-domain {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.64rem;
+  color: var(--ink-faded);
+  margin-top: 0.18rem;
+}
+.today-quest-desc .task-anchor-note {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-size: 0.68rem;
+  color: var(--ink-faded);
+  margin-bottom: 0.35rem;
+}
+.quest-summary-lore {
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--gold-deep);
+  font-size: 0.92rem;
+  font-style: italic;
+  line-height: 1.25;
+  margin-top: 0.1rem;
+}
+.quest-summary-lore strong {
+  font-family: 'Cinzel', serif;
+  font-style: normal;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-faded);
+  text-transform: uppercase;
+}
+.scene-anchor-line .scene-anchor-real {
+  color: var(--ink);
+}
+.scene-anchor-line .scene-anchor-arrow {
+  color: var(--gold-deep);
+  padding: 0 0.2rem;
+}
+.scene-anchor-line .scene-anchor-lore {
+  color: var(--gold-deep);
+  font-style: italic;
+}
+
+
+/* ============================================================
+   STORY ENGINE 3.0A.2 — THEME-FIRST TODAY WATCH
+   Broad real-world tiles first; specific tasks second; lore stays secondary.
+   ============================================================ */
+.theme-watch-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.theme-task-card {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(212, 175, 55, 0.08), transparent 60%),
+    var(--parchment);
+  border: 1px solid rgba(139, 100, 32, 0.45);
+  border-left: 3px solid var(--gold-deep);
+  border-radius: 6px;
+  padding: 0.75rem;
+  box-shadow: 0 2px 8px rgba(42, 24, 16, 0.10);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+.theme-task-card.done {
+  border-left-color: var(--forest);
+  border-color: rgba(58, 90, 58, 0.48);
+  box-shadow: 0 3px 12px rgba(58, 90, 58, 0.12);
+}
+.theme-task-card.heroic {
+  border-left-color: var(--gold-bright);
+  border-color: rgba(212, 175, 55, 0.85);
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.22), 0 4px 18px rgba(212, 175, 55, 0.18);
+}
+.theme-task-top {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  gap: 0.65rem;
+  align-items: center;
+  margin-bottom: 0.55rem;
+}
+.theme-task-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 5px;
+  border: 1px solid rgba(139, 100, 32, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--parchment-dark);
+}
+.theme-task-icon svg { width: 22px; height: 22px; fill: var(--gold-deep); }
+.theme-task-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+.theme-task-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.68rem;
+  color: var(--ink-faded);
+  margin-top: 0.12rem;
+  line-height: 1.25;
+}
+.theme-task-count {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faded);
+  border: 1px solid rgba(107, 74, 50, 0.35);
+  border-radius: 999px;
+  padding: 0.3rem 0.45rem;
+  background: rgba(244, 232, 208, 0.6);
+  white-space: nowrap;
+}
+.theme-task-card.done .theme-task-count { color: var(--forest); border-color: rgba(58, 90, 58, 0.45); }
+.theme-task-card.heroic .theme-task-count { color: var(--gold-bright); background: var(--ink); border-color: var(--gold-bright); }
+.theme-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.theme-chip {
+  border: 1px solid rgba(107, 74, 50, 0.45);
+  background: var(--parchment-dark);
+  color: var(--ink-soft);
+  border-radius: 999px;
+  padding: 0.45rem 0.62rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+.theme-chip:active { transform: scale(0.96); }
+.theme-chip.on {
+  background: var(--ink);
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.20);
+}
+.theme-chip:disabled { opacity: 0.58; cursor: not-allowed; }
+.theme-selected-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.65rem;
+  padding-top: 0.55rem;
+  border-top: 1px dashed rgba(107, 74, 50, 0.35);
+}
+.theme-selected-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+  background: rgba(244, 232, 208, 0.55);
+  border: 1px solid rgba(107, 74, 50, 0.22);
+  border-radius: 4px;
+  padding: 0.45rem 0.55rem;
+}
+.theme-selected-main {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  line-height: 1.25;
+}
+.theme-selected-main strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+.theme-selected-lore {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--ink-faded);
+  font-size: 0.9rem;
+  margin-top: 0.08rem;
+}
+.theme-anchor-btn {
+  border: 1px solid rgba(139, 100, 32, 0.55);
+  background: transparent;
+  color: var(--gold-deep);
+  border-radius: 999px;
+  padding: 0.32rem 0.45rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.56rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.theme-anchor-btn.on {
+  background: var(--ink);
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
+}
+.theme-watch-note {
+  width: 100%;
+  min-height: 58px;
+  resize: vertical;
+  background: var(--parchment);
+  border: 1px solid rgba(107, 74, 50, 0.45);
+  border-radius: 4px;
+  padding: 0.6rem 0.7rem;
+  color: var(--ink);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  line-height: 1.35;
+  outline: none;
+  margin-top: 0.75rem;
+}
+.theme-watch-note:focus { border-color: var(--gold); }
+.theme-watch-note::placeholder { color: var(--ink-faded); font-style: italic; }
+.theme-layout-hint {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  margin-bottom: 0.75rem;
+  font-style: italic;
+}
+@media (max-width: 360px) {
+  .theme-task-top { grid-template-columns: 30px 1fr; }
+  .theme-task-count { grid-column: 1 / -1; width: fit-content; }
+  .theme-selected-item { grid-template-columns: 1fr; }
+}
+
+
+
+/* ============================================================
+   STORY ENGINE 3.0A.3 — ATTRIBUTE-FIRST WATCH LAYOUT
+   Six D&D attributes become the primary task categories.
+   ============================================================ */
+.attribute-watch-hint {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--ink-soft);
+  line-height: 1.42;
+  background: rgba(184, 137, 58, 0.08);
+  border-left: 3px solid var(--gold);
+  padding: 0.62rem 0.75rem;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 0.75rem;
+}
+.attribute-watch-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+  margin-bottom: 0.75rem;
+}
+.attribute-card {
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 0%, rgba(212, 175, 55, 0.10), transparent 70%),
+    var(--parchment);
+  border: 1px solid rgba(139, 100, 32, 0.48);
+  border-radius: 6px;
+  padding: 0.65rem;
+  min-height: 92px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.attribute-card:active { transform: scale(0.985); }
+.attribute-card.active {
+  border-color: var(--gold-bright);
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.28), 0 4px 16px rgba(212, 175, 55, 0.16);
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 0%, rgba(212, 175, 55, 0.16), transparent 72%),
+    var(--parchment-dark);
+}
+.attribute-card.done {
+  border-color: rgba(58, 90, 58, 0.55);
+  box-shadow: 0 3px 12px rgba(58, 90, 58, 0.11);
+}
+.attribute-card.heroic {
+  border-color: var(--gold-bright);
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.35), 0 4px 18px rgba(212, 175, 55, 0.22);
+}
+.attribute-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  margin-bottom: 0.35rem;
+}
+.attribute-code {
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  color: var(--gold-deep);
+  font-weight: 700;
+}
+.attribute-value-pill {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.09em;
+  color: var(--ink-faded);
+  border: 1px solid rgba(107,74,50,0.32);
+  border-radius: 999px;
+  padding: 0.18rem 0.38rem;
+  background: rgba(244, 232, 208, 0.65);
+  white-space: nowrap;
+}
+.attribute-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.66rem;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--ink);
+  line-height: 1.22;
+}
+.attribute-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.88rem;
+  line-height: 1.22;
+  color: var(--ink-soft);
+  font-style: italic;
+  margin-top: 0.22rem;
+}
+.attribute-count-line {
+  margin-top: 0.42rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.64rem;
+  color: var(--gold-deep);
+}
+.attribute-detail-panel {
+  background: var(--parchment-dark);
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  padding: 0.8rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 12px var(--shadow);
+  position: relative;
+}
+.attribute-detail-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+}
+.attribute-detail-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  align-items: baseline;
+  border-bottom: 1px dashed rgba(107,74,50,0.38);
+  padding-bottom: 0.55rem;
+  margin-bottom: 0.65rem;
+}
+.attribute-detail-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.13em;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+.attribute-detail-lore {
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--ink-faded);
+  font-size: 0.92rem;
+  font-style: italic;
+  text-align: right;
+}
+.attribute-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.attribute-chip {
+  border: 1px solid rgba(107, 74, 50, 0.45);
+  background: var(--parchment);
+  color: var(--ink-soft);
+  border-radius: 999px;
+  padding: 0.46rem 0.62rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.74rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.attribute-chip:active { transform: scale(0.96); }
+.attribute-chip.on {
+  background: var(--ink);
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
+  box-shadow: 0 2px 8px rgba(212,175,55,0.20);
+}
+.attribute-chip:disabled { opacity: 0.55; cursor: not-allowed; }
+.attribute-selected-list {
+  margin-top: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.attribute-selected-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+  background: rgba(244,232,208,0.65);
+  border: 1px solid rgba(107,74,50,0.28);
+  border-radius: 4px;
+  padding: 0.5rem 0.55rem;
+}
+.attribute-selected-main strong {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.76rem;
+  color: var(--ink);
+}
+.attribute-selected-lore {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  font-style: italic;
+  line-height: 1.25;
+  margin-top: 0.08rem;
+}
+.attribute-anchor-btn {
+  border: 1px solid rgba(139,100,32,0.55);
+  background: transparent;
+  color: var(--gold-deep);
+  font-family: 'Cinzel', serif;
+  font-size: 0.56rem;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 0.34rem 0.48rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.attribute-anchor-btn.on {
+  background: var(--ink);
+  color: var(--gold-bright);
+  border-color: var(--gold-bright);
+}
+.attribute-watch-note {
+  width: 100%;
+  min-height: 58px;
+  resize: vertical;
+  background: var(--parchment);
+  border: 1px solid rgba(107, 74, 50, 0.45);
+  border-radius: 4px;
+  padding: 0.6rem 0.7rem;
+  color: var(--ink);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  line-height: 1.35;
+  outline: none;
+  margin-top: 0.2rem;
+}
+.attribute-watch-note:focus { border-color: var(--gold); }
+.attribute-watch-note::placeholder { color: var(--ink-faded); font-style: italic; }
+.attribute-track-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.55rem;
+}
+.attribute-track-card {
+  background: var(--parchment);
+  border: 1px solid rgba(139,100,32,0.45);
+  border-left: 3px solid var(--gold-deep);
+  border-radius: 5px;
+  padding: 0.65rem 0.72rem;
+}
+.attribute-track-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  align-items: baseline;
+  margin-bottom: 0.25rem;
+}
+.attribute-track-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+.attribute-track-stat {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  color: var(--gold-deep);
+  white-space: nowrap;
+}
+.attribute-track-copy {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.93rem;
+  line-height: 1.32;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+.attribute-track-tasks {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.67rem;
+  color: var(--ink-faded);
+  line-height: 1.35;
+  margin-top: 0.32rem;
+}
+.attribute-track-meter {
+  height: 5px;
+  background: var(--parchment-dark);
+  border: 1px solid rgba(107,74,50,0.30);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 0.45rem;
+}
+.attribute-track-meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright));
+}
+@media (max-width: 390px) {
+  .attribute-watch-grid { grid-template-columns: 1fr; }
+  .attribute-detail-header { flex-direction: column; gap: 0.18rem; }
+  .attribute-detail-lore { text-align: left; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .attribute-card, .attribute-chip { transition: none; }
+}
+
 </style>
 </head>
 <body>
@@ -7849,6 +8585,2496 @@ async function testBackendConnection() {
     showToast(`Failed: ${err.message || 'unknown'}`);
   }
 }
+
+
+
+/* ============================================================
+   STORY ENGINE 3.0A — HTML APP / FRONTEND STATE PATCH
+   Adds lore-first domains, heroic task, pressure, choices,
+   councils, party-member NPCs, campaign cards, and lore unlocks.
+   ============================================================ */
+const STORY_ENGINE_VERSION = '3.0A';
+
+const DOMAINS = {
+  archive: {
+    id: 'archive', name: 'The Archive', stat: 'INT', icon: 'book',
+    realWorldExamples: ['UWorld', 'Anki', 'exam prep', 'board prep', 'reading'],
+    locationName: 'The Sealed Archive',
+    shortLoreDescription: 'Shelves of casebooks, oath-ledgers, and reports that prefer not to be understood quickly.',
+    microRewardLines: [
+      'The sealed shelves remember the hand that returns.',
+      'A difficult page yields one quiet inch.',
+      'Dust shifts. Somewhere, an index becomes less useless.'
+    ],
+    unlocks: ['Restricted shelf rumor', 'Sealed report fragment', 'Trial ledger']
+  },
+  infirmary: {
+    id: 'infirmary', name: 'The Infirmary', stat: 'WIS', icon: 'caduceus',
+    realWorldExamples: ['residency work', 'clinical duty', 'patient care'],
+    locationName: 'The Infirmary',
+    shortLoreDescription: 'A room of clean cloth, hard choices, and the kind of responsibility that does not applaud.',
+    microRewardLines: [
+      'The room is quieter because someone competent crossed it.',
+      'A small mercy reaches its shelf before nightfall.',
+      'Thale would call it duty, which is his word for praise.'
+    ],
+    unlocks: ['Mentor respect', 'Service reputation', 'Mercy stores']
+  },
+  scriptorium: {
+    id: 'scriptorium', name: 'The Scriptorium', stat: 'INT', icon: 'scroll',
+    realWorldExamples: ['research', 'abstracts', 'manuscripts', 'mentor emails'],
+    locationName: 'The Scriptorium',
+    shortLoreDescription: 'A narrow room where questions become maps and maps become trouble.',
+    microRewardLines: [
+      'A margin note becomes a path.',
+      'The ink dries into something that may yet matter.',
+      'A question survives the first attempt to kill it.'
+    ],
+    unlocks: ['Scholar NPC hint', 'Prestige thread', 'Discovery fragment']
+  },
+  training_yard: {
+    id: 'training_yard', name: 'The Training Yard', stat: 'STR', icon: 'sword',
+    realWorldExamples: ['gym', 'cardio', 'lifting', 'mobility'],
+    locationName: 'The Training Yard',
+    shortLoreDescription: 'Scuffed stone, dull blades, honest breath, and no patience for speeches.',
+    microRewardLines: [
+      'The yard keeps an honest record.',
+      'The blade is not lighter. The hand is better.',
+      'Across the yard, the rival notices and pretends not to.'
+    ],
+    unlocks: ['Rival scene', 'Class readiness', 'Body Forge beat']
+  },
+  hearth: {
+    id: 'hearth', name: 'The Hearth', stat: 'CON', icon: 'heart',
+    realWorldExamples: ['sleep', 'nutrition', 'protein', 'hydration', 'recovery'],
+    locationName: 'The Hearth',
+    shortLoreDescription: 'The less glamorous half of courage: food, sleep, water, and repair.',
+    microRewardLines: [
+      'The fire is banked properly for once.',
+      'The body is not a mule, despite some evidence to the contrary.',
+      'Warmth returns to the edges of the day.'
+    ],
+    unlocks: ['Recovery boon hint', 'Body Forge support', 'Pressure relief']
+  },
+  quarters: {
+    id: 'quarters', name: 'The Quarters', stat: 'DEX', icon: 'broom',
+    realWorldExamples: ['cleaning', 'laundry', 'chores', 'organizing'],
+    locationName: 'The East-Tower Quarters',
+    shortLoreDescription: 'A private kingdom small enough to conquer and large enough to decay if ignored.',
+    microRewardLines: [
+      'Chaos loses one drawer.',
+      'The room stops muttering accusations.',
+      'Order, modest and badly needed, takes the floor.'
+    ],
+    unlocks: ['Quarters upgrade', 'Chaos relief', 'Stable rest']
+  },
+  long_table: {
+    id: 'long_table', name: 'The Long Table', stat: 'CHA', icon: 'goblets',
+    realWorldExamples: ['friends', 'family', 'dates', 'social connection'],
+    locationName: 'The Long Table',
+    shortLoreDescription: 'Where company turns the chapterhouse from a building into a place people return to.',
+    microRewardLines: [
+      'A chair stays warm after the meal ends.',
+      'The table grows less empty by one honest hour.',
+      'Morale is cheap to lose and expensive to replace. Tonight it holds.'
+    ],
+    unlocks: ['Party scene', 'Companion hint', 'Morale thread']
+  },
+  ledger: {
+    id: 'ledger', name: "The Steward’s Ledger", stat: 'WIS', icon: 'scroll',
+    realWorldExamples: ['bills', 'scheduling', 'finances', 'admin'],
+    locationName: "The Steward’s Ledger",
+    shortLoreDescription: 'The unromantic book that prevents romantic disasters.',
+    microRewardLines: [
+      'A future inconvenience dies quietly in the margin.',
+      'The steward will not thank you. The steward is still relieved.',
+      'Resources stop leaking through a hole no one wanted to name.'
+    ],
+    unlocks: ['Resource stability', 'Chaos relief', 'Council leverage']
+  },
+  artificer_bench: {
+    id: 'artificer_bench', name: "The Artificer’s Bench", stat: 'INT', icon: 'hourglass',
+    realWorldExamples: ['app building', 'coding', 'creative work'],
+    locationName: "The Artificer’s Bench",
+    shortLoreDescription: 'A bench of half-made tools, stubborn wires, and useful little monsters.',
+    microRewardLines: [
+      'The device makes one fewer stupid demand.',
+      'A hinge catches, a gear turns, and the bench looks smug about it.',
+      'The tool becomes slightly more worthy of the hand.'
+    ],
+    unlocks: ['Meta-upgrade', 'Tool invention', 'System refinement']
+  },
+  war_room: {
+    id: 'war_room', name: 'The War Room', stat: 'WIS', icon: 'hourglass',
+    realWorldExamples: ['planning', 'reflection', 'weekly reset', 'strategy'],
+    locationName: 'The War Room',
+    shortLoreDescription: 'A table of maps, imperfect plans, and fewer avoidable ambushes.',
+    microRewardLines: [
+      'The map does not improve. The route does.',
+      'Foresight, the least glamorous form of luck, enters the room.',
+      'Tomorrow is not tamed, but it is at least named.'
+    ],
+    unlocks: ['Council choices', 'Foresight thread', 'Campaign direction']
+  }
+};
+
+const DOMAIN_ORDER = ['archive','infirmary','scriptorium','training_yard','hearth','quarters','long_table','ledger','artificer_bench','war_room'];
+const DOMAIN_TO_CATEGORY = {
+  archive: 'Study', infirmary: 'Work', scriptorium: 'Research', training_yard: 'Train', hearth: 'Health',
+  quarters: 'Chores', long_table: 'Social', ledger: 'Work', artificer_bench: 'Research', war_room: 'Study'
+};
+const DIFFICULTY_RANK = { minor: 1, standard: 2, major: 3, heroic: 4 };
+
+const LORE_PROOF_CHIPS = {
+  archive: ['Case opened', 'Sigils reviewed', 'Report studied', 'Shelf returned'],
+  infirmary: ['Duty kept', 'Hands steady', 'Rounds endured', 'Small mercy'],
+  scriptorium: ['Ink laid', 'Question named', 'Letter sent', 'Table revised'],
+  training_yard: ['Drills done', 'Blade lifted', 'Road taken', 'Form held'],
+  hearth: ['Fire banked', 'Rations kept', 'Water drawn', 'Sleep defended'],
+  quarters: ['Floor reclaimed', 'Laundry routed', 'Desk cleared', 'Dust beaten'],
+  long_table: ['Bread broken', 'Call answered', 'Chair kept', 'Laughter logged'],
+  ledger: ['Bill settled', 'Plan filed', 'Coin counted', 'Time claimed'],
+  artificer_bench: ['Gear turned', 'Patch forged', 'Tool tuned', 'Bug slain'],
+  war_room: ['Map checked', 'Week surveyed', 'Route chosen', 'Ambush named']
+};
+
+const LORE_QUEST_SEEDS = [
+  { id: 'q_archive_trial', name: 'Trial of the Archive', realLabel: 'UWorld / question block', loreName: 'Trial of the Archive', loreDescription: 'Open a sealed case and answer what it asks before the shelves go quiet.', domainId: 'archive', category: 'Study', cadence: 'daily', target: 1, difficulty: 'major', icon: 'book', rewardXp: 15, domainXp: 14, pressureEffects: { rival: -2, greyrot: -1 }, worldEffect: 'The Archive grows easier to navigate.' },
+  { id: 'q_memory_sigils', name: 'Memory Sigils', realLabel: 'Anki / spaced repetition', loreName: 'Memory Sigils', loreDescription: 'Refresh the small runes before they fade back into expensive nonsense.', domainId: 'archive', category: 'Study', cadence: 'daily', target: 1, difficulty: 'standard', icon: 'book', rewardXp: 10, domainXp: 10, pressureEffects: { rival: -1 }, worldEffect: 'Old knowledge stays within reach.' },
+  { id: 'q_yard_drills', name: 'Yard Drills', realLabel: 'Workout', loreName: 'Yard Drills', loreDescription: 'Report to the yard and make the body less surprised by the road.', domainId: 'training_yard', category: 'Train', cadence: 'weekly', target: 3, difficulty: 'major', icon: 'sword', rewardXp: 15, domainXp: 16, pressureEffects: { rival: -2 }, worldEffect: 'The yard begins to expect your footsteps.' },
+  { id: 'q_rations_hearth', name: 'Rations of the Hearth', realLabel: 'Protein / nutrition', loreName: 'Rations of the Hearth', loreDescription: 'Feed the traveler well enough that tomorrow does not begin in debt.', domainId: 'hearth', category: 'Health', cadence: 'daily', target: 1, difficulty: 'standard', icon: 'heart', rewardXp: 10, domainXp: 10, pressureEffects: { greyrot: -1 }, worldEffect: 'The hearth holds its warmth.' },
+  { id: 'q_night_watch', name: 'Night Watch Kept', realLabel: 'Sleep / recovery', loreName: 'Night Watch Kept', loreDescription: 'End the watch with enough mercy that the morning does not arrive armed.', domainId: 'hearth', category: 'Health', cadence: 'daily', target: 1, difficulty: 'standard', icon: 'heart', rewardXp: 10, domainXp: 10, pressureEffects: { greyrot: -1 }, worldEffect: 'Recovery returns to the ledger.' },
+  { id: 'q_scriptorium_inquiry', name: 'Scriptorium Inquiry', realLabel: 'Research block', loreName: 'Scriptorium Inquiry', loreDescription: 'Carry one question far enough that it stops being only a question.', domainId: 'scriptorium', category: 'Research', cadence: 'weekly', target: 2, difficulty: 'major', icon: 'scroll', rewardXp: 15, domainXp: 16, pressureEffects: { greyrot: -1 }, worldEffect: 'The Scriptorium gains a thread worth following.' },
+  { id: 'q_quarters_restored', name: 'Quarters Restored', realLabel: 'Chores / cleaning', loreName: 'Quarters Restored', loreDescription: 'Drive the small disorder out before it starts charging rent.', domainId: 'quarters', category: 'Chores', cadence: 'weekly', target: 2, difficulty: 'standard', icon: 'broom', rewardXp: 10, domainXp: 12, pressureEffects: { chaos: -3 }, worldEffect: 'The east tower becomes less hostile.' },
+  { id: 'q_long_table_bond', name: 'Long Table Bond', realLabel: 'Friends / family / social connection', loreName: 'Long Table Bond', loreDescription: 'Keep one bond warm enough that distance cannot easily put it out.', domainId: 'long_table', category: 'Social', cadence: 'weekly', target: 2, difficulty: 'standard', icon: 'goblets', rewardXp: 10, domainXp: 12, pressureEffects: { greyrot: -1 }, worldEffect: 'The table remembers another voice.' },
+  { id: 'q_ledger_duty', name: 'Ledger Duty', realLabel: 'Finances / admin / scheduling', loreName: 'Ledger Duty', loreDescription: 'Settle the small account before it returns with friends.', domainId: 'ledger', category: 'Work', cadence: 'weekly', target: 1, difficulty: 'standard', icon: 'scroll', rewardXp: 10, domainXp: 12, pressureEffects: { chaos: -3 }, worldEffect: 'The steward’s book stops bleeding ink.' },
+  { id: 'q_war_room_survey', name: 'War Room Survey', realLabel: 'Planning / weekly review', loreName: 'War Room Survey', loreDescription: 'Look over the map while there is still time to choose the road.', domainId: 'war_room', category: 'Study', cadence: 'weekly', target: 1, difficulty: 'standard', icon: 'hourglass', rewardXp: 10, domainXp: 12, pressureEffects: { chaos: -2, greyrot: -1 }, worldEffect: 'The week becomes a little less able to ambush you.' }
+];
+
+const LEGACY_QUEST_TO_SEED = {
+  q_long_reading: 'q_archive_trial',
+  q_bodys_due: 'q_rations_hearth',
+  q_hour_unspent: 'q_war_room_survey',
+  q_forge: 'q_yard_drills',
+  q_bonds_kept: 'q_long_table_bond',
+  q_slow_work: 'q_scriptorium_inquiry'
+};
+
+const CAMPAIGN_CARD_SEEDS = [
+  { id: 'nine_week_trial', title: 'The Nine-Week Trial', subtitle: 'The board-prep arc beneath the sealed shelves.', domains: ['archive','war_room'], currentObjective: 'Keep the Archive warm and review the map before the week turns.', nextUnlock: 'A sealed report fragment waits at 25%.', status: 'active' },
+  { id: 'body_forge', title: 'The Body Forge', subtitle: 'Training, rations, recovery, and the slow argument with gravity.', domains: ['training_yard','hearth'], currentObjective: 'Pair yard work with a defended hearth.', nextUnlock: 'The rival notices consistency at 25%.', status: 'active' },
+  { id: 'scriptorium_path', title: 'The Scriptorium Path', subtitle: 'Research, fellowship work, and questions that may become reputation.', domains: ['scriptorium'], currentObjective: 'Move one inquiry forward each week.', nextUnlock: 'A scholar takes interest at 25%.', status: 'active' },
+  { id: 'chapterhouse', title: 'The Chapterhouse', subtitle: 'Order, resources, recovery, and the people who keep the place alive.', domains: ['quarters','ledger','long_table','hearth'], currentObjective: 'Keep chaos from becoming a tenant.', nextUnlock: 'The east tower improves at 25%.', status: 'active' },
+  { id: 'eastern_road', title: 'The Eastern Road', subtitle: 'The main Greyrot thread, mostly quiet for now. Mostly.', domains: DOMAIN_ORDER, currentObjective: 'Build enough mixed consistency for the Council to act.', nextUnlock: 'Council scene upgrade at 25%.', status: 'active' }
+];
+
+const __storyEngineBase = {
+  init,
+  migrateCampaignState,
+  callWorker,
+  buildWorkerContext,
+  submitCheckIn,
+  closeTodayWatch,
+  cycleTodayQuest,
+  toggleTodayQuestChip,
+  buildQuestboardPayload,
+  renderTodayQuestCard,
+  renderQuestPanel,
+  sourceQuestRewardLabel,
+  questToCategoryTag,
+  showTodayCardIfLogged,
+  renderTodaysWorldResponse,
+  renderQuestsPage,
+  renderWorldPage,
+  renderWorldCast,
+  renderWorldBoss,
+  renderSettings,
+  renderQuestStats,
+  reckoningHTML
+};
+
+function getDomain(domainId) {
+  return DOMAINS[domainId] || DOMAINS.archive;
+}
+
+function inferDomainFromCategory(category) {
+  const map = { Work: 'infirmary', Study: 'archive', Research: 'scriptorium', Train: 'training_yard', Health: 'hearth', Chores: 'quarters', Social: 'long_table' };
+  return map[category] || 'archive';
+}
+
+function inferDomainFromQuestName(name) {
+  const n = String(name || '').toLowerCase();
+  if (/anki|memory|sigil|uworld|question|reading|study|archive|book|board/.test(n)) return 'archive';
+  if (/clinic|hospital|patient|work|duty|round|infirmary/.test(n)) return 'infirmary';
+  if (/research|paper|abstract|scriptorium|manuscript|draft|mentor|email/.test(n)) return 'scriptorium';
+  if (/gym|lift|run|cardio|train|forge|yard|workout/.test(n)) return 'training_yard';
+  if (/sleep|protein|food|nutrition|water|health|hearth|recovery/.test(n)) return 'hearth';
+  if (/clean|laundry|chore|room|quarter|organize/.test(n)) return 'quarters';
+  if (/friend|family|social|call|date|bond|table/.test(n)) return 'long_table';
+  if (/bill|admin|finance|schedule|ledger/.test(n)) return 'ledger';
+  if (/code|app|build|patch|artificer/.test(n)) return 'artificer_bench';
+  if (/plan|review|reset|strategy|war room/.test(n)) return 'war_room';
+  return inferDomainFromCategory(null);
+}
+
+function domainRewardLine(domainId) {
+  const lines = getDomain(domainId).microRewardLines || [];
+  return lines[Math.floor(Math.random() * Math.max(1, lines.length))] || 'The chapterhouse records the effort.';
+}
+
+function ensurePressureStateOn(cs) {
+  cs.pressure = cs.pressure || {};
+  for (const k of ['greyrot','rival','chaos']) {
+    cs.pressure[k] = Object.assign({ value: 0, lastChangedDate: null, trend: 'stable', lastNote: '' }, cs.pressure[k] || {});
+    cs.pressure[k].value = clampNumber(Number(cs.pressure[k].value || 0), 0, 100);
+    if (!['rising','falling','stable'].includes(cs.pressure[k].trend)) cs.pressure[k].trend = 'stable';
+  }
+  return cs.pressure;
+}
+
+function ensurePressureState() {
+  ensureStoryEngineState();
+  return ensurePressureStateOn(state.campaignState);
+}
+
+function ensureCampaignStoryFields(cs, existingState = state) {
+  cs = cs || {};
+  cs.seasonTitle = cs.seasonTitle || 'Season I: The Squire of Calenhal';
+  cs.chapterTitle = cs.chapterTitle || 'Chapter I: The House With Four Banners';
+  cs.activeThread = cs.activeThread || 'The First Trial';
+  cs.loomingThreat = cs.loomingThreat || 'The Greyrot stirs beyond the eastern road';
+  cs.rivalThread = cs.rivalThread || 'Another aspirant is already ahead';
+  cs.councilCadence = cs.councilCadence || 'weekly';
+  if (cs.tomorrowFocusDomain === undefined) cs.tomorrowFocusDomain = null;
+  if (cs.councilDirective === undefined) cs.councilDirective = null;
+  if (!cs.domainProgress || typeof cs.domainProgress !== 'object') cs.domainProgress = {};
+  for (const id of DOMAIN_ORDER) {
+    cs.domainProgress[id] = Object.assign({ xp: 0, completions: 0, lastReason: '', lastChangedDate: null }, cs.domainProgress[id] || {});
+    cs.domainProgress[id].xp = Number(cs.domainProgress[id].xp || 0);
+    cs.domainProgress[id].completions = Number(cs.domainProgress[id].completions || 0);
+  }
+  ensurePressureStateOn(cs);
+  if (!cs.dailyChoices || typeof cs.dailyChoices !== 'object') cs.dailyChoices = {};
+  if (!Array.isArray(cs.councils)) cs.councils = [];
+  if (!Array.isArray(cs.loreUnlocks)) cs.loreUnlocks = [];
+  if (!Array.isArray(existingState?.campaignCards)) existingState.campaignCards = [];
+  return cs;
+}
+
+migrateCampaignState = function patchedMigrateCampaignState(cs, existingState = state) {
+  const migrated = __storyEngineBase.migrateCampaignState ? __storyEngineBase.migrateCampaignState(cs, existingState) : (cs || {});
+  return ensureCampaignStoryFields(migrated, existingState);
+};
+
+function ensureNpcPartyFields(target = state) {
+  if (!target) return;
+  if (!Array.isArray(target.npcs)) target.npcs = [];
+  const hasThale = target.npcs.some(n => n.id === 'npc_iven_thale');
+  if (!hasThale) {
+    target.npcs.push({ id: 'npc_iven_thale', name: 'Master Iven Thale', role: 'Mentor', relationship: 'mentor', status: 'alive', tags: ['chapterhouse','watch','teacher'] });
+  }
+  if (target.rival?.name) {
+    const rid = 'npc_' + slugifyName(target.rival.name);
+    if (!target.npcs.some(n => n.id === rid)) {
+      target.npcs.push({ id: rid, name: target.rival.name, role: 'Rival', relationship: 'rival', status: 'alive', tags: ['rival','aspirant'] });
+    }
+  }
+  for (const npc of target.npcs) {
+    npc.id = npc.id || ('npc_' + slugifyName(npc.name || 'unknown'));
+    npc.name = npc.name || 'Unknown Companion';
+    npc.role = npc.role || 'Companion';
+    npc.relationship = npc.relationship || 'acquaintance';
+    if (!npc.partyRole) {
+      if (npc.id === 'npc_iven_thale' || /thale/i.test(npc.name)) npc.partyRole = 'The Stern Guide';
+      else if (npc.relationship === 'rival' || /rival/i.test(npc.role)) npc.partyRole = 'The Rival';
+      else if (/scholar|scribe/i.test(npc.role)) npc.partyRole = 'The Scholar';
+      else npc.partyRole = 'Unsworn Companion';
+    }
+    if (typeof npc.bond !== 'number') {
+      npc.bond = npc.relationship === 'mentor' ? 42 : npc.relationship === 'rival' ? 35 : npc.relationship === 'peer' ? 38 : 30;
+    }
+    npc.bond = clampNumber(npc.bond, 0, 100);
+    npc.attitude = npc.attitude || (npc.relationship === 'mentor' ? 'watchful' : npc.relationship === 'rival' ? 'politely competitive' : 'curious');
+    npc.currentConcern = npc.currentConcern || '';
+    npc.recentMemory = npc.recentMemory || '';
+    npc.personalQuest = npc.personalQuest || '';
+    npc.nextSceneHook = npc.nextSceneHook || '';
+    npc.lastScene = npc.lastScene || '';
+    if (npc.lastMentionedDate === undefined) npc.lastMentionedDate = null;
+    npc.status = npc.status || 'alive';
+    if (!Array.isArray(npc.tags)) npc.tags = [];
+  }
+}
+
+function loreDescriptionForDomain(domainId, name) {
+  const d = getDomain(domainId);
+  const lines = {
+    archive: 'Open the old shelves and return with one thing the morning did not know.',
+    infirmary: 'Answer the duty in front of you with steady hands and no theatre.',
+    scriptorium: 'Move a question from fog toward ink.',
+    training_yard: 'Give the yard enough effort that it has to remember you.',
+    hearth: 'Keep the body from becoming the first enemy of the road.',
+    quarters: 'Restore order to the small kingdom under your care.',
+    long_table: 'Keep a bond warm at the table before the hall grows cold.',
+    ledger: 'Settle one small account before it learns to shout.',
+    artificer_bench: 'Improve the tool, even if the tool complains first.',
+    war_room: 'Look over the map before the map becomes an ambush.'
+  };
+  return lines[domainId] || d.shortLoreDescription || String(name || 'A modest oath kept.');
+}
+
+function normalizeLoreQuest(q) {
+  const mappedSeedId = LEGACY_QUEST_TO_SEED[q.id];
+  const seed = mappedSeedId ? LORE_QUEST_SEEDS.find(s => s.id === mappedSeedId) : LORE_QUEST_SEEDS.find(s => s.id === q.id);
+  const originalName = q.realLabel || q.name || seed?.realLabel || seed?.name || 'Unlabeled anchor';
+  const domainId = q.domainId || seed?.domainId || inferDomainFromCategory(q.category) || inferDomainFromQuestName(q.name);
+  const d = getDomain(domainId);
+  const merged = Object.assign({}, seed || {}, q);
+  merged.realLabel = q.realLabel || seed?.realLabel || originalName;
+  merged.loreName = q.loreName || seed?.loreName || seed?.name || loreNameForQuest(q.name, domainId);
+  merged.name = merged.loreName;
+  merged.loreDescription = q.loreDescription || seed?.loreDescription || loreDescriptionForDomain(domainId, q.name);
+  merged.desc = merged.loreDescription;
+  merged.domainId = domainId;
+  merged.category = q.category && CATEGORIES[q.category] ? q.category : (seed?.category || DOMAIN_TO_CATEGORY[domainId] || 'Study');
+  merged.stat = q.stat || d.stat;
+  merged.cadence = q.cadence || seed?.cadence || 'daily';
+  merged.target = Number(q.target || seed?.target || 1);
+  merged.difficulty = q.difficulty || seed?.difficulty || (merged.cadence === 'weekly' ? 'standard' : 'minor');
+  merged.icon = q.icon || seed?.icon || d.icon || 'book';
+  merged.proofChips = Array.isArray(q.proofChips) && q.proofChips.length ? q.proofChips : (seed?.proofChips || LORE_PROOF_CHIPS[domainId] || ['Oath kept']);
+  merged.rewardXp = Number(q.rewardXp || seed?.rewardXp || (merged.cadence === 'weekly' ? 15 : 10));
+  merged.domainXp = Number(q.domainXp || seed?.domainXp || (merged.cadence === 'weekly' ? 12 : 8));
+  merged.pressureEffects = Object.assign({}, calculateQuestPressureEffects(merged), q.pressureEffects || seed?.pressureEffects || {});
+  merged.worldEffect = q.worldEffect || seed?.worldEffect || `${d.locationName} shifts by a small, visible amount.`;
+  if (typeof merged.archived !== 'boolean') merged.archived = false;
+  merged.createdAt = merged.createdAt || new Date().toISOString();
+  return merged;
+}
+
+function loreNameForQuest(name, domainId) {
+  const d = getDomain(domainId);
+  if (!name) return `${d.name} Duty`;
+  const n = String(name).toLowerCase();
+  if (/long reading|uworld|question/.test(n)) return 'Trial of the Archive';
+  if (/anki|memory/.test(n)) return 'Memory Sigils';
+  if (/forge|train|workout/.test(n)) return 'Yard Drills';
+  if (/body|health|protein|nutrition/.test(n)) return 'Rations of the Hearth';
+  if (/bond|social/.test(n)) return 'Long Table Bond';
+  if (/slow work|research/.test(n)) return 'Scriptorium Inquiry';
+  if (/hour unspent|plan|review/.test(n)) return 'War Room Survey';
+  return `${d.name} Duty`;
+}
+
+function ensureLoreQuestTemplates(target = state) {
+  if (!target) return;
+  if (!Array.isArray(target.quests)) target.quests = [];
+  target.quests = target.quests.map(normalizeLoreQuest);
+  const activeNames = new Set(target.quests.filter(q => !q.archived).map(q => q.loreName || q.name));
+  for (const seed of LORE_QUEST_SEEDS) {
+    if (!activeNames.has(seed.loreName)) {
+      target.quests.push(normalizeLoreQuest(Object.assign({}, seed, { archived: false, createdAt: new Date().toISOString() })));
+      activeNames.add(seed.loreName);
+    }
+  }
+}
+
+function ensureCampaignCards(target = state) {
+  if (!target) return;
+  if (!Array.isArray(target.campaignCards)) target.campaignCards = [];
+  const byId = new Map(target.campaignCards.map(c => [c.id, c]));
+  for (const seed of CAMPAIGN_CARD_SEEDS) {
+    const existing = byId.get(seed.id) || {};
+    const card = Object.assign({}, seed, existing);
+    card.domains = Array.isArray(card.domains) && card.domains.length ? card.domains : seed.domains;
+    card.progress = clampNumber(Number(card.progress || 0), 0, 100);
+    card.currentObjective = card.currentObjective || seed.currentObjective;
+    card.nextUnlock = card.nextUnlock || seed.nextUnlock;
+    card.recentConsequence = card.recentConsequence || '';
+    card.status = card.status || seed.status || 'active';
+    byId.set(seed.id, card);
+  }
+  target.campaignCards = Array.from(byId.values()).filter(Boolean);
+}
+
+function ensureStoryEngineState(target = state) {
+  if (!target) return;
+  target.storyEngineVersion = STORY_ENGINE_VERSION;
+  target.campaignState = ensureCampaignStoryFields(target.campaignState, target);
+  ensureNpcPartyFields(target);
+  ensureLoreQuestTemplates(target);
+  ensureCampaignCards(target);
+  if (!target.todayWatchDrafts || typeof target.todayWatchDrafts !== 'object') target.todayWatchDrafts = {};
+  if (!Array.isArray(target.entries)) target.entries = [];
+  for (const e of target.entries) {
+    if (e.heroicQuestId === undefined) e.heroicQuestId = null;
+    if (e.heroicQuestSnapshot === undefined) e.heroicQuestSnapshot = null;
+    if (e.worldResponses === undefined) e.worldResponses = [];
+    if (e.selectedChoiceId === undefined) e.selectedChoiceId = null;
+    if (e.loreUnlocks === undefined) e.loreUnlocks = [];
+    if (e.campaignSnapshot === undefined) e.campaignSnapshot = null;
+  }
+}
+
+function getDomainProgress(domainId) {
+  ensureStoryEngineState();
+  const d = getDomain(domainId).id;
+  const p = state.campaignState.domainProgress[d] || { xp: 0, completions: 0 };
+  return Object.assign({ level: Math.floor((Number(p.xp || 0)) / 100) + 1, progress: Number(p.xp || 0) % 100 }, p);
+}
+
+function addDomainProgress(domainId, amount, reason) {
+  ensureStoryEngineState();
+  const id = getDomain(domainId).id;
+  const p = state.campaignState.domainProgress[id];
+  p.xp = Math.max(0, Number(p.xp || 0) + Number(amount || 0));
+  if (amount > 0) p.completions = Number(p.completions || 0) + 1;
+  p.lastReason = reason || '';
+  p.lastChangedDate = gameDate();
+  updateCampaignCardsFromDomain(id, amount, reason);
+  return p;
+}
+
+function applyPressureDelta(kind, delta, note) {
+  ensurePressureState();
+  if (!state.campaignState.pressure[kind]) return null;
+  const p = state.campaignState.pressure[kind];
+  const before = Number(p.value || 0);
+  const after = clampNumber(before + Number(delta || 0), 0, 100);
+  p.value = after;
+  p.lastChangedDate = gameDate();
+  p.trend = after > before ? 'rising' : after < before ? 'falling' : 'stable';
+  if (note) p.lastNote = note;
+  return p;
+}
+
+function calculateQuestPressureEffects(quest) {
+  const domainId = quest?.domainId || inferDomainFromCategory(quest?.category) || inferDomainFromQuestName(quest?.name);
+  if (domainId === 'quarters') return { chaos: -3 };
+  if (domainId === 'ledger') return { chaos: -3 };
+  if (domainId === 'war_room') return { chaos: -2, greyrot: -1 };
+  if (domainId === 'archive') return { rival: -2, greyrot: -1 };
+  if (domainId === 'training_yard') return { rival: -2 };
+  if (domainId === 'hearth') return { greyrot: -1 };
+  if (domainId === 'long_table') return { greyrot: -1 };
+  if (domainId === 'scriptorium') return { greyrot: -1 };
+  return {};
+}
+
+function applyQuestImmediateReward(questId) {
+  ensureStoryEngineState();
+  const today = gameDate();
+  const draft = ensureTodayWatchDraft(today);
+  const qState = draft.quests[questId];
+  const quest = state.quests.find(q => q.id === questId);
+  if (!quest || !qState || qState.rewardApplied) return;
+  const domain = getDomain(quest.domainId);
+  const domainXp = Number(quest.domainXp || 8);
+  addDomainProgress(domain.id, domainXp, quest.loreName || quest.name);
+  const pressureEffects = quest.pressureEffects || calculateQuestPressureEffects(quest);
+  const pressureBits = [];
+  for (const [kind, delta] of Object.entries(pressureEffects)) {
+    if (!delta) continue;
+    applyPressureDelta(kind, clampNumber(delta, -5, 5), `${quest.loreName || quest.name} changed ${kind}.`);
+    pressureBits.push(`${campaignTitleCase(kind)} ${delta > 0 ? '+' : ''}${delta}`);
+  }
+  qState.rewardApplied = true;
+  qState.rewardSummary = `${domain.name} +${domainXp}${pressureBits.length ? ' · ' + pressureBits.join(' · ') : ''}`;
+  qState.rewardLine = domainRewardLine(domain.id);
+  qState.rewardedAt = new Date().toISOString();
+}
+
+function setHeroicQuestForToday(questId) {
+  const today = gameDate();
+  const draft = ensureTodayWatchDraft(today);
+  for (const [id, v] of Object.entries(draft.quests)) {
+    if (id !== questId && v.state === 'heroic') v.state = 'done';
+  }
+  if (draft.quests[questId]) {
+    if (draft.quests[questId].state === 'none') draft.quests[questId].state = 'done';
+    draft.quests[questId].state = 'heroic';
+    draft.heroicQuestId = questId;
+    draft.heroicManual = true;
+  }
+  saveState();
+}
+
+function completedQuestObjectsForDate(date = gameDate()) {
+  const draft = ensureTodayWatchDraft(date);
+  return Object.entries(draft.quests)
+    .filter(([_, v]) => v.state === 'done' || v.state === 'heroic')
+    .map(([id]) => state.quests.find(q => q.id === id))
+    .filter(Boolean);
+}
+
+function pickHeroicCandidate(date = gameDate()) {
+  const completed = completedQuestObjectsForDate(date);
+  if (!completed.length) return null;
+  return completed.sort((a, b) => {
+    const d = (DIFFICULTY_RANK[b.difficulty] || 1) - (DIFFICULTY_RANK[a.difficulty] || 1);
+    if (d !== 0) return d;
+    return Number(b.domainXp || 0) - Number(a.domainXp || 0);
+  })[0];
+}
+
+function autoSelectHeroicQuest(date = gameDate()) {
+  const draft = ensureTodayWatchDraft(date);
+  if (draft.heroicQuestId && draft.quests[draft.heroicQuestId] && ['done','heroic'].includes(draft.quests[draft.heroicQuestId].state)) {
+    draft.quests[draft.heroicQuestId].state = 'heroic';
+    return draft.heroicQuestId;
+  }
+  const q = pickHeroicCandidate(date);
+  if (!q) return null;
+  for (const v of Object.values(draft.quests)) if (v.state === 'heroic') v.state = 'done';
+  draft.quests[q.id].state = 'heroic';
+  draft.heroicQuestId = q.id;
+  draft.heroicManual = false;
+  return q.id;
+}
+
+function getHeroicQuestForDate(date = gameDate()) {
+  const draft = ensureTodayWatchDraft(date);
+  const id = draft.heroicQuestId || null;
+  if (id && draft.quests[id] && ['done','heroic'].includes(draft.quests[id].state)) return state.quests.find(q => q.id === id) || null;
+  return pickHeroicCandidate(date);
+}
+
+function getHeroicQuestSnapshot(questId) {
+  const q = state.quests.find(x => x.id === questId);
+  if (!q) return null;
+  const d = getDomain(q.domainId);
+  return {
+    id: q.id,
+    loreName: q.loreName || q.name,
+    loreDescription: q.loreDescription || q.desc || '',
+    realLabel: q.realLabel || q.name,
+    domainId: q.domainId,
+    domainName: d.name,
+    stat: q.stat || d.stat,
+    difficulty: q.difficulty || 'standard',
+    cadence: q.cadence || 'daily',
+    target: q.target || 1
+  };
+}
+
+function getQuestDisplayName(q) { return q ? (q.loreName || q.name || 'Unnamed Oath') : 'Unnamed Oath'; }
+function getQuestDisplayDescription(q) { return q ? (q.loreDescription || q.desc || '') : ''; }
+function getQuestProofChips(q) { return (Array.isArray(q?.proofChips) && q.proofChips.length) ? q.proofChips : (LORE_PROOF_CHIPS[q?.domainId] || ['Oath kept']); }
+
+questToCategoryTag = function patchedQuestToCategoryTag(quest) {
+  if (quest?.category && CATEGORIES[quest.category]) return quest.category;
+  if (quest?.domainId && DOMAIN_TO_CATEGORY[quest.domainId]) return DOMAIN_TO_CATEGORY[quest.domainId];
+  return __storyEngineBase.questToCategoryTag ? __storyEngineBase.questToCategoryTag(quest) : null;
+};
+
+sourceQuestRewardLabel = function patchedSourceQuestRewardLabel(quest) {
+  const d = getDomain(quest.domainId || inferDomainFromCategory(quest.category));
+  return `${d.name} +${quest.domainXp || 8} · ${d.stat}`;
+};
+
+cycleTodayQuest = function patchedCycleTodayQuest(questId) {
+  ensureStoryEngineState();
+  const today = gameDate();
+  if (state.entries.some(e => e.gameDate === today && e.type !== 'rest')) {
+    showToast('Watch already closed');
+    return;
+  }
+  const draft = ensureTodayWatchDraft(today);
+  const q = draft.quests[questId];
+  if (!q) return;
+  if (q.state === 'none') {
+    q.state = 'done';
+    applyQuestImmediateReward(questId);
+  } else if (q.state === 'done') {
+    if (todayHeroicExists(questId)) {
+      showToast('One heroic effort per day');
+      return;
+    }
+    q.state = 'heroic';
+    draft.heroicQuestId = questId;
+    draft.heroicManual = true;
+    applyQuestImmediateReward(questId);
+  } else {
+    q.state = 'none';
+    if (draft.heroicQuestId === questId) {
+      draft.heroicQuestId = null;
+      draft.heroicManual = false;
+    }
+  }
+  saveState();
+  renderQuestPanel();
+};
+
+const __baseToggleTodayQuestChip = toggleTodayQuestChip;
+toggleTodayQuestChip = function patchedToggleTodayQuestChip(questId, chip) {
+  __baseToggleTodayQuestChip(questId, chip);
+  const draft = ensureTodayWatchDraft(gameDate());
+  if (draft.quests[questId] && ['done','heroic'].includes(draft.quests[questId].state)) {
+    applyQuestImmediateReward(questId);
+    saveState();
+    renderQuestPanel();
+  }
+};
+
+buildQuestboardPayload = function patchedBuildQuestboardPayload() {
+  ensureStoryEngineState();
+  autoSelectHeroicQuest(gameDate());
+  const draft = ensureTodayWatchDraft();
+  const completedIds = completedTodayQuestIds();
+  const tags = [];
+  const parts = [];
+  for (const questId of completedIds) {
+    const quest = state.quests.find(q => q.id === questId);
+    if (!quest) continue;
+    const qState = draft.quests[questId];
+    const tag = questToCategoryTag(quest);
+    if (tag && !tags.includes(tag)) tags.push(tag);
+    const chips = (qState.chips || []).length ? ` (${qState.chips.join(', ')})` : '';
+    const note = qState.note && qState.note.trim() ? ` — ${qState.note.trim()}` : '';
+    const effort = qState.state === 'heroic' ? 'Scene anchor' : 'Oath kept';
+    parts.push(`${effort}: ${getQuestDisplayName(quest)}${chips}. ${getQuestDisplayDescription(quest)}${note}`);
+  }
+  const hero = getHeroicQuestForDate(gameDate());
+  if (hero) parts.unshift(`Today’s scene should center on ${getQuestDisplayName(hero)}.`);
+  return { completedIds, tags, text: parts.length ? parts.join('\n') : '' };
+};
+
+closeTodayWatch = async function patchedCloseTodayWatch() {
+  ensureStoryEngineState();
+  autoSelectHeroicQuest(gameDate());
+  return __storyEngineBase.closeTodayWatch();
+};
+
+renderTodayQuestCard = function patchedRenderTodayQuestCard(quest, alreadyLogged) {
+  ensureStoryEngineState();
+  const draftState = todayQuestState(quest.id);
+  const stateClass = draftState.state === 'done' ? 'done' : draftState.state === 'heroic' ? 'heroic' : '';
+  const rewardedClass = draftState.rewardApplied ? 'rewarded' : '';
+  const stateLabel = draftState.state === 'heroic' ? '✦ Heroic' : draftState.state === 'done' ? '✓ Kept' : '○ Tap';
+  const iconSvg = ICONS[quest.icon] || ICONS[getDomain(quest.domainId).icon] || ICONS.book;
+  const chips = getQuestProofChips(quest);
+  const chipHtml = chips.map(chip => `
+    <button class="today-chip ${draftState.chips.includes(chip) ? 'on' : ''}" ${alreadyLogged ? 'disabled' : ''} onclick="event.stopPropagation(); toggleTodayQuestChip('${quest.id}', '${escapeHTML(chip)}')">${escapeHTML(chip)}</button>
+  `).join('');
+  const d = getDomain(quest.domainId);
+  const meta = `${d.locationName} · ${d.stat} · ${quest.cadence}`;
+  const micro = draftState.rewardApplied ? `
+    <div class="today-quest-micro"><strong>${escapeHTML(draftState.rewardSummary || sourceQuestRewardLabel(quest))}</strong><br>${escapeHTML(draftState.rewardLine || domainRewardLine(quest.domainId))}</div>
+  ` : '';
+  const heroicBadge = draftState.state === 'heroic' ? `<span class="heroic-badge">✦ Scene Anchor</span>` : '';
+  return `
+    <div class="today-quest-card ${stateClass} ${rewardedClass}" data-today-quest-id="${quest.id}">
+      <div class="today-quest-head" onclick="toggleTodayQuestOpen('${quest.id}')">
+        <div class="today-quest-icon">${iconSvg}</div>
+        <div>
+          <div class="today-quest-title">${escapeHTML(getQuestDisplayName(quest))}</div>
+          <div class="today-quest-meta">${escapeHTML(meta)}</div>
+          <div class="today-quest-domain">${escapeHTML(d.name)} · ${escapeHTML(quest.difficulty || 'standard')}</div>
+          ${heroicBadge}
+        </div>
+        <button class="today-quest-state-btn" ${alreadyLogged ? 'disabled' : ''} onclick="event.stopPropagation(); cycleTodayQuest('${quest.id}')">${stateLabel}</button>
+      </div>
+      ${micro}
+      <div class="today-quest-body">
+        <div class="today-quest-desc">${escapeHTML(getQuestDisplayDescription(quest))}</div>
+        <div class="today-chip-row">${chipHtml}</div>
+        <textarea class="today-note" ${alreadyLogged ? 'disabled' : ''} placeholder="Optional field note. Keep it short." oninput="updateTodayQuestNote('${quest.id}', this.value)">${escapeHTML(draftState.note || '')}</textarea>
+      </div>
+    </div>
+  `;
+};
+
+renderQuestPanel = function patchedRenderQuestPanel() {
+  ensureStoryEngineState();
+  const panel = document.getElementById('quest-panel');
+  const dailyQuests = getDailyQuests();
+  const weeklyQuests = getWeeklyQuests();
+  const activeQuests = [...dailyQuests, ...weeklyQuests];
+  if (!panel) return;
+  panel.style.display = 'block';
+  const today = gameDate();
+  const alreadyLogged = state.entries.some(e => e.gameDate === today && e.type !== 'rest');
+  const draft = ensureTodayWatchDraft(today);
+  const completed = completedTodayQuestIds();
+  const dayName = new Date(today + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' });
+  const startWk = startOfWeekDate(today);
+  const dayInWeek = daysBetweenGameDates(startWk, today) + 1;
+  const hero = getHeroicQuestForDate(today);
+  document.getElementById('quest-panel-day').textContent = `${dayName} · ${completed.length}/${activeQuests.length} oaths kept`;
+
+  let html = `
+    <div class="today-watch-intro">
+      Tap lore oaths, mark one as the scene anchor if the day had a center, then close the Watch. No long journal required.
+    </div>
+    ${renderCouncilPanel()}
+    <div class="quest-section-label">Today’s Watch</div>
+    <div class="today-watch-list">
+  `;
+  for (const q of dailyQuests) html += renderTodayQuestCard(q, alreadyLogged);
+  for (const q of weeklyQuests) html += renderTodayQuestCard(q, alreadyLogged);
+  html += `</div>`;
+
+  if (weeklyQuests.length > 0) {
+    const wk = weekKeyForDate(today);
+    const weekRes = state.questHistory.weekly[wk] || evaluateWeeklyQuestsForWeek(wk);
+    html += `<div class="weekly-oath-panel"><div class="quest-section-label">Weekly Oaths · Day ${dayInWeek} of 7</div>`;
+    for (const q of weeklyQuests) {
+      const draftHit = draft.quests[q.id] && (draft.quests[q.id].state === 'done' || draft.quests[q.id].state === 'heroic') && !alreadyLogged ? 1 : 0;
+      const r = weekRes[q.id] || { hits: 0, target: q.target, status: 'open' };
+      const hits = Math.min(q.target, (r.hits || 0) + draftHit);
+      const cells = Array.from({ length: q.target }, (_, i) => `<div class="weekly-oath-pip ${i < hits ? 'filled' : ''}"></div>`).join('');
+      html += `
+        <div class="weekly-oath-row">
+          <div>
+            <div class="weekly-oath-name">${escapeHTML(getQuestDisplayName(q))}</div>
+            <div class="weekly-oath-pips">${cells}</div>
+          </div>
+          <div class="weekly-oath-count">${hits}/${q.target}</div>
+        </div>
+      `;
+    }
+    html += `</div>`;
+  }
+
+  const payload = buildQuestboardPayload();
+  const closeDisabled = alreadyLogged || payload.completedIds.length === 0;
+  const anchorLine = hero
+    ? `Today’s scene will center on: <strong>${escapeHTML(getQuestDisplayName(hero))}</strong>`
+    : 'Today’s scene will center on: <strong>the first oath you keep</strong>';
+  const summary = payload.completedIds.length > 0
+    ? `${payload.completedIds.length} oath${payload.completedIds.length === 1 ? '' : 's'} ready. ${anchorLine}`
+    : 'No oaths kept yet. Tap at least one quest to close the Watch.';
+
+  html += `
+    <div class="today-watch-actions">
+      <button class="btn" id="close-watch-btn" ${closeDisabled ? 'disabled' : ''}>✦ Close the Watch ✦</button>
+      <div class="scene-anchor-line">${alreadyLogged ? 'The Watch is already closed for today.' : summary}</div>
+    </div>
+  `;
+  document.getElementById('quest-panel-body').innerHTML = html;
+  const closeBtn = document.getElementById('close-watch-btn');
+  if (closeBtn) closeBtn.addEventListener('click', closeTodayWatch);
+};
+
+function normalizeNarrationResponse(response) {
+  const r = response && typeof response === 'object' ? Object.assign({}, response) : { narration: String(response || '') };
+  r.narration = typeof r.narration === 'string' && r.narration.trim() ? r.narration.trim() : 'The day was set down, if not elegantly. The chronicler will survive.';
+  r.event = typeof r.event === 'string' && r.event.trim() ? r.event.trim() : null;
+  r.npcMentions = Array.isArray(r.npcMentions) ? r.npcMentions : [];
+  r.worldResponses = Array.isArray(r.worldResponses) ? r.worldResponses : [];
+  r.pressureSuggestions = r.pressureSuggestions && typeof r.pressureSuggestions === 'object' ? r.pressureSuggestions : {};
+  r.npcBondSuggestions = Array.isArray(r.npcBondSuggestions) ? r.npcBondSuggestions : [];
+  r.campaignThreadUpdates = Array.isArray(r.campaignThreadUpdates) ? r.campaignThreadUpdates : [];
+  r.loreUnlockSuggestions = Array.isArray(r.loreUnlockSuggestions) ? r.loreUnlockSuggestions : [];
+  r.nextChoice = r.nextChoice && typeof r.nextChoice === 'object' ? r.nextChoice : null;
+  return r;
+}
+
+callWorker = async function patchedCallWorker(args) {
+  const resp = normalizeNarrationResponse(await __storyEngineBase.callWorker(args));
+  window.__chronicleLastWorkerResponse = resp;
+  return resp;
+};
+
+buildWorkerContext = function patchedBuildWorkerContext(tags, text, milestones, options = {}) {
+  ensureStoryEngineState();
+  const ctx = __storyEngineBase.buildWorkerContext(tags, text, milestones, options);
+  const today = ctx.todaysEntry?.gameDate || gameDate();
+  const hero = getHeroicQuestForDate(today);
+  ctx.domains = DOMAIN_ORDER.map(id => {
+    const d = getDomain(id);
+    const p = getDomainProgress(id);
+    return { id, name: d.name, stat: d.stat, locationName: d.locationName, completions: p.completions, xp: p.xp };
+  });
+  ctx.heroicQuest = hero ? getHeroicQuestSnapshot(hero.id) : null;
+  ctx.pressure = JSON.parse(JSON.stringify(state.campaignState.pressure || {}));
+  ctx.campaignCards = (state.campaignCards || []).map(c => ({ id: c.id, title: c.title, progress: c.progress, currentObjective: c.currentObjective }));
+  ctx.activeQuests = getActiveQuests().map(q => {
+    const d = getDomain(q.domainId);
+    const draft = state.todayWatchDrafts?.[today]?.quests?.[q.id];
+    return {
+      id: q.id,
+      name: q.loreName || q.name,
+      loreName: q.loreName || q.name,
+      loreDescription: q.loreDescription || q.desc,
+      domainId: q.domainId,
+      domainName: d.name,
+      cadence: q.cadence,
+      difficulty: q.difficulty,
+      todayStatus: draft?.state || 'none'
+    };
+  });
+  return ctx;
+};
+
+function handleWorldResponses(worldResponses) {
+  if (!Array.isArray(worldResponses)) return [];
+  return worldResponses.slice(0, 4).map((w, idx) => ({
+    date: gameDate(),
+    kind: String(w.kind || w.type || 'thread').slice(0, 32),
+    id: String(w.id || ('world_response_' + idx)).slice(0, 64),
+    title: String(w.title || w.heading || 'World Response').slice(0, 80),
+    text: String(w.text || w.description || '').slice(0, 240),
+    icon: String(w.icon || '✦').slice(0, 3)
+  })).filter(w => w.text);
+}
+
+function applyBoundedAiSuggestions(response) {
+  const r = normalizeNarrationResponse(response || {});
+  for (const [kind, raw] of Object.entries(r.pressureSuggestions || {})) {
+    if (!['greyrot','rival','chaos'].includes(kind)) continue;
+    const delta = clampNumber(Number(raw.delta ?? raw), -3, 3);
+    if (delta) applyPressureDelta(kind, delta, raw.note || 'The chronicler suggested a small pressure shift.');
+  }
+  for (const s of r.npcBondSuggestions || []) {
+    const npc = state.npcs.find(n => n.id === s.npcId || n.name === s.name);
+    if (!npc) continue;
+    const delta = clampNumber(Number(s.delta || 0), -3, 3);
+    npc.bond = clampNumber(Number(npc.bond || 30) + delta, 0, 100);
+    npc.recentMemory = String(s.note || npc.recentMemory || '').slice(0, 160);
+    npc.lastMentionedDate = gameDate();
+  }
+  for (const u of r.loreUnlockSuggestions || []) {
+    addLoreUnlock({
+      id: u.id || ('ai_' + slugifyName(u.title || 'lore') + '_' + gameDate()),
+      title: u.title || 'A Rumor Moves',
+      text: u.text || u.description || 'Something small changed in the margins.',
+      domainId: u.domainId || null,
+      unlockedAt: gameDate(),
+      trigger: u.trigger || 'chronicler',
+      seen: false
+    });
+  }
+}
+
+function createChoiceFromAi(nextChoice, date = gameDate()) {
+  if (!nextChoice || typeof nextChoice !== 'object') return null;
+  const options = Array.isArray(nextChoice.options) ? nextChoice.options.slice(0, 3) : [];
+  if (options.length < 2) return null;
+  return {
+    id: nextChoice.id || ('choice_' + date.replace(/-/g, '') + '_ai'),
+    title: String(nextChoice.title || 'At the campfire').slice(0, 80),
+    prompt: String(nextChoice.prompt || 'Tonight, attention must be placed somewhere.').slice(0, 220),
+    options: options.map((o, idx) => ({
+      id: o.id || ('opt_' + idx),
+      label: String(o.label || ('Option ' + (idx + 1))).slice(0, 80),
+      description: String(o.description || '').slice(0, 180),
+      effectType: o.effectType || 'focus_domain',
+      effectTarget: o.effectTarget || 'archive',
+      effectValue: clampNumber(Number(o.effectValue || 1), -5, 5)
+    })),
+    selectedOptionId: null,
+    resolvedAt: null
+  };
+}
+
+function generateFallbackDailyChoice(date = gameDate()) {
+  ensureStoryEngineState();
+  const hero = getHeroicQuestForDate(date);
+  const heroDomain = hero?.domainId || state.campaignState.tomorrowFocusDomain || 'archive';
+  const neglected = getNeglectedDomainId();
+  return {
+    id: 'choice_' + date.replace(/-/g, ''),
+    title: 'At the campfire',
+    prompt: `${state.character.name || 'Jerry'} decides where to place the next small weight of attention.`,
+    options: [
+      { id: 'return_to_focus', label: `Return to ${getDomain(heroDomain).name}`, description: getDomain(heroDomain).shortLoreDescription, effectType: 'focus_domain', effectTarget: heroDomain, effectValue: 1 },
+      { id: 'ask_thale', label: 'Ask Thale about the sealed reports', description: 'He may answer. Worse, he may ask a better question.', effectType: 'npc_bond', effectTarget: 'npc_iven_thale', effectValue: 2 },
+      { id: 'tend_neglected', label: `Walk past ${getDomain(neglected).name}`, description: 'Not everything urgent is loud.', effectType: 'focus_domain', effectTarget: neglected, effectValue: 1 }
+    ],
+    selectedOptionId: null,
+    resolvedAt: null
+  };
+}
+
+function ensureDailyChoice(date = gameDate(), aiChoice = null) {
+  ensureStoryEngineState();
+  const choices = state.campaignState.dailyChoices;
+  if (!choices[date]) choices[date] = createChoiceFromAi(aiChoice, date) || generateFallbackDailyChoice(date);
+  return choices[date];
+}
+
+function applyChoiceEffect(choice, option) {
+  if (!choice || !option) return;
+  const value = clampNumber(Number(option.effectValue || 0), -5, 5);
+  if (option.effectType === 'focus_domain') {
+    state.campaignState.tomorrowFocusDomain = option.effectTarget;
+  } else if (option.effectType === 'npc_bond') {
+    const npc = state.npcs.find(n => n.id === option.effectTarget);
+    if (npc) {
+      npc.bond = clampNumber(Number(npc.bond || 30) + value, 0, 100);
+      npc.recentMemory = `A campfire conversation shifted the air by ${value > 0 ? '+' : ''}${value}.`;
+      npc.lastMentionedDate = gameDate();
+    }
+  } else if (option.effectType === 'thread_heat') {
+    if (option.effectTarget === 'rival') applyPressureDelta('rival', value, 'A campfire decision sharpened the rival thread.');
+  } else if (option.effectType === 'pressure_delta') {
+    const target = option.effectTarget;
+    if (['greyrot','rival','chaos'].includes(target)) applyPressureDelta(target, value, 'A campfire choice shifted the pressure.');
+  } else if (option.effectType === 'campaign_card') {
+    const c = state.campaignCards.find(card => card.id === option.effectTarget);
+    if (c) {
+      c.progress = clampNumber(Number(c.progress || 0) + value, 0, 100);
+      c.recentConsequence = 'A campfire choice nudged this arc forward.';
+    }
+  }
+}
+
+function selectDailyChoice(date, optionId) {
+  ensureStoryEngineState();
+  const choice = ensureDailyChoice(date);
+  if (choice.selectedOptionId) return;
+  const option = choice.options.find(o => o.id === optionId);
+  if (!option) return;
+  choice.selectedOptionId = optionId;
+  choice.resolvedAt = new Date().toISOString();
+  applyChoiceEffect(choice, option);
+  const entry = state.entries.find(e => e.gameDate === date && e.type !== 'rest');
+  if (entry) entry.selectedChoiceId = optionId;
+  saveState();
+  renderHome();
+  if (document.getElementById('screen-world').classList.contains('active')) renderWorldPage();
+}
+window.selectDailyChoice = selectDailyChoice;
+
+function renderDailyChoice(date = gameDate()) {
+  ensureStoryEngineState();
+  const entry = state.entries.find(e => e.gameDate === date && e.type !== 'rest');
+  if (!entry) return '';
+  const choice = ensureDailyChoice(date);
+  const selected = choice.selectedOptionId;
+  const optionHtml = choice.options.map(o => `
+    <button class="choice-option ${selected === o.id ? 'selected' : ''}" ${selected ? 'disabled' : ''} onclick="selectDailyChoice('${date}', '${o.id}')">
+      <span class="choice-label">${escapeHTML(o.label)}</span>
+      <span class="choice-desc">${escapeHTML(o.description || '')}</span>
+    </button>
+  `).join('');
+  return `
+    <div class="campfire-panel">
+      <div class="campfire-title">${escapeHTML(choice.title || 'At the campfire')}</div>
+      <div class="campfire-prompt">${escapeHTML(choice.prompt || '')}</div>
+      ${optionHtml}
+    </div>
+  `;
+}
+
+function getWeekKey(date = gameDate()) { return weekKeyForDate(date); }
+
+function recentActivityCount(days = 7) {
+  const today = gameDate();
+  let count = 0;
+  for (let i = 0; i < days; i++) {
+    const d = new Date(today + 'T12:00:00'); d.setDate(d.getDate() - i);
+    const ds = d.toISOString().slice(0, 10);
+    if (state.entries.some(e => e.gameDate === ds && e.type !== 'rest')) count++;
+  }
+  return count;
+}
+
+function isCouncilDue(date = gameDate()) {
+  const d = new Date(date + 'T12:00:00');
+  const dow = d.getDay();
+  if (dow === 0) return true;
+  if (dow === 3 && recentActivityCount(4) >= 3) return true;
+  return false;
+}
+
+function generateCouncil(date = gameDate()) {
+  ensureStoryEngineState();
+  const weekKey = getWeekKey(date);
+  const existing = state.campaignState.councils.find(c => c.weekKey === weekKey && c.date === date);
+  if (existing) return existing;
+  const strongestDomain = getStrongestDomainId();
+  const neglectedDomain = getNeglectedDomainId();
+  const pressureSnapshot = JSON.parse(JSON.stringify(state.campaignState.pressure || {}));
+  const council = {
+    id: 'council_' + date.replace(/-/g, ''),
+    weekKey,
+    date,
+    summary: `The Council notes strength in ${getDomain(strongestDomain).name} and neglect around ${getDomain(neglectedDomain).name}. Nobody looks surprised, which is rude but efficient.`,
+    strongestDomain,
+    neglectedDomain,
+    pressureSnapshot,
+    options: [
+      { id: 'press_strength', label: `Press ${getDomain(strongestDomain).name}`, description: 'Double down on the part of the campaign already moving.', effectType: 'focus_domain', effectTarget: strongestDomain, effectValue: 2 },
+      { id: 'repair_weakness', label: `Repair ${getDomain(neglectedDomain).name}`, description: 'Send attention where the floorboards have started complaining.', effectType: 'focus_domain', effectTarget: neglectedDomain, effectValue: 2 },
+      { id: 'confront_rival', label: 'Name the rival plainly', description: 'Make the next few days a direct answer to the person ahead.', effectType: 'pressure_delta', effectTarget: 'rival', effectValue: -5 },
+      { id: 'steady_the_house', label: 'Steady the chapterhouse', description: 'Lower disorder before chasing any grander road.', effectType: 'pressure_delta', effectTarget: 'chaos', effectValue: -5 }
+    ],
+    selectedOptionId: null,
+    selectedAt: null
+  };
+  state.campaignState.councils.push(council);
+  return council;
+}
+
+function applyCouncilChoice(council, option) {
+  if (!council || !option) return;
+  if (option.effectType === 'focus_domain') {
+    state.campaignState.councilDirective = `For the next few days: ${option.label}.`;
+    state.campaignState.tomorrowFocusDomain = option.effectTarget;
+  } else if (option.effectType === 'pressure_delta') {
+    applyPressureDelta(option.effectTarget, clampNumber(Number(option.effectValue || 0), -8, 8), `Council directive: ${option.label}.`);
+    state.campaignState.councilDirective = option.label;
+  }
+  state.campaignState.activeThread = option.label;
+}
+
+function selectCouncilOption(councilId, optionId) {
+  ensureStoryEngineState();
+  const council = state.campaignState.councils.find(c => c.id === councilId);
+  if (!council || council.selectedOptionId) return;
+  const option = council.options.find(o => o.id === optionId);
+  if (!option) return;
+  council.selectedOptionId = optionId;
+  council.selectedAt = new Date().toISOString();
+  applyCouncilChoice(council, option);
+  saveState();
+  renderHome();
+  if (document.getElementById('screen-world').classList.contains('active')) renderWorldPage();
+}
+window.selectCouncilOption = selectCouncilOption;
+
+function renderCouncilPanel() {
+  ensureStoryEngineState();
+  const today = gameDate();
+  if (!isCouncilDue(today)) return '';
+  const council = generateCouncil(today);
+  if (council.selectedOptionId) return '';
+  return `
+    <div class="council-panel">
+      <div class="council-title">Council at Calenhal</div>
+      <div class="council-summary">${escapeHTML(council.summary)}</div>
+      ${council.options.map(o => `
+        <button class="council-option" onclick="selectCouncilOption('${council.id}', '${o.id}')">
+          <span class="council-label">${escapeHTML(o.label)}</span>
+          <span class="council-desc">${escapeHTML(o.description)}</span>
+        </button>
+      `).join('')}
+    </div>
+  `;
+}
+
+function getStrongestDomainId() {
+  ensureStoryEngineState();
+  return DOMAIN_ORDER.slice().sort((a, b) => Number(state.campaignState.domainProgress[b]?.xp || 0) - Number(state.campaignState.domainProgress[a]?.xp || 0))[0] || 'archive';
+}
+
+function getNeglectedDomainId() {
+  ensureStoryEngineState();
+  return DOMAIN_ORDER.slice().sort((a, b) => Number(state.campaignState.domainProgress[a]?.completions || 0) - Number(state.campaignState.domainProgress[b]?.completions || 0))[0] || 'quarters';
+}
+
+function checkLoreUnlocks(date = gameDate()) {
+  ensureStoryEngineState();
+  const newly = [];
+  const completions = Object.fromEntries(DOMAIN_ORDER.map(id => [id, Number(state.campaignState.domainProgress[id]?.completions || 0)]));
+  const mixed = DOMAIN_ORDER.filter(id => completions[id] > 0).length;
+  const candidates = [
+    { id: 'archive_3_restricted_shelf', title: 'Restricted Shelf Rumor', text: 'A shelf at the back of the Archive has started appearing in conversations where it does not belong.', domainId: 'archive', trigger: '3 Archive completions', ok: completions.archive >= 3 },
+    { id: 'archive_5_sealed_report', title: 'Sealed Report Fragment', text: 'A damaged report mentions the eastern road, then becomes annoyingly vague at the useful part.', domainId: 'archive', trigger: '5 Archive completions', ok: completions.archive >= 5 },
+    { id: 'yard_3_rival_scene', title: 'The Rival Looks Up', text: 'Someone across the yard has begun timing their drills against yours.', domainId: 'training_yard', trigger: '3 Training Yard completions', ok: completions.training_yard >= 3 },
+    { id: 'hearth_5_recovery_boon', title: 'The Hearth Holds', text: 'Recovery has become visible enough that even the chapterhouse stops pretending it is incidental.', domainId: 'hearth', trigger: '5 Hearth completions', ok: completions.hearth >= 5 },
+    { id: 'table_3_party_scene', title: 'A Chair Left Open', text: 'At the Long Table, a place is being kept without anyone making a formal thing of it.', domainId: 'long_table', trigger: '3 Long Table completions', ok: completions.long_table >= 3 },
+    { id: 'scriptorium_2_scholar_hint', title: 'A Scholar Takes Interest', text: 'A marginal note in another hand appears beside one of your questions: brief, precise, and slightly irritating.', domainId: 'scriptorium', trigger: '2 Scriptorium blocks', ok: completions.scriptorium >= 2 },
+    { id: 'order_3_quarters_ledger', title: 'The East Tower Settles', text: 'Between the Quarters and the Ledger, disorder loses enough ground to become defensive.', domainId: 'quarters', trigger: '3 order/stability completions', ok: (completions.quarters + completions.ledger) >= 3 },
+    { id: 'mixed_7_council_upgrade', title: 'The Council Listens Earlier', text: 'Consistency across the house has made the Council less ceremonial and more useful.', domainId: 'war_room', trigger: '7-day mixed consistency', ok: recentActivityCount(7) >= 7 && mixed >= 4 },
+    { id: 'miss_3_rival_advances', title: 'A Rumor Worsens', text: 'Three quiet days are enough for the rival thread to move without asking permission.', domainId: null, trigger: '3 missed days', ok: hasRecentRestGap(3) }
+  ];
+  for (const u of candidates) {
+    if (!u.ok) continue;
+    const added = addLoreUnlock(Object.assign({}, u, { unlockedAt: date, seen: false }));
+    if (added) newly.push(added);
+    if (newly.length >= 2) break;
+  }
+  return newly;
+}
+
+function hasRecentRestGap(n) {
+  return state.entries.some(e => e.type === 'rest' && Number(e.daysSkipped || 0) >= n);
+}
+
+function addLoreUnlock(unlock) {
+  ensureStoryEngineState();
+  if (!unlock || !unlock.id) return null;
+  if (state.campaignState.loreUnlocks.some(u => u.id === unlock.id)) return null;
+  const u = {
+    id: unlock.id,
+    title: unlock.title || 'A Page Loosens',
+    text: unlock.text || 'Something small has become available to know.',
+    domainId: unlock.domainId || null,
+    unlockedAt: unlock.unlockedAt || gameDate(),
+    trigger: unlock.trigger || 'consistency',
+    seen: !!unlock.seen
+  };
+  state.campaignState.loreUnlocks.push(u);
+  return u;
+}
+
+function getRecentLoreUnlocks(limit = 5) {
+  ensureStoryEngineState();
+  return [...state.campaignState.loreUnlocks].sort((a, b) => String(b.unlockedAt || '').localeCompare(String(a.unlockedAt || ''))).slice(0, limit);
+}
+
+function renderLoreUnlocks(unlocks = null) {
+  const list = unlocks || getRecentLoreUnlocks(6);
+  if (!list.length) return '<div class="world-response-empty">No new shelf has opened yet.</div>';
+  return list.map(u => `
+    <div class="lore-unlock-item">
+      <div class="lore-unlock-item-title">${escapeHTML(u.title)}</div>
+      <div class="lore-unlock-item-text">${escapeHTML(u.text)}</div>
+    </div>
+  `).join('');
+}
+
+function applyDailyPressureEffects(date = gameDate()) {
+  ensureStoryEngineState();
+  const completed = completedQuestObjectsForDate(date);
+  const domains = new Set(completed.map(q => q.domainId));
+  if (domains.size >= 3) applyPressureDelta('greyrot', -2, 'Mixed-domain consistency pushed back the grey edges.');
+  if (domains.has('archive') || domains.has('training_yard')) applyPressureDelta('rival', -2, 'Archive or yard work answered the rival thread.');
+  if (domains.has('quarters') || domains.has('ledger') || domains.has('war_room')) applyPressureDelta('chaos', -2, 'Orderly work reduced the house disorder.');
+  const daily = state.questHistory?.daily?.[date] || {};
+  const broken = Object.values(daily).filter(v => v === 'broken').length;
+  if (broken >= 2) applyPressureDelta('greyrot', 1, 'Several daily oaths went unkept.');
+  const hero = getHeroicQuestForDate(date);
+  if (hero) applyPressureDelta('rival', -1, 'A heroic task gave the rival less room to posture.');
+}
+
+function getPressureSummary() {
+  ensurePressureState();
+  return Object.entries(state.campaignState.pressure).map(([kind, p]) => ({ kind, value: p.value, trend: p.trend, lastNote: p.lastNote }));
+}
+
+function updateNpcReactionsForEntry(entry) {
+  ensureNpcPartyFields(state);
+  const domains = new Set(completedQuestObjectsForDate(entry.gameDate).map(q => q.domainId));
+  const thale = state.npcs.find(n => n.id === 'npc_iven_thale');
+  if (thale) {
+    if (domains.has('archive') || domains.has('infirmary')) {
+      thale.bond = clampNumber(thale.bond + 2, 0, 100);
+      thale.recentMemory = 'Noted the day’s competence without saying the generous part aloud.';
+      thale.currentConcern = 'Whether consistency survives fatigue.';
+      thale.nextSceneHook = 'A sealed report may be worth discussing.';
+    } else if (entry.type === 'rest') {
+      thale.currentConcern = 'The silence between pages.';
+    }
+  }
+  let rival = state.npcs.find(n => n.relationship === 'rival' || n.partyRole === 'The Rival');
+  if (!rival && (domains.has('training_yard') || domains.has('archive'))) {
+    const name = state.rival?.name || 'Aldric Vey';
+    state.rival.name = state.rival.name || name;
+    rival = { id: 'npc_' + slugifyName(name), name, role: 'Aspirant', relationship: 'rival', partyRole: 'The Rival', bond: 35, attitude: 'politely competitive', status: 'alive', tags: ['rival'] };
+    state.npcs.push(rival);
+  }
+  if (rival) {
+    if (domains.has('training_yard') || domains.has('archive')) {
+      rival.bond = clampNumber(rival.bond + 1, 0, 100);
+      rival.recentMemory = 'Saw enough effort to make ignoring it inconvenient.';
+      rival.currentConcern = 'Staying ahead without admitting there is a race.';
+      rival.nextSceneHook = 'A direct challenge at the yard is becoming likely.';
+    }
+  }
+  if (domains.has('scriptorium') && !state.npcs.some(n => n.id === 'npc_scholar_unseen')) {
+    state.npcs.push({ id: 'npc_scholar_unseen', name: 'Unnamed Scholar', role: 'Scholar', relationship: 'acquaintance', partyRole: 'The Unmet Scholar', bond: 25, attitude: 'interested at a distance', currentConcern: 'Whether the question is serious.', recentMemory: 'A marginal note appeared in the Scriptorium.', personalQuest: 'Name the question worth pursuing.', nextSceneHook: 'A formal introduction may follow another inquiry.', status: 'teased', tags: ['scriptorium','locked'] });
+  }
+  if (domains.has('long_table') && !state.npcs.some(n => n.id === 'npc_table_companion')) {
+    state.npcs.push({ id: 'npc_table_companion', name: 'A Familiar Chair', role: 'Companion Tease', relationship: 'peer', partyRole: 'The Future Companion', bond: 20, attitude: 'not yet named', currentConcern: 'Whether Jerry keeps showing up.', recentMemory: 'Someone at the Long Table made room.', personalQuest: 'Become more than a background voice.', nextSceneHook: 'Another shared meal could give them a name.', status: 'teased', tags: ['long_table','locked'] });
+  }
+}
+
+function updateCampaignCardsFromDomain(domainId, amount, reason) {
+  if (!Array.isArray(state?.campaignCards)) return;
+  for (const c of state.campaignCards) {
+    if (!Array.isArray(c.domains) || !c.domains.includes(domainId)) continue;
+    const inc = Math.max(0, Number(amount || 0)) / (c.domains.length > 3 ? 16 : 10);
+    c.progress = clampNumber(Number(c.progress || 0) + inc, 0, 100);
+    if (reason) c.recentConsequence = `${getDomain(domainId).name}: ${reason}`;
+    if (c.progress >= 25 && /25/.test(c.nextUnlock || '')) c.nextUnlock = 'The next threshold waits at 50%.';
+    if (c.progress >= 50) c.nextUnlock = 'The next threshold waits at 75%.';
+    if (c.progress >= 75) c.nextUnlock = 'Resolution pressure begins near 100%.';
+    if (c.progress >= 100) c.status = 'ready';
+  }
+}
+
+function updateCampaignCardsFromEntry(entry) {
+  ensureCampaignCards(state);
+  const domains = new Set(completedQuestObjectsForDate(entry.gameDate).map(q => q.domainId));
+  for (const id of domains) updateCampaignCardsFromDomain(id, 3, 'A completed oath moved the arc.');
+  const p = state.campaignState.pressure;
+  const eastern = state.campaignCards.find(c => c.id === 'eastern_road');
+  if (eastern && (p.greyrot.value < 30 || recentActivityCount(7) >= 4)) {
+    eastern.progress = clampNumber(eastern.progress + 1, 0, 100);
+    eastern.recentConsequence = 'The eastern road thread stayed visible beneath the week.';
+  }
+}
+
+function deriveLocalWorldResponses(entry) {
+  const out = [];
+  const hero = entry.heroicQuestSnapshot;
+  if (hero) out.push({ date: entry.gameDate, kind: 'thread', id: 'heroic_anchor', title: 'Scene Anchor', text: `${hero.loreName} became the center of the day’s account.`, icon: '✦' });
+  const domains = new Set(completedQuestObjectsForDate(entry.gameDate).map(q => q.domainId));
+  if (domains.has('quarters') || domains.has('ledger') || domains.has('war_room')) out.push({ date: entry.gameDate, kind: 'pressure', id: 'chaos_relief', title: 'Chaos Recedes', text: 'The chapterhouse grew slightly less disordered, which is less dramatic than a dragon and more useful.', icon: '◇' });
+  if (domains.has('archive')) out.push({ date: entry.gameDate, kind: 'location', id: 'archive_stirs', title: 'Archive Stirs', text: 'The shelves gave up a little more of their silence.', icon: '📖' });
+  if (domains.has('training_yard')) out.push({ date: entry.gameDate, kind: 'rival', id: 'rival_notices', title: 'Rival Notices', text: 'Across the yard, someone adjusted their pace.', icon: '⚔' });
+  return out.slice(0, 4);
+}
+
+function finalizeStoryEngineEntry(entry, workerResp = null) {
+  if (!entry || entry.storyEngine3Finalized) return;
+  ensureStoryEngineState();
+  const date = entry.gameDate || gameDate();
+  const heroId = autoSelectHeroicQuest(date);
+  entry.heroicQuestId = heroId;
+  entry.heroicQuestSnapshot = heroId ? getHeroicQuestSnapshot(heroId) : null;
+  const aiResponses = handleWorldResponses(workerResp?.worldResponses || []);
+  entry.worldResponses = aiResponses.length ? aiResponses : deriveLocalWorldResponses(entry);
+  entry.campaignChanges = [...(entry.campaignChanges || []), ...(entry.worldResponses || [])].slice(-8);
+  applyBoundedAiSuggestions(workerResp || {});
+  applyDailyPressureEffects(date);
+  updateNpcReactionsForEntry(entry);
+  updateCampaignCardsFromEntry(entry);
+  const unlocks = checkLoreUnlocks(date);
+  entry.loreUnlocks = unlocks;
+  ensureDailyChoice(date, workerResp?.nextChoice || null);
+  entry.campaignSnapshot = JSON.parse(JSON.stringify(state.campaignState));
+  entry.storyEngine3Finalized = true;
+}
+
+submitCheckIn = async function patchedSubmitCheckIn() {
+  ensureStoryEngineState();
+  const today = gameDate();
+  autoSelectHeroicQuest(today);
+  window.__chronicleLastWorkerResponse = null;
+  const beforeIds = new Set((state.entries || []).map(e => e.id));
+  await __storyEngineBase.submitCheckIn();
+  ensureStoryEngineState();
+  const newEntries = (state.entries || []).filter(e => !beforeIds.has(e.id));
+  for (const e of newEntries) {
+    if (e.type === 'entry') finalizeStoryEngineEntry(e, window.__chronicleLastWorkerResponse);
+    if (e.type === 'rest') {
+      applyPressureDelta('greyrot', Math.min(8, Number(e.daysSkipped || 1) * 2), 'The quiet stretch gave the Greyrot room to be annoying.');
+      applyPressureDelta('rival', Math.min(6, Number(e.daysSkipped || 1)), 'The rival moved while the page was quiet.');
+      e.campaignSnapshot = JSON.parse(JSON.stringify(state.campaignState));
+    }
+  }
+  saveState();
+  renderHome();
+};
+
+showTodayCardIfLogged = function patchedShowTodayCardIfLogged() {
+  __storyEngineBase.showTodayCardIfLogged();
+  const today = gameDate();
+  const todayEntry = state.entries.find(e => e.gameDate === today && e.type !== 'rest');
+  if (todayEntry && !todayEntry.storyEngine3Finalized) {
+    finalizeStoryEngineEntry(todayEntry, null);
+    saveState();
+  }
+  renderTodaysWorldResponse(todayEntry || null);
+};
+
+renderTodaysWorldResponse = function patchedRenderTodaysWorldResponse(entry) {
+  const el = document.getElementById('todays-world-response');
+  if (!el) return;
+  if (!entry) { el.innerHTML = ''; return; }
+  const pieces = [];
+  const responses = Array.isArray(entry.worldResponses) && entry.worldResponses.length ? entry.worldResponses : (entry.campaignChanges || []);
+  pieces.push(renderWorldResponsePanel(responses, { maxItems: 4, showEmpty: false }));
+  if (Array.isArray(entry.loreUnlocks) && entry.loreUnlocks.length) {
+    pieces.push(`<div class="lore-unlock-panel"><div class="lore-unlock-title">Lore Unlocked</div>${renderLoreUnlocks(entry.loreUnlocks)}</div>`);
+  }
+  pieces.push(renderDailyChoice(entry.gameDate));
+  el.innerHTML = pieces.join('');
+};
+
+reckoningHTML = function patchedReckoningHTML(entry) {
+  if (!entry.questResolution) return '';
+  const items = Object.entries(entry.questResolution);
+  if (items.length === 0) return '';
+  const parts = items.map(([qid, status]) => {
+    const q = state.quests.find(x => x.id === qid);
+    if (!q) return null;
+    const cls = status === 'kept' ? 'kept-mark' : 'broken-mark';
+    const mark = status === 'kept' ? '✓' : '✗';
+    return `<span class="${cls}">${mark} ${escapeHTML(getQuestDisplayName(q))}</span>`;
+  }).filter(Boolean);
+  const hero = entry.heroicQuestSnapshot ? `<div class="entry-reckoning-line"><span class="kept-mark">✦ Scene Anchor:</span> ${escapeHTML(entry.heroicQuestSnapshot.loreName)}</div>` : '';
+  return `
+    <div class="entry-reckoning">
+      <div class="entry-reckoning-label">Today's Reckoning</div>
+      <div class="entry-reckoning-line">${parts.join(' · ')}</div>
+      ${hero}
+    </div>
+  `;
+};
+
+function renderQuestSummaryRows(quests) {
+  if (!quests.length) return '<div class="game-card-text">No active oaths.</div>';
+  return quests.map(q => {
+    const d = getDomain(q.domainId);
+    return `
+      <div class="quest-summary-row">
+        <div>
+          <div class="quest-summary-name">${escapeHTML(getQuestDisplayName(q))}</div>
+          <div class="quest-summary-meta">${escapeHTML(d.name)} · ${escapeHTML(q.cadence)} · ${escapeHTML(q.difficulty || 'standard')}</div>
+        </div>
+        <div class="quest-summary-pill">${q.target || 1}×</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderCampaignCards(cards = state.campaignCards || []) {
+  ensureCampaignCards(state);
+  return `<div class="campaign-card-list">${cards.map(c => `
+    <div class="campaign-card">
+      <div class="campaign-card-title">${escapeHTML(c.title)}</div>
+      <div class="campaign-card-sub">${escapeHTML(c.subtitle || '')}</div>
+      <div class="campaign-bar"><div class="campaign-bar-fill" style="width:${clampNumber(c.progress || 0, 0, 100)}%;"></div></div>
+      <div class="campaign-card-meta"><strong>Now:</strong> ${escapeHTML(c.currentObjective || '')}<br><strong>Next:</strong> ${escapeHTML(c.nextUnlock || '')}${c.recentConsequence ? `<br><strong>Recent:</strong> ${escapeHTML(c.recentConsequence)}` : ''}</div>
+    </div>
+  `).join('')}</div>`;
+}
+
+renderQuestsPage = function patchedRenderQuestsPage() {
+  ensureStoryEngineState();
+  document.getElementById('daily-quest-summary').innerHTML = renderQuestSummaryRows(getDailyQuests());
+  document.getElementById('weekly-quest-summary').innerHTML = renderQuestSummaryRows(getWeeklyQuests());
+  document.getElementById('campaign-hook-summary').innerHTML = renderCampaignCards(state.campaignCards || []);
+};
+
+function renderDomainLocationCards() {
+  ensureStoryEngineState();
+  const el = document.getElementById('location-grid');
+  if (!el) return;
+  el.innerHTML = DOMAIN_ORDER.map(id => {
+    const d = getDomain(id);
+    const p = getDomainProgress(id);
+    return `
+      <div class="location-card ${p.level > 1 ? 'upgraded' : ''}">
+        <div class="location-top">
+          <div class="location-name">${escapeHTML(d.locationName)}</div>
+          <div class="location-level">LV ${p.level}</div>
+        </div>
+        <div class="location-desc">${escapeHTML(d.shortLoreDescription)}</div>
+        <div class="location-meter"><div class="location-meter-fill" style="width:${clampNumber(p.progress,0,100)}%;"></div></div>
+        <div class="location-unlock">${escapeHTML((d.unlocks || [])[0] || 'More to uncover.')}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+renderWorldCast = function patchedRenderWorldCast() {
+  ensureNpcPartyFields(state);
+  const el = document.getElementById('world-cast-list');
+  if (!el) return;
+  const npcs = state.npcs.slice(0, 8);
+  let html = npcs.map(n => `
+    <div class="npc-item has-portrait">
+      <div class="npc-portrait"><img src="${npcPortraitPath(n.name)}" alt="" onerror="this.src='${SILHOUETTE_PATH}'"></div>
+      <div class="npc-item-body">
+        <div class="npc-item-name">${escapeHTML(n.name)}</div>
+        <div class="npc-item-meta">${escapeHTML(n.partyRole || n.role || 'Companion')} · ${escapeHTML(n.attitude || 'watchful')}</div>
+        <div class="bond-meter"><div class="bond-meter-fill" style="width:${clampNumber(n.bond || 0,0,100)}%;"></div></div>
+        <div class="npc-item-attr">${escapeHTML(n.recentMemory || n.currentConcern || n.nextSceneHook || 'No recent scene yet.')}</div>
+      </div>
+    </div>
+  `).join('');
+  html += `
+    <div class="npc-item">
+      <div class="npc-item-name">Unknown Party Slot</div>
+      <div class="npc-item-meta">A future companion · not yet named</div>
+      <div class="npc-item-attr">The Long Table, Scriptorium, or Hearth may introduce them when the pattern is strong enough.</div>
+    </div>
+  `;
+  el.innerHTML = html;
+};
+
+function renderWorldPressure() {
+  ensurePressureState();
+  const el = document.getElementById('world-boss-content');
+  if (!el) return;
+  const title = el.parentElement?.querySelector('.game-card-title');
+  if (title) title.textContent = 'World Pressure';
+  const labels = { greyrot: 'Greyrot', rival: 'Rival', chaos: 'Chaos' };
+  el.innerHTML = `<div class="pressure-grid">${['greyrot','rival','chaos'].map(k => {
+    const p = state.campaignState.pressure[k];
+    return `
+      <div class="pressure-row">
+        <div class="pressure-top"><div class="pressure-name">${labels[k]}</div><div class="pressure-value">${p.value}/100 · ${escapeHTML(p.trend)}</div></div>
+        <div class="pressure-meter"><div class="pressure-fill" style="width:${p.value}%;"></div></div>
+        <div class="pressure-note">${escapeHTML(p.lastNote || 'Stable for now.')}</div>
+      </div>
+    `;
+  }).join('')}</div>`;
+}
+
+function renderCampaignStateStory() {
+  ensureStoryEngineState();
+  const el = document.getElementById('campaign-state-content');
+  if (!el) return;
+  const cs = state.campaignState;
+  const latestCouncil = [...(cs.councils || [])].reverse().find(c => c.selectedOptionId);
+  el.innerHTML = `
+    <div class="ledger-row"><span>Season</span><strong>${escapeHTML(cs.seasonTitle)}</strong></div>
+    <div class="ledger-row"><span>Chapter</span><strong>${escapeHTML(cs.chapterTitle)}</strong></div>
+    <div class="ledger-row"><span>Active thread</span><strong>${escapeHTML(cs.activeThread)}</strong></div>
+    <div class="ledger-row"><span>Looming threat</span><strong>${escapeHTML(cs.loomingThreat)}</strong></div>
+    <div class="ledger-row"><span>Rival thread</span><strong>${escapeHTML(cs.rivalThread)}</strong></div>
+    ${cs.councilDirective ? `<div class="world-event-line">Current directive: ${escapeHTML(cs.councilDirective)}</div>` : ''}
+    ${latestCouncil ? `<div class="world-event-line">Last Council: ${escapeHTML(latestCouncil.summary)}</div>` : ''}
+    <div class="ledger-divider"></div>
+    ${renderCampaignCards((state.campaignCards || []).slice(0, 3))}
+  `;
+}
+
+function renderRecentWorldChangesStory() {
+  const el = document.getElementById('recent-world-changes-content');
+  if (!el) return;
+  const changes = [
+    ...((state.campaignState?.recentConsequences || []).slice(-4)),
+    ...getRecentLoreUnlocks(4).map(u => ({ title: u.title, text: u.text, date: u.unlockedAt }))
+  ].slice(-6).reverse();
+  if (!changes.length) {
+    el.innerHTML = '<div class="game-card-text">No major changes yet. The first few days are still laying stone.</div>';
+    return;
+  }
+  el.innerHTML = changes.map(c => `
+    <div class="recent-world-change">
+      <div class="recent-world-change-title">${escapeHTML(c.title || 'World Change')}</div>
+      <div class="recent-world-change-text">${escapeHTML(c.text || '')}</div>
+      <div class="recent-world-change-date">${escapeHTML(c.date || '')}</div>
+    </div>
+  `).join('') + `<div class="ledger-divider"></div><div class="lore-unlock-title">Lore Unlocks</div>${renderLoreUnlocks(getRecentLoreUnlocks(6))}`;
+}
+
+renderWorldPage = function patchedRenderWorldPage() {
+  ensureStoryEngineState();
+  renderDomainLocationCards();
+  renderWorldCast();
+  renderWorldPressure();
+  renderCampaignStateStory();
+  renderRecentWorldChangesStory();
+};
+
+renderQuestStats = function patchedRenderQuestStats() {
+  __storyEngineBase.renderQuestStats();
+  const el = document.getElementById('quest-stats-content');
+  if (!el) return;
+  const anchors = getActiveQuests().slice(0, 12).map(q => `
+    <div class="quest-anchor-row">
+      <div class="quest-anchor-name">${escapeHTML(getQuestDisplayName(q))}</div>
+      <div class="quest-anchor-real">Real-world anchor: ${escapeHTML(q.realLabel || q.name)}</div>
+    </div>
+  `).join('');
+  el.innerHTML += `<div class="ledger-divider"></div><div class="settings-label" style="margin-top:0.8rem;">Quest Anchors</div>${anchors}`;
+};
+
+renderSettings = function patchedRenderSettings() {
+  ensureStoryEngineState();
+  __storyEngineBase.renderSettings();
+};
+
+init = function patchedInit() {
+  __storyEngineBase.init();
+  ensureStoryEngineState();
+  saveState();
+  const active = document.querySelector('.screen.active')?.id?.replace('screen-','');
+  if (active && active !== 'create' && active !== 'prologue') showScreen(active);
+};
+
+
+
+/* ============================================================
+   STORY ENGINE 3.0A.1 — REAL TASK ANCHORS PATCH
+   The daily UI now shows recognizable real-life tasks first.
+   Lore remains the translation layer used by narration/world systems.
+   ============================================================ */
+const REAL_TASK_LABELS = {
+  q_archive_trial: 'UWorld / Question Block',
+  q_memory_sigils: 'Anki Cards',
+  q_yard_drills: 'Workout',
+  q_rations_hearth: 'Protein / Nutrition',
+  q_night_watch: 'Sleep / Recovery',
+  q_scriptorium_inquiry: 'Research Block',
+  q_quarters_restored: 'Cleaning / Laundry / Chores',
+  q_long_table_bond: 'Friends / Family / Social',
+  q_ledger_duty: 'Bills / Scheduling / Admin',
+  q_war_room_survey: 'Planning / Weekly Reset'
+};
+
+const REAL_PROOF_CHIPS = {
+  q_archive_trial: ['10 questions', '20 questions', '40 questions', 'Reviewed incorrects'],
+  q_memory_sigils: ['Reviews cleared', 'New cards', 'Hard deck', 'Missed cards fixed'],
+  q_yard_drills: ['Lift', 'Cardio', 'Mobility', 'Walk / bike'],
+  q_rations_hearth: ['Protein hit', 'Meal prepped', 'Hydrated', 'Good meal'],
+  q_night_watch: ['7+ hours', 'Early bed', 'Nap / recovery', 'Screen cutoff'],
+  q_scriptorium_inquiry: ['Abstract', 'Manuscript', 'Mentor email', 'Data / REDCap'],
+  q_quarters_restored: ['Laundry', 'Clean room', 'Dishes', 'Organized'],
+  q_long_table_bond: ['Family', 'Friends', 'Date', 'Called / texted'],
+  q_ledger_duty: ['Bills', 'Schedule', 'Appointments', 'Finance / admin'],
+  q_war_room_survey: ['Plan week', 'Review tasks', 'Prioritize', 'Calendar reset']
+};
+
+const DOMAIN_TASK_CHIPS = {
+  archive: ['Questions', 'Cards', 'Reading', 'Review'],
+  infirmary: ['Clinical duty', 'Patient care', 'Rounds', 'Follow-up'],
+  scriptorium: ['Research', 'Writing', 'Email', 'Data'],
+  training_yard: ['Lift', 'Cardio', 'Mobility', 'Walk'],
+  hearth: ['Protein', 'Hydration', 'Sleep', 'Recovery'],
+  quarters: ['Laundry', 'Cleaning', 'Dishes', 'Organizing'],
+  long_table: ['Family', 'Friends', 'Date', 'Call'],
+  ledger: ['Bills', 'Scheduling', 'Admin', 'Finance'],
+  artificer_bench: ['Code', 'Patch', 'Build', 'Debug'],
+  war_room: ['Plan', 'Review', 'Reset', 'Prioritize']
+};
+
+function titleCaseTaskLabel(label) {
+  return String(label || '')
+    .replace(/\buworld\b/i, 'UWorld')
+    .replace(/\banki\b/i, 'Anki')
+    .replace(/\bredcap\b/i, 'REDCap')
+    .replace(/\badmin\b/i, 'Admin')
+    .replace(/\bquestion block\b/i, 'Question Block')
+    .replace(/\bspaced repetition\b/i, 'Spaced Repetition')
+    .replace(/\bnutrition\b/i, 'Nutrition')
+    .replace(/\brecovery\b/i, 'Recovery')
+    .replace(/\bresearch block\b/i, 'Research Block')
+    .replace(/\bweekly review\b/i, 'Weekly Review')
+    .replace(/\bplanning\b/i, 'Planning')
+    .replace(/\bscheduling\b/i, 'Scheduling')
+    .replace(/\bfinances\b/i, 'Finances')
+    .replace(/\bsocial connection\b/i, 'Social')
+    .trim();
+}
+
+function getQuestTaskLabel(q) {
+  if (!q) return 'Task';
+  return REAL_TASK_LABELS[q.id] || titleCaseTaskLabel(q.realLabel || q.taskLabel || q.name || 'Task');
+}
+
+function getQuestLoreName(q) {
+  if (!q) return 'Unnamed Oath';
+  return q.loreName || q.name || 'Unnamed Oath';
+}
+
+function renderAnchorPair(q) {
+  return `<span class="scene-anchor-real">${escapeHTML(getQuestTaskLabel(q))}</span><span class="scene-anchor-arrow">→</span><span class="scene-anchor-lore">${escapeHTML(getQuestLoreName(q))}</span>`;
+}
+
+function repairRealTaskAnchors() {
+  if (!state || !Array.isArray(state.quests)) return;
+  for (const q of state.quests) {
+    if (REAL_TASK_LABELS[q.id]) q.realLabel = REAL_TASK_LABELS[q.id];
+    if (REAL_PROOF_CHIPS[q.id]) q.proofChips = REAL_PROOF_CHIPS[q.id].slice();
+  }
+}
+
+getQuestProofChips = function patchedRealWorldProofChips(q) {
+  if (q && REAL_PROOF_CHIPS[q.id]) return REAL_PROOF_CHIPS[q.id].slice();
+  if (Array.isArray(q?.proofChips) && q.proofChips.length) return q.proofChips;
+  return (DOMAIN_TASK_CHIPS[q?.domainId] || ['Done']);
+};
+
+renderTodayQuestCard = function patchedRealAnchorTodayQuestCard(quest, alreadyLogged) {
+  ensureStoryEngineState();
+  repairRealTaskAnchors();
+  const draftState = todayQuestState(quest.id);
+  const stateClass = draftState.state === 'done' ? 'done' : draftState.state === 'heroic' ? 'heroic' : '';
+  const rewardedClass = draftState.rewardApplied ? 'rewarded' : '';
+  const stateLabel = draftState.state === 'heroic' ? '✦ Heroic' : draftState.state === 'done' ? '✓ Done' : '○ Tap';
+  const iconSvg = ICONS[quest.icon] || ICONS[getDomain(quest.domainId).icon] || ICONS.book;
+  const chips = getQuestProofChips(quest);
+  const chipHtml = chips.map(chip => `
+    <button class="today-chip ${draftState.chips.includes(chip) ? 'on' : ''}" ${alreadyLogged ? 'disabled' : ''} onclick="event.stopPropagation(); toggleTodayQuestChip('${quest.id}', '${escapeHTML(chip)}')">${escapeHTML(chip)}</button>
+  `).join('');
+  const d = getDomain(quest.domainId);
+  const meta = `${d.name} · ${d.stat} · ${quest.cadence}`;
+  const micro = draftState.rewardApplied ? `
+    <div class="today-quest-micro"><strong>${escapeHTML(draftState.rewardSummary || sourceQuestRewardLabel(quest))}</strong><br>${escapeHTML(draftState.rewardLine || domainRewardLine(quest.domainId))}</div>
+  ` : '';
+  const heroicBadge = draftState.state === 'heroic' ? `<span class="heroic-badge">✦ Scene Anchor</span>` : '';
+  return `
+    <div class="today-quest-card ${stateClass} ${rewardedClass}" data-today-quest-id="${quest.id}">
+      <div class="today-quest-head" onclick="toggleTodayQuestOpen('${quest.id}')">
+        <div class="today-quest-icon">${iconSvg}</div>
+        <div>
+          <div class="today-quest-real-title">${escapeHTML(getQuestTaskLabel(quest))}</div>
+          <div class="today-quest-lore-line"><strong>Becomes</strong>${escapeHTML(getQuestLoreName(quest))}</div>
+          <div class="today-quest-domain">${escapeHTML(meta)} · ${escapeHTML(quest.difficulty || 'standard')}</div>
+          ${heroicBadge}
+        </div>
+        <button class="today-quest-state-btn" ${alreadyLogged ? 'disabled' : ''} onclick="event.stopPropagation(); cycleTodayQuest('${quest.id}')">${stateLabel}</button>
+      </div>
+      ${micro}
+      <div class="today-quest-body">
+        <div class="today-quest-desc"><span class="task-anchor-note">Story translation: ${escapeHTML(getQuestLoreName(quest))}</span>${escapeHTML(getQuestDisplayDescription(quest))}</div>
+        <div class="today-chip-row">${chipHtml}</div>
+        <textarea class="today-note" ${alreadyLogged ? 'disabled' : ''} placeholder="Optional note. Example: 40 questions, chest day, called family." oninput="updateTodayQuestNote('${quest.id}', this.value)">${escapeHTML(draftState.note || '')}</textarea>
+      </div>
+    </div>
+  `;
+};
+
+renderQuestPanel = function patchedRealAnchorQuestPanel() {
+  ensureStoryEngineState();
+  repairRealTaskAnchors();
+  const panel = document.getElementById('quest-panel');
+  const dailyQuests = getDailyQuests();
+  const weeklyQuests = getWeeklyQuests();
+  const activeQuests = [...dailyQuests, ...weeklyQuests];
+  if (!panel) return;
+  panel.style.display = 'block';
+  const today = gameDate();
+  const alreadyLogged = state.entries.some(e => e.gameDate === today && e.type !== 'rest');
+  const draft = ensureTodayWatchDraft(today);
+  const completed = completedTodayQuestIds();
+  const dayName = new Date(today + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' });
+  const startWk = startOfWeekDate(today);
+  const dayInWeek = daysBetweenGameDates(startWk, today) + 1;
+  const hero = getHeroicQuestForDate(today);
+  document.getElementById('quest-panel-day').textContent = `${dayName} · ${completed.length}/${activeQuests.length} tasks done`;
+
+  let html = `
+    <div class="today-watch-intro">
+      Tap the real task you actually did. The Chronicle will translate it into the world after you close the Watch.
+    </div>
+    ${renderCouncilPanel()}
+    <div class="quest-section-label">Today’s Tasks</div>
+    <div class="today-watch-list">
+  `;
+  for (const q of dailyQuests) html += renderTodayQuestCard(q, alreadyLogged);
+  for (const q of weeklyQuests) html += renderTodayQuestCard(q, alreadyLogged);
+  html += `</div>`;
+
+  if (weeklyQuests.length > 0) {
+    const wk = weekKeyForDate(today);
+    const weekRes = state.questHistory.weekly[wk] || evaluateWeeklyQuestsForWeek(wk);
+    html += `<div class="weekly-oath-panel"><div class="quest-section-label">Weekly Targets · Day ${dayInWeek} of 7</div>`;
+    for (const q of weeklyQuests) {
+      const draftHit = draft.quests[q.id] && (draft.quests[q.id].state === 'done' || draft.quests[q.id].state === 'heroic') && !alreadyLogged ? 1 : 0;
+      const r = weekRes[q.id] || { hits: 0, target: q.target, status: 'open' };
+      const hits = Math.min(q.target, (r.hits || 0) + draftHit);
+      const cells = Array.from({ length: q.target }, (_, i) => `<div class="weekly-oath-pip ${i < hits ? 'filled' : ''}"></div>`).join('');
+      html += `
+        <div class="weekly-oath-row">
+          <div>
+            <div class="weekly-oath-name">${escapeHTML(getQuestTaskLabel(q))}</div>
+            <div class="quest-summary-lore"><strong>Becomes</strong> ${escapeHTML(getQuestLoreName(q))}</div>
+            <div class="weekly-oath-pips">${cells}</div>
+          </div>
+          <div class="weekly-oath-count">${hits}/${q.target}</div>
+        </div>
+      `;
+    }
+    html += `</div>`;
+  }
+
+  const payload = buildQuestboardPayload();
+  const closeDisabled = alreadyLogged || payload.completedIds.length === 0;
+  const anchorLine = hero
+    ? `Today’s scene will center on: <strong>${renderAnchorPair(hero)}</strong>`
+    : 'Today’s scene will center on: <strong>the first completed task</strong>';
+  const summary = payload.completedIds.length > 0
+    ? `${payload.completedIds.length} task${payload.completedIds.length === 1 ? '' : 's'} ready. ${anchorLine}`
+    : 'No tasks done yet. Tap at least one task to close the Watch.';
+
+  html += `
+    <div class="today-watch-actions">
+      <button class="btn" id="close-watch-btn" ${closeDisabled ? 'disabled' : ''}>✦ Close the Watch ✦</button>
+      <div class="scene-anchor-line">${alreadyLogged ? 'The Watch is already closed for today.' : summary}</div>
+    </div>
+  `;
+  document.getElementById('quest-panel-body').innerHTML = html;
+  const closeBtn = document.getElementById('close-watch-btn');
+  if (closeBtn) closeBtn.addEventListener('click', closeTodayWatch);
+};
+
+renderQuestSummaryRows = function patchedRealAnchorQuestSummaryRows(quests) {
+  if (!quests.length) return '<div class="game-card-text">No active tasks.</div>';
+  return quests.map(q => {
+    const d = getDomain(q.domainId);
+    return `
+      <div class="quest-summary-row">
+        <div>
+          <div class="quest-summary-name">${escapeHTML(getQuestTaskLabel(q))}</div>
+          <div class="quest-summary-lore"><strong>Becomes</strong> ${escapeHTML(getQuestLoreName(q))}</div>
+          <div class="quest-summary-meta">${escapeHTML(d.name)} · ${escapeHTML(q.cadence)} · ${escapeHTML(q.difficulty || 'standard')}</div>
+        </div>
+        <div class="quest-summary-pill">${q.target || 1}×</div>
+      </div>
+    `;
+  }).join('');
+};
+
+renderQuestStats = function patchedRealAnchorQuestStats() {
+  __storyEngineBase.renderQuestStats();
+  const el = document.getElementById('quest-stats-content');
+  if (!el) return;
+  const anchors = getActiveQuests().slice(0, 12).map(q => `
+    <div class="quest-anchor-row">
+      <div class="quest-anchor-name">${escapeHTML(getQuestTaskLabel(q))}</div>
+      <div class="quest-anchor-real">Lore translation: ${escapeHTML(getQuestLoreName(q))}</div>
+    </div>
+  `).join('');
+  el.innerHTML += `<div class="ledger-divider"></div><div class="settings-label" style="margin-top:0.8rem;">Task Translation Layer</div>${anchors}`;
+};
+
+const __realAnchorInit = init;
+init = function patchedRealAnchorInit() {
+  __realAnchorInit();
+  ensureStoryEngineState();
+  repairRealTaskAnchors();
+  saveState();
+  const active = document.querySelector('.screen.active')?.id?.replace('screen-','');
+  if (active && active !== 'create' && active !== 'prologue') showScreen(active);
+};
+
+
+/* ============================================================
+   STORY ENGINE 3.0A.2 — THEME-FIRST TODAY WATCH PATCH
+   Keeps the story translation layer, restores the simple broad-theme UX.
+   ============================================================ */
+const THEME_LAYOUT_EXTRA_QUESTS = [
+  {
+    id: 'q_infirmary_duty', name: 'Infirmary Duty', realLabel: 'Clinical work / hospital duty', loreName: 'Infirmary Duty',
+    loreDescription: 'Take the room in front of you seriously, even when the room is tired and badly lit.',
+    desc: 'Take the room in front of you seriously, even when the room is tired and badly lit.',
+    domainId: 'infirmary', category: 'Work', stat: 'WIS', cadence: 'campaign', target: 1, difficulty: 'major', icon: 'caduceus',
+    proofChips: ['Clinical shift', 'Rounds', 'Patient care', 'Teaching'], rewardXp: 12, domainXp: 14,
+    pressureEffects: { greyrot: -1 }, worldEffect: 'The Infirmary remembers steady hands.', archived: false
+  },
+  {
+    id: 'q_artificer_work', name: 'Artificer Work', realLabel: 'App building / coding / creative work', loreName: 'Artificer Work',
+    loreDescription: 'Improve the tool until it makes one fewer stupid demand of the hand using it.',
+    desc: 'Improve the tool until it makes one fewer stupid demand of the hand using it.',
+    domainId: 'artificer_bench', category: 'Research', stat: 'INT', cadence: 'campaign', target: 1, difficulty: 'standard', icon: 'hourglass',
+    proofChips: ['App work', 'Coding', 'Creative build', 'Bug fix'], rewardXp: 10, domainXp: 12,
+    pressureEffects: { chaos: -1 }, worldEffect: 'The bench gains another useful little monster.', archived: false
+  }
+];
+
+const THEME_TASK_GROUPS = [
+  {
+    id: 'study', title: 'Study', icon: 'book', subtitle: 'UWorld, Anki, reading, boards', lore: 'The Archive',
+    tasks: [
+      { key: 'study_uworld', label: 'UWorld block', questId: 'q_archive_trial', chip: 'UWorld block' },
+      { key: 'study_anki', label: 'Anki cards', questId: 'q_memory_sigils', chip: 'Anki cards' },
+      { key: 'study_reading', label: 'Reading / notes', questId: 'q_archive_trial', chip: 'Reading / notes' },
+      { key: 'study_incorrects', label: 'Reviewed incorrects', questId: 'q_archive_trial', chip: 'Reviewed incorrects' }
+    ]
+  },
+  {
+    id: 'work', title: 'Clinical Work', icon: 'caduceus', subtitle: 'Shift, rounds, patient care, teaching', lore: 'The Infirmary',
+    tasks: [
+      { key: 'work_shift', label: 'Clinical shift', questId: 'q_infirmary_duty', chip: 'Clinical shift' },
+      { key: 'work_rounds', label: 'Rounds / patient care', questId: 'q_infirmary_duty', chip: 'Rounds / patient care' },
+      { key: 'work_notes', label: 'Notes / follow-up', questId: 'q_infirmary_duty', chip: 'Notes / follow-up' },
+      { key: 'work_teaching', label: 'Teaching / feedback', questId: 'q_infirmary_duty', chip: 'Teaching / feedback' }
+    ]
+  },
+  {
+    id: 'body', title: 'Body', icon: 'heart', subtitle: 'Workout, protein, sleep, recovery', lore: 'The Yard + Hearth',
+    tasks: [
+      { key: 'body_workout', label: 'Workout', questId: 'q_yard_drills', chip: 'Workout' },
+      { key: 'body_cardio', label: 'Cardio / walk', questId: 'q_yard_drills', chip: 'Cardio / walk' },
+      { key: 'body_protein', label: 'Protein / nutrition', questId: 'q_rations_hearth', chip: 'Protein / nutrition' },
+      { key: 'body_hydration', label: 'Hydration', questId: 'q_rations_hearth', chip: 'Hydration' },
+      { key: 'body_sleep', label: 'Sleep / recovery', questId: 'q_night_watch', chip: 'Sleep / recovery' }
+    ]
+  },
+  {
+    id: 'research_build', title: 'Research / Build', icon: 'scroll', subtitle: 'Research, emails, manuscripts, app work', lore: 'The Scriptorium + Bench',
+    tasks: [
+      { key: 'research_block', label: 'Research block', questId: 'q_scriptorium_inquiry', chip: 'Research block' },
+      { key: 'research_manuscript', label: 'Abstract / manuscript', questId: 'q_scriptorium_inquiry', chip: 'Abstract / manuscript' },
+      { key: 'research_email', label: 'Mentor email', questId: 'q_scriptorium_inquiry', chip: 'Mentor email' },
+      { key: 'build_app', label: 'App / coding work', questId: 'q_artificer_work', chip: 'App / coding work' },
+      { key: 'build_creative', label: 'Creative build', questId: 'q_artificer_work', chip: 'Creative build' }
+    ]
+  },
+  {
+    id: 'life_admin', title: 'Life Admin', icon: 'broom', subtitle: 'Cleaning, laundry, bills, schedule, planning', lore: 'Quarters + Ledger + War Room',
+    tasks: [
+      { key: 'admin_clean', label: 'Cleaning / dishes', questId: 'q_quarters_restored', chip: 'Cleaning / dishes' },
+      { key: 'admin_laundry', label: 'Laundry', questId: 'q_quarters_restored', chip: 'Laundry' },
+      { key: 'admin_bills', label: 'Bills / finances', questId: 'q_ledger_duty', chip: 'Bills / finances' },
+      { key: 'admin_schedule', label: 'Scheduling / appointments', questId: 'q_ledger_duty', chip: 'Scheduling / appointments' },
+      { key: 'admin_reset', label: 'Planning / weekly reset', questId: 'q_war_room_survey', chip: 'Planning / weekly reset' }
+    ]
+  },
+  {
+    id: 'connection', title: 'Connection', icon: 'goblets', subtitle: 'Friends, family, dates, real conversation', lore: 'The Long Table',
+    tasks: [
+      { key: 'connection_family', label: 'Family', questId: 'q_long_table_bond', chip: 'Family' },
+      { key: 'connection_friends', label: 'Friends', questId: 'q_long_table_bond', chip: 'Friends' },
+      { key: 'connection_date', label: 'Date / partner time', questId: 'q_long_table_bond', chip: 'Date / partner time' },
+      { key: 'connection_call', label: 'Call / text back', questId: 'q_long_table_bond', chip: 'Call / text back' }
+    ]
+  }
+];
+
+function ensureThemeFirstQuests() {
+  if (!state || !Array.isArray(state.quests)) return;
+  repairRealTaskAnchors();
+  for (const seed of THEME_LAYOUT_EXTRA_QUESTS) {
+    let q = state.quests.find(x => x.id === seed.id);
+    if (!q) {
+      state.quests.push({ ...seed, createdAt: new Date().toISOString(), archived: false });
+    } else {
+      Object.assign(q, {
+        name: q.name || seed.name,
+        realLabel: q.realLabel || seed.realLabel,
+        loreName: q.loreName || seed.loreName,
+        loreDescription: q.loreDescription || seed.loreDescription,
+        desc: q.desc || seed.desc || seed.loreDescription,
+        domainId: q.domainId || seed.domainId,
+        category: q.category || seed.category,
+        stat: q.stat || seed.stat,
+        cadence: q.cadence || seed.cadence,
+        target: q.target || seed.target,
+        difficulty: q.difficulty || seed.difficulty,
+        icon: q.icon || seed.icon,
+        rewardXp: q.rewardXp || seed.rewardXp,
+        domainXp: q.domainXp || seed.domainXp,
+        pressureEffects: q.pressureEffects || seed.pressureEffects,
+        worldEffect: q.worldEffect || seed.worldEffect
+      });
+      if (!Array.isArray(q.proofChips) || !q.proofChips.length) q.proofChips = seed.proofChips.slice();
+      if (q.archived === undefined) q.archived = false;
+    }
+  }
+}
+
+function getThemeTaskByKey(taskKey) {
+  for (const group of THEME_TASK_GROUPS) {
+    for (const task of group.tasks) {
+      if (task.key === taskKey) return { group, task };
+    }
+  }
+  return null;
+}
+
+function getThemeTaskQuest(task) {
+  return state.quests.find(q => q.id === task.questId) || null;
+}
+
+function getSelectedThemeTasks(date = gameDate()) {
+  const draft = ensureTodayWatchDraft(date);
+  const selected = [];
+  for (const group of THEME_TASK_GROUPS) {
+    for (const task of group.tasks) {
+      const qState = draft.quests?.[task.questId];
+      if (qState && Array.isArray(qState.chips) && qState.chips.includes(task.chip)) {
+        const quest = getThemeTaskQuest(task);
+        if (quest) selected.push({ group, task, quest, qState });
+      }
+    }
+  }
+  return selected;
+}
+
+function toggleThemeTask(taskKey) {
+  ensureStoryEngineState();
+  ensureThemeFirstQuests();
+  const found = getThemeTaskByKey(taskKey);
+  if (!found) return;
+  const today = gameDate();
+  if (state.entries.some(e => e.gameDate === today && e.type !== 'rest')) {
+    showToast('Watch already closed');
+    return;
+  }
+  const { task } = found;
+  const quest = getThemeTaskQuest(task);
+  if (!quest) return;
+  const draft = ensureTodayWatchDraft(today);
+  if (!draft.quests[quest.id]) draft.quests[quest.id] = { state: 'none', chips: [], note: '' };
+  const qState = draft.quests[quest.id];
+  if (!Array.isArray(qState.chips)) qState.chips = [];
+  const idx = qState.chips.indexOf(task.chip);
+  if (idx >= 0) {
+    if (qState.rewardApplied) {
+      showToast('Already recorded');
+      return;
+    }
+    qState.chips.splice(idx, 1);
+    if (!qState.chips.length && qState.state !== 'heroic') qState.state = 'none';
+  } else {
+    qState.chips.push(task.chip);
+    if (qState.state === 'none') qState.state = 'done';
+    applyQuestImmediateReward(quest.id);
+  }
+  saveState();
+  renderQuestPanel();
+}
+
+function markThemeQuestHeroic(questId) {
+  ensureStoryEngineState();
+  ensureThemeFirstQuests();
+  setHeroicQuestForToday(questId);
+  renderQuestPanel();
+}
+
+function updateThemeWatchNote(value) {
+  const draft = ensureTodayWatchDraft(gameDate());
+  draft.freeNote = String(value || '').slice(0, 500);
+  saveState();
+}
+
+function renderThemeTaskGroup(group, alreadyLogged) {
+  const draft = ensureTodayWatchDraft(gameDate());
+  const selected = group.tasks.filter(task => draft.quests?.[task.questId]?.chips?.includes(task.chip));
+  const selectedQuestIds = new Set(selected.map(t => t.questId));
+  const hero = getHeroicQuestForDate(gameDate());
+  const isHeroicGroup = hero && selectedQuestIds.has(hero.id);
+  const cardClass = isHeroicGroup ? 'heroic' : selected.length ? 'done' : '';
+  const iconSvg = ICONS[group.icon] || ICONS.book;
+  const countLabel = isHeroicGroup ? 'Scene Anchor' : selected.length ? `${selected.length} marked` : 'Choose';
+  const chips = group.tasks.map(task => {
+    const on = draft.quests?.[task.questId]?.chips?.includes(task.chip);
+    return `<button class="theme-chip ${on ? 'on' : ''}" ${alreadyLogged ? 'disabled' : ''} onclick="event.stopPropagation(); toggleThemeTask('${task.key}')">${escapeHTML(task.label)}</button>`;
+  }).join('');
+
+  let selectedHtml = '';
+  if (selected.length) {
+    const rows = selected.map(task => {
+      const quest = getThemeTaskQuest(task);
+      if (!quest) return '';
+      const heroic = hero && hero.id === quest.id;
+      return `
+        <div class="theme-selected-item">
+          <div class="theme-selected-main">
+            <strong>${escapeHTML(task.label)}</strong>
+            <div class="theme-selected-lore">Becomes: ${escapeHTML(getQuestLoreName(quest))}</div>
+          </div>
+          <button class="theme-anchor-btn ${heroic ? 'on' : ''}" ${alreadyLogged ? 'disabled' : ''} onclick="event.stopPropagation(); markThemeQuestHeroic('${quest.id}')">${heroic ? 'Anchor' : 'Make Anchor'}</button>
+        </div>
+      `;
+    }).join('');
+    selectedHtml = `<div class="theme-selected-list">${rows}</div>`;
+  }
+
+  return `
+    <div class="theme-task-card ${cardClass}" data-theme-group="${escapeHTML(group.id)}">
+      <div class="theme-task-top">
+        <div class="theme-task-icon">${iconSvg}</div>
+        <div>
+          <div class="theme-task-title">${escapeHTML(group.title)}</div>
+          <div class="theme-task-subtitle">${escapeHTML(group.subtitle)} · Lore: ${escapeHTML(group.lore)}</div>
+        </div>
+        <div class="theme-task-count">${escapeHTML(countLabel)}</div>
+      </div>
+      <div class="theme-chip-row">${chips}</div>
+      ${selectedHtml}
+    </div>
+  `;
+}
+
+const __themeFirstBuildQuestboardPayload = buildQuestboardPayload;
+buildQuestboardPayload = function patchedThemeFirstBuildQuestboardPayload() {
+  const payload = __themeFirstBuildQuestboardPayload();
+  const draft = ensureTodayWatchDraft(gameDate());
+  const selected = getSelectedThemeTasks(gameDate());
+  if (selected.length) {
+    const privateLines = selected.map(({ task, quest }) => `${task.label} → ${getQuestLoreName(quest)}`);
+    payload.text = `${payload.text || ''}\nSelected real-world anchors, translated for story use:\n${privateLines.join('\n')}`.trim();
+  }
+  if (draft.freeNote && draft.freeNote.trim()) {
+    payload.text = `${payload.text || ''}\nAdditional note: ${draft.freeNote.trim()}`.trim();
+  }
+  return payload;
+};
+
+renderQuestPanel = function patchedThemeFirstQuestPanel() {
+  ensureStoryEngineState();
+  ensureThemeFirstQuests();
+  const panel = document.getElementById('quest-panel');
+  if (!panel) return;
+  panel.style.display = 'block';
+  const today = gameDate();
+  const alreadyLogged = state.entries.some(e => e.gameDate === today && e.type !== 'rest');
+  const draft = ensureTodayWatchDraft(today);
+  const selectedTasks = getSelectedThemeTasks(today);
+  const selectedQuestIds = completedTodayQuestIds();
+  const dayName = new Date(today + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' });
+  const hero = getHeroicQuestForDate(today);
+  document.getElementById('quest-panel-day').textContent = `${dayName} · ${selectedTasks.length} item${selectedTasks.length === 1 ? '' : 's'} marked`;
+
+  let html = `
+    <div class="theme-layout-hint">
+      Tap a broad part of the day, then mark the specific thing you actually did. The Chronicle handles the fantasy translation underneath.
+    </div>
+    ${renderCouncilPanel()}
+    <div class="quest-section-label">Today’s Watch</div>
+    <div class="theme-watch-grid">
+      ${THEME_TASK_GROUPS.map(group => renderThemeTaskGroup(group, alreadyLogged)).join('')}
+    </div>
+  `;
+
+  const weeklyQuests = getWeeklyQuests();
+  if (weeklyQuests.length > 0) {
+    const wk = weekKeyForDate(today);
+    const weekRes = state.questHistory.weekly[wk] || evaluateWeeklyQuestsForWeek(wk);
+    html += `<div class="weekly-oath-panel"><div class="quest-section-label">Weekly Oath Progress</div>`;
+    for (const q of weeklyQuests) {
+      const draftHit = draft.quests[q.id] && (draft.quests[q.id].state === 'done' || draft.quests[q.id].state === 'heroic') && !alreadyLogged ? 1 : 0;
+      const r = weekRes[q.id] || { hits: 0, target: q.target, status: 'open' };
+      const hits = Math.min(q.target, (r.hits || 0) + draftHit);
+      const cells = Array.from({ length: q.target }, (_, i) => `<div class="weekly-oath-pip ${i < hits ? 'filled' : ''}"></div>`).join('');
+      html += `
+        <div class="weekly-oath-row">
+          <div>
+            <div class="weekly-oath-name">${escapeHTML(getQuestTaskLabel(q))}</div>
+            <div class="quest-summary-lore"><strong>Becomes</strong> ${escapeHTML(getQuestLoreName(q))}</div>
+            <div class="weekly-oath-pips">${cells}</div>
+          </div>
+          <div class="weekly-oath-count">${hits}/${q.target}</div>
+        </div>
+      `;
+    }
+    html += `</div>`;
+  }
+
+  const closeDisabled = alreadyLogged || selectedQuestIds.length === 0;
+  const anchorLine = hero
+    ? `Today’s scene will center on: <strong>${renderAnchorPair(hero)}</strong>`
+    : 'Today’s scene will center on: <strong>the strongest marked task</strong>';
+  const summary = selectedQuestIds.length > 0
+    ? `${selectedTasks.length} item${selectedTasks.length === 1 ? '' : 's'} marked across ${selectedQuestIds.length} oath${selectedQuestIds.length === 1 ? '' : 's'}. ${anchorLine}`
+    : 'Nothing marked yet. Tap a chip under one of the broad themes.';
+
+  html += `
+    <textarea class="theme-watch-note" ${alreadyLogged ? 'disabled' : ''} placeholder="Optional note for context. Example: 40 questions, rough call shift, chest day, paid rent." oninput="updateThemeWatchNote(this.value)">${escapeHTML(draft.freeNote || '')}</textarea>
+    <div class="today-watch-actions">
+      <button class="btn" id="close-watch-btn" ${closeDisabled ? 'disabled' : ''}>✦ Close the Watch ✦</button>
+      <div class="scene-anchor-line">${alreadyLogged ? 'The Watch is already closed for today.' : summary}</div>
+    </div>
+  `;
+  document.getElementById('quest-panel-body').innerHTML = html;
+  const closeBtn = document.getElementById('close-watch-btn');
+  if (closeBtn) closeBtn.addEventListener('click', closeTodayWatch);
+};
+
+const __themeFirstInit = init;
+init = function patchedThemeFirstInit() {
+  __themeFirstInit();
+  ensureStoryEngineState();
+  ensureThemeFirstQuests();
+  saveState();
+  const active = document.querySelector('.screen.active')?.id?.replace('screen-','');
+  if (active && active !== 'create' && active !== 'prologue') showScreen(active);
+};
+
+
+
+
+/* ============================================================
+   STORY ENGINE 3.0A.3 — ATTRIBUTE-FIRST TODAY WATCH PATCH
+   Restores the intuitive STR/DEX/CON/INT/WIS/CHA task layout.
+   ============================================================ */
+let activeAttributeGroup = 'INT';
+
+const ATTRIBUTE_TASK_GROUPS = [
+  {
+    stat: 'STR',
+    title: 'Training',
+    short: 'Strength',
+    desc: 'Exercise, lifting, conditioning, mobility.',
+    lore: 'Training Yard',
+    domains: ['training_yard'],
+    tasks: [
+      { key: 'str_lift', label: 'Lift / gym', questId: 'q_yard_drills', chip: 'Lift / gym' },
+      { key: 'str_workout', label: 'Workout', questId: 'q_yard_drills', chip: 'Workout' },
+      { key: 'str_cardio', label: 'Cardio / bike / walk', questId: 'q_yard_drills', chip: 'Cardio / bike / walk' },
+      { key: 'str_mobility', label: 'Mobility / stretch', questId: 'q_yard_drills', chip: 'Mobility / stretch' }
+    ]
+  },
+  {
+    stat: 'DEX',
+    title: 'Order',
+    short: 'Dexterity',
+    desc: 'Cleaning, laundry, errands, keeping life from tangling.',
+    lore: 'Quarters',
+    domains: ['quarters'],
+    tasks: [
+      { key: 'dex_cleaning', label: 'Cleaning / dishes', questId: 'q_quarters_restored', chip: 'Cleaning / dishes' },
+      { key: 'dex_laundry', label: 'Laundry', questId: 'q_quarters_restored', chip: 'Laundry' },
+      { key: 'dex_organize', label: 'Organize / reset space', questId: 'q_quarters_restored', chip: 'Organize / reset space' },
+      { key: 'dex_errands', label: 'Errands', questId: 'q_quarters_restored', chip: 'Errands' }
+    ]
+  },
+  {
+    stat: 'CON',
+    title: 'Recovery',
+    short: 'Constitution',
+    desc: 'Sleep, protein, hydration, food, real recovery.',
+    lore: 'Hearth',
+    domains: ['hearth'],
+    tasks: [
+      { key: 'con_protein', label: 'Protein / nutrition', questId: 'q_rations_hearth', chip: 'Protein / nutrition' },
+      { key: 'con_hydration', label: 'Hydration', questId: 'q_rations_hearth', chip: 'Hydration' },
+      { key: 'con_meal_prep', label: 'Meal prep / cooking', questId: 'q_rations_hearth', chip: 'Meal prep / cooking' },
+      { key: 'con_sleep', label: 'Sleep / recovery', questId: 'q_night_watch', chip: 'Sleep / recovery' },
+      { key: 'con_rest', label: 'Intentional rest', questId: 'q_night_watch', chip: 'Intentional rest' }
+    ]
+  },
+  {
+    stat: 'INT',
+    title: 'Study & Craft',
+    short: 'Intelligence',
+    desc: 'UWorld, Anki, reading, research, writing, building.',
+    lore: 'Archive · Scriptorium · Bench',
+    domains: ['archive', 'scriptorium', 'artificer_bench'],
+    tasks: [
+      { key: 'int_uworld', label: 'UWorld / questions', questId: 'q_archive_trial', chip: 'UWorld / questions' },
+      { key: 'int_anki', label: 'Anki cards', questId: 'q_memory_sigils', chip: 'Anki cards' },
+      { key: 'int_reading', label: 'Reading / notes', questId: 'q_archive_trial', chip: 'Reading / notes' },
+      { key: 'int_research', label: 'Research block', questId: 'q_scriptorium_inquiry', chip: 'Research block' },
+      { key: 'int_manuscript', label: 'Abstract / manuscript', questId: 'q_scriptorium_inquiry', chip: 'Abstract / manuscript' },
+      { key: 'int_coding', label: 'App / coding work', questId: 'q_artificer_work', chip: 'App / coding work' }
+    ]
+  },
+  {
+    stat: 'WIS',
+    title: 'Duty & Judgment',
+    short: 'Wisdom',
+    desc: 'Clinical work, admin, planning, scheduling, weekly reset.',
+    lore: 'Infirmary · Ledger · War Room',
+    domains: ['infirmary', 'ledger', 'war_room'],
+    tasks: [
+      { key: 'wis_clinical_shift', label: 'Clinical shift', questId: 'q_infirmary_duty', chip: 'Clinical shift' },
+      { key: 'wis_rounds', label: 'Rounds / patient care', questId: 'q_infirmary_duty', chip: 'Rounds / patient care' },
+      { key: 'wis_teaching', label: 'Teaching / feedback', questId: 'q_infirmary_duty', chip: 'Teaching / feedback' },
+      { key: 'wis_bills', label: 'Bills / finances', questId: 'q_ledger_duty', chip: 'Bills / finances' },
+      { key: 'wis_schedule', label: 'Scheduling / appointments', questId: 'q_ledger_duty', chip: 'Scheduling / appointments' },
+      { key: 'wis_plan', label: 'Planning / weekly reset', questId: 'q_war_room_survey', chip: 'Planning / weekly reset' }
+    ]
+  },
+  {
+    stat: 'CHA',
+    title: 'Bonds',
+    short: 'Charisma',
+    desc: 'Friends, family, dates, calls, meaningful connection.',
+    lore: 'Long Table',
+    domains: ['long_table'],
+    tasks: [
+      { key: 'cha_family', label: 'Family', questId: 'q_long_table_bond', chip: 'Family' },
+      { key: 'cha_friends', label: 'Friends', questId: 'q_long_table_bond', chip: 'Friends' },
+      { key: 'cha_date', label: 'Date / partner time', questId: 'q_long_table_bond', chip: 'Date / partner time' },
+      { key: 'cha_call', label: 'Call / text back', questId: 'q_long_table_bond', chip: 'Call / text back' },
+      { key: 'cha_real_talk', label: 'Real conversation', questId: 'q_long_table_bond', chip: 'Real conversation' }
+    ]
+  }
+];
+
+function ensureAttributeFirstQuests() {
+  if (typeof ensureThemeFirstQuests === 'function') ensureThemeFirstQuests();
+  if (typeof repairRealTaskAnchors === 'function') repairRealTaskAnchors();
+  if (!state || !Array.isArray(state.quests)) return;
+  for (const group of ATTRIBUTE_TASK_GROUPS) {
+    for (const task of group.tasks) {
+      const q = state.quests.find(x => x.id === task.questId);
+      if (q) {
+        if (!Array.isArray(q.proofChips)) q.proofChips = [];
+        if (!q.proofChips.includes(task.chip)) q.proofChips.push(task.chip);
+        if (!q.stat) q.stat = group.stat;
+      }
+    }
+  }
+}
+
+function getAttributeGroup(stat) {
+  return ATTRIBUTE_TASK_GROUPS.find(g => g.stat === stat) || ATTRIBUTE_TASK_GROUPS[0];
+}
+
+function getAttributeTaskByKey(taskKey) {
+  for (const group of ATTRIBUTE_TASK_GROUPS) {
+    for (const task of group.tasks) {
+      if (task.key === taskKey) return { group, task };
+    }
+  }
+  return null;
+}
+
+function getAttributeTaskQuest(task) {
+  return state.quests.find(q => q.id === task.questId) || null;
+}
+
+function getSelectedAttributeTasks(date = gameDate()) {
+  const draft = ensureTodayWatchDraft(date);
+  const selected = [];
+  for (const group of ATTRIBUTE_TASK_GROUPS) {
+    for (const task of group.tasks) {
+      const qState = draft.quests?.[task.questId];
+      if (qState && Array.isArray(qState.chips) && qState.chips.includes(task.chip)) {
+        const quest = getAttributeTaskQuest(task);
+        if (quest) selected.push({ group, task, quest, qState });
+      }
+    }
+  }
+  return selected;
+}
+
+function getSelectedAttributeTasksForGroup(stat, date = gameDate()) {
+  return getSelectedAttributeTasks(date).filter(x => x.group.stat === stat);
+}
+
+function setActiveAttributeGroup(stat) {
+  activeAttributeGroup = stat;
+  renderQuestPanel();
+}
+
+function toggleAttributeTask(taskKey) {
+  ensureStoryEngineState();
+  ensureAttributeFirstQuests();
+  const found = getAttributeTaskByKey(taskKey);
+  if (!found) return;
+  const today = gameDate();
+  if (state.entries.some(e => e.gameDate === today && e.type !== 'rest')) {
+    showToast('Watch already closed');
+    return;
+  }
+  activeAttributeGroup = found.group.stat;
+  const quest = getAttributeTaskQuest(found.task);
+  if (!quest) return;
+  const draft = ensureTodayWatchDraft(today);
+  if (!draft.quests[quest.id]) draft.quests[quest.id] = { state: 'none', chips: [], note: '' };
+  const qState = draft.quests[quest.id];
+  if (!Array.isArray(qState.chips)) qState.chips = [];
+  const idx = qState.chips.indexOf(found.task.chip);
+  if (idx >= 0) {
+    qState.chips.splice(idx, 1);
+    if (!qState.chips.length && qState.state !== 'heroic') qState.state = 'none';
+    if (!qState.chips.length && qState.state === 'heroic') qState.state = 'none';
+  } else {
+    qState.chips.push(found.task.chip);
+    if (qState.state === 'none') qState.state = 'done';
+    applyQuestImmediateReward(quest.id);
+  }
+  saveState();
+  renderQuestPanel();
+}
+
+function markAttributeQuestHeroic(questId) {
+  ensureStoryEngineState();
+  ensureAttributeFirstQuests();
+  setHeroicQuestForToday(questId);
+  renderQuestPanel();
+}
+
+function updateAttributeWatchNote(value) {
+  const draft = ensureTodayWatchDraft(gameDate());
+  draft.freeNote = String(value || '').slice(0, 500);
+  saveState();
+}
+
+function renderAttributeCard(group, alreadyLogged) {
+  const selected = getSelectedAttributeTasksForGroup(group.stat);
+  const hero = getHeroicQuestForDate(gameDate());
+  const selectedQuestIds = new Set(selected.map(x => x.quest.id));
+  const isHeroic = hero && selectedQuestIds.has(hero.id);
+  const isActive = activeAttributeGroup === group.stat;
+  const statVal = state.character.stats?.[group.stat] ?? 8;
+  const xpNow = state.character.statXP?.[group.stat] || 0;
+  const countLine = isHeroic ? 'Scene anchor set' : selected.length ? `${selected.length} task${selected.length === 1 ? '' : 's'} marked` : 'Tap to choose tasks';
+  return `
+    <div class="attribute-card ${isActive ? 'active' : ''} ${selected.length ? 'done' : ''} ${isHeroic ? 'heroic' : ''}" onclick="setActiveAttributeGroup('${group.stat}')">
+      <div class="attribute-card-top">
+        <div class="attribute-code">${escapeHTML(group.stat)}</div>
+        <div class="attribute-value-pill">${statVal} · ${xpNow}/${STAT_XP_PER_BUMP}</div>
+      </div>
+      <div class="attribute-title">${escapeHTML(group.title)}</div>
+      <div class="attribute-desc">${escapeHTML(group.desc)}</div>
+      <div class="attribute-count-line">${escapeHTML(countLine)}</div>
+    </div>
+  `;
+}
+
+function renderActiveAttributeDetail(alreadyLogged) {
+  const group = getAttributeGroup(activeAttributeGroup);
+  const draft = ensureTodayWatchDraft(gameDate());
+  const hero = getHeroicQuestForDate(gameDate());
+  const chips = group.tasks.map(task => {
+    const on = draft.quests?.[task.questId]?.chips?.includes(task.chip);
+    return `<button class="attribute-chip ${on ? 'on' : ''}" ${alreadyLogged ? 'disabled' : ''} onclick="event.stopPropagation(); toggleAttributeTask('${task.key}')">${escapeHTML(task.label)}</button>`;
+  }).join('');
+  const selected = getSelectedAttributeTasksForGroup(group.stat);
+  const selectedHtml = selected.length ? `
+    <div class="attribute-selected-list">
+      ${selected.map(({ task, quest }) => {
+        const heroic = hero && hero.id === quest.id;
+        return `
+          <div class="attribute-selected-item">
+            <div class="attribute-selected-main">
+              <strong>${escapeHTML(task.label)}</strong>
+              <div class="attribute-selected-lore">Becomes: ${escapeHTML(getQuestLoreName(quest))}</div>
+            </div>
+            <button class="attribute-anchor-btn ${heroic ? 'on' : ''}" ${alreadyLogged ? 'disabled' : ''} onclick="event.stopPropagation(); markAttributeQuestHeroic('${quest.id}')">${heroic ? 'Anchor' : 'Make Anchor'}</button>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  ` : '';
+  return `
+    <div class="attribute-detail-panel">
+      <div class="attribute-detail-header">
+        <div class="attribute-detail-title">${escapeHTML(group.stat)} · ${escapeHTML(group.title)}</div>
+        <div class="attribute-detail-lore">Lore path: ${escapeHTML(group.lore)}</div>
+      </div>
+      <div class="attribute-chip-row">${chips}</div>
+      ${selectedHtml}
+    </div>
+  `;
+}
+
+buildQuestboardPayload = function patchedAttributeFirstBuildQuestboardPayload() {
+  ensureStoryEngineState();
+  ensureAttributeFirstQuests();
+  autoSelectHeroicQuest(gameDate());
+  const draft = ensureTodayWatchDraft(gameDate());
+  const selected = getSelectedAttributeTasks(gameDate());
+  const completedIds = Array.from(new Set(selected.map(({ quest }) => quest.id)));
+  const tags = [];
+  const parts = [];
+  const hero = getHeroicQuestForDate(gameDate());
+  if (hero) parts.push(`Today’s scene should center on ${getQuestLoreName(hero)}.`);
+  for (const { group, task, quest } of selected) {
+    const tag = questToCategoryTag(quest);
+    if (tag && !tags.includes(tag)) tags.push(tag);
+    const effort = hero && hero.id === quest.id ? 'Scene anchor' : 'Task marked';
+    parts.push(`${effort}: ${task.label} → ${getQuestLoreName(quest)} [${group.stat}]. ${getQuestDisplayDescription(quest)}`);
+  }
+  if (draft.freeNote && draft.freeNote.trim()) {
+    parts.push(`Additional note: ${draft.freeNote.trim()}`);
+  }
+  return { completedIds, tags, text: parts.length ? parts.join('\n') : '' };
+};
+
+renderQuestPanel = function patchedAttributeFirstQuestPanel() {
+  ensureStoryEngineState();
+  ensureAttributeFirstQuests();
+  const panel = document.getElementById('quest-panel');
+  if (!panel) return;
+  panel.style.display = 'block';
+  const today = gameDate();
+  const alreadyLogged = state.entries.some(e => e.gameDate === today && e.type !== 'rest');
+  const draft = ensureTodayWatchDraft(today);
+  const selectedTasks = getSelectedAttributeTasks(today);
+  if (!selectedTasks.some(x => x.group.stat === activeAttributeGroup)) {
+    const firstSelected = selectedTasks[0]?.group?.stat;
+    if (firstSelected && !ATTRIBUTE_TASK_GROUPS.some(g => g.stat === activeAttributeGroup)) activeAttributeGroup = firstSelected;
+  }
+  const selectedQuestIds = Array.from(new Set(selectedTasks.map(x => x.quest.id)));
+  const dayName = new Date(today + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' });
+  const hero = getHeroicQuestForDate(today);
+  document.getElementById('quest-panel-day').textContent = `${dayName} · ${selectedTasks.length} task${selectedTasks.length === 1 ? '' : 's'} marked`;
+
+  let html = `
+    <div class="attribute-watch-hint">
+      Pick the D&D attribute that fits the day, then tap the specific thing you did. The story translates it into the world afterward.
+    </div>
+    ${renderCouncilPanel()}
+    <div class="quest-section-label">Today’s Watch · Attribute Tasks</div>
+    <div class="attribute-watch-grid">
+      ${ATTRIBUTE_TASK_GROUPS.map(group => renderAttributeCard(group, alreadyLogged)).join('')}
+    </div>
+    ${renderActiveAttributeDetail(alreadyLogged)}
+  `;
+
+  const weeklyQuests = getWeeklyQuests();
+  if (weeklyQuests.length > 0) {
+    const wk = weekKeyForDate(today);
+    const weekRes = state.questHistory.weekly[wk] || evaluateWeeklyQuestsForWeek(wk);
+    html += `<div class="weekly-oath-panel"><div class="quest-section-label">Weekly Oath Progress</div>`;
+    for (const q of weeklyQuests) {
+      const draftHit = draft.quests[q.id] && (draft.quests[q.id].state === 'done' || draft.quests[q.id].state === 'heroic') && !alreadyLogged ? 1 : 0;
+      const r = weekRes[q.id] || { hits: 0, target: q.target, status: 'open' };
+      const hits = Math.min(q.target, (r.hits || 0) + draftHit);
+      const cells = Array.from({ length: q.target }, (_, i) => `<div class="weekly-oath-pip ${i < hits ? 'filled' : ''}"></div>`).join('');
+      html += `
+        <div class="weekly-oath-row">
+          <div>
+            <div class="weekly-oath-name">${escapeHTML(getQuestTaskLabel(q))}</div>
+            <div class="quest-summary-lore"><strong>Becomes</strong> ${escapeHTML(getQuestLoreName(q))}</div>
+            <div class="weekly-oath-pips">${cells}</div>
+          </div>
+          <div class="weekly-oath-count">${hits}/${q.target}</div>
+        </div>
+      `;
+    }
+    html += `</div>`;
+  }
+
+  const closeDisabled = alreadyLogged || selectedQuestIds.length === 0;
+  const anchorLine = hero
+    ? `Today’s scene will center on: <strong>${escapeHTML(getQuestLoreName(hero))}</strong>`
+    : 'Today’s scene will center on: <strong>the strongest marked task</strong>';
+  const summary = selectedTasks.length > 0
+    ? `${selectedTasks.length} task${selectedTasks.length === 1 ? '' : 's'} marked across ${selectedQuestIds.length} oath${selectedQuestIds.length === 1 ? '' : 's'}. ${anchorLine}`
+    : 'Nothing marked yet. Tap an attribute, then choose a specific task.';
+
+  html += `
+    <textarea class="attribute-watch-note" ${alreadyLogged ? 'disabled' : ''} placeholder="Optional note. Example: 40 questions, chest day, night shift, paid rent." oninput="updateAttributeWatchNote(this.value)">${escapeHTML(draft.freeNote || '')}</textarea>
+    <div class="today-watch-actions">
+      <button class="btn" id="close-watch-btn" ${closeDisabled ? 'disabled' : ''}>✦ Close the Watch ✦</button>
+      <div class="scene-anchor-line">${alreadyLogged ? 'The Watch is already closed for today.' : summary}</div>
+    </div>
+  `;
+  document.getElementById('quest-panel-body').innerHTML = html;
+  const closeBtn = document.getElementById('close-watch-btn');
+  if (closeBtn) closeBtn.addEventListener('click', closeTodayWatch);
+};
+
+function renderAttributeHeroPanel() {
+  const statsGrid = document.getElementById('stats-grid');
+  if (!statsGrid || !statsGrid.parentNode) return;
+  let panel = document.getElementById('attribute-track-panel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'attribute-track-panel';
+    panel.className = 'game-card';
+    statsGrid.insertAdjacentElement('afterend', panel);
+  }
+  const cards = ATTRIBUTE_TASK_GROUPS.map(group => {
+    const statVal = state.character.stats?.[group.stat] ?? 8;
+    const xpNow = state.character.statXP?.[group.stat] || 0;
+    const pct = Math.max(0, Math.min(100, (xpNow / STAT_XP_PER_BUMP) * 100));
+    const taskLabels = group.tasks.slice(0, 5).map(t => t.label).join(' · ');
+    return `
+      <div class="attribute-track-card">
+        <div class="attribute-track-top">
+          <div class="attribute-track-name">${escapeHTML(group.stat)} · ${escapeHTML(group.title)}</div>
+          <div class="attribute-track-stat">${statVal} · ${xpNow}/${STAT_XP_PER_BUMP}</div>
+        </div>
+        <div class="attribute-track-copy">${escapeHTML(group.desc)} In-world: ${escapeHTML(group.lore)}.</div>
+        <div class="attribute-track-tasks">Common tasks: ${escapeHTML(taskLabels)}</div>
+        <div class="attribute-track-meter"><div class="attribute-track-meter-fill" style="width:${pct}%"></div></div>
+      </div>
+    `;
+  }).join('');
+  panel.innerHTML = `
+    <div class="game-card-title">Attribute Paths</div>
+    <div class="game-card-text" style="margin-bottom:0.65rem;">These are the six practical buckets used by Today’s Watch. Stats stay readable; the Chronicle handles the fantasy translation.</div>
+    <div class="attribute-track-grid">${cards}</div>
+  `;
+}
+
+const __attributeFirstRenderCharacterPage = renderCharacterPage;
+renderCharacterPage = function patchedAttributeFirstCharacterPage() {
+  __attributeFirstRenderCharacterPage();
+  renderAttributeHeroPanel();
+};
+
+const __attributeFirstInit = init;
+init = function patchedAttributeFirstInit() {
+  __attributeFirstInit();
+  ensureStoryEngineState();
+  ensureAttributeFirstQuests();
+  saveState();
+  const active = document.querySelector('.screen.active')?.id?.replace('screen-','');
+  if (active && active !== 'create' && active !== 'prologue') showScreen(active);
+};
+
 
 document.addEventListener('DOMContentLoaded', init);
 </script>
