@@ -3758,150 +3758,245 @@ body::before {
   .ui40-world-overview { grid-template-columns: 1fr; }
 }
 
+
+
 /* ============================================================
-   PROLOGUE 2.0 — THE FIRST WATCH POLISH
+   WATCH 4.1 — QoL reward loop + Personal Oaths
    ============================================================ */
-.prologue-choice-rich {
-  padding: 0.95rem 1rem 0.88rem;
-  border-radius: 9px;
-  background:
-    radial-gradient(ellipse 80% 70% at 50% 0%, rgba(212,175,55,0.10), transparent 70%),
-    rgba(244,232,208,0.72);
-  border-color: rgba(139,100,32,0.52);
-  border-left-width: 4px;
-  box-shadow: 0 2px 10px rgba(42,24,16,0.10);
-}
-.prologue-choice-rich:hover {
-  background:
-    radial-gradient(ellipse 80% 70% at 50% 0%, rgba(212,175,55,0.18), transparent 70%),
-    var(--parchment-dark);
-  box-shadow: 0 0 0 1px rgba(212,175,55,0.22), 0 5px 18px rgba(42,24,16,0.15);
-}
-.prologue-choice-rich .choice-title {
-  display: block;
-  font-family: 'Cinzel', serif;
-  font-size: 0.78rem;
-  letter-spacing: 0.10em;
-  text-transform: uppercase;
-  color: var(--ink);
-  margin-bottom: 0.25rem;
-}
-.prologue-choice-rich .choice-subtitle {
-  display: block;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1rem;
-  line-height: 1.32;
-  font-style: italic;
-  color: var(--ink-soft);
-}
-.prologue-choice-rich .choice-effect {
-  display: inline-block;
-  margin-top: 0.5rem;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.66rem;
-  line-height: 1.25;
+.watch41-add-oath-btn {
+  border: 1px solid rgba(139,100,32,0.55);
+  background: rgba(244,232,208,0.66);
   color: var(--gold-deep);
-  border: 1px solid rgba(139,100,32,0.35);
   border-radius: 999px;
-  padding: 0.24rem 0.48rem;
-  background: rgba(244,232,208,0.55);
-}
-.prologue-writ-card {
-  background:
-    radial-gradient(ellipse 90% 50% at 50% 0%, rgba(212,175,55,0.18), transparent 72%),
-    rgba(27,16,11,0.92);
-  color: var(--parchment);
-  border: 1px solid rgba(212,175,55,0.58);
-  border-radius: 14px;
-  padding: 1rem;
-  box-shadow: 0 10px 30px rgba(42,24,16,0.30), inset 0 0 18px rgba(212,175,55,0.06);
-}
-.writ-kicker {
+  padding: 0.38rem 0.55rem;
   font-family: 'Cinzel', serif;
+  font-size: 0.56rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.watch41-add-oath-btn:active { transform: scale(0.96); }
+.watch41-personal-oath-label {
+  width: 100%;
+  margin: 0.55rem 0 0.32rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.56rem;
+  letter-spacing: 0.16em;
+  color: var(--gold-deep);
+  text-transform: uppercase;
+}
+.attribute-chip.personal-oath-chip {
+  border-style: solid;
+  border-color: rgba(212,175,55,0.62);
+  background: linear-gradient(90deg, rgba(212,175,55,0.12), rgba(244,232,208,0.72));
+}
+.attribute-chip.personal-oath-chip.on {
+  background: var(--ink);
+  border-color: var(--gold-bright);
   color: var(--gold-bright);
+}
+.watch41-oath-modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  background: rgba(20, 12, 8, 0.72);
+  align-items: center;
+  justify-content: center;
+  padding: 1.3rem;
+}
+.watch41-oath-modal-backdrop.show { display: flex; }
+.watch41-oath-modal {
+  width: min(420px, 100%);
+  background: var(--parchment);
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 16px 46px rgba(0,0,0,0.48);
+  position: relative;
+}
+.watch41-oath-modal::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+}
+.watch41-oath-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  color: var(--ink);
+  text-transform: uppercase;
   text-align: center;
-  font-size: 0.58rem;
+  margin-bottom: 0.8rem;
+}
+.watch41-oath-context {
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--ink-faded);
+  font-size: 0.95rem;
+  font-style: italic;
+  text-align: center;
+  margin: -0.35rem 0 0.8rem;
+}
+.watch41-oath-field { margin-bottom: 0.7rem; }
+.watch41-oath-field label {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  margin-bottom: 0.28rem;
+}
+.watch41-oath-field input,
+.watch41-oath-field select {
+  width: 100%;
+  background: var(--parchment-dark);
+  border: 1px solid rgba(107,74,50,0.48);
+  border-radius: 6px;
+  padding: 0.65rem 0.7rem;
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  outline: none;
+}
+.watch41-oath-field input:focus,
+.watch41-oath-field select:focus { border-color: var(--gold); }
+.watch41-oath-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.9rem; }
+.watch41-oath-actions .btn { font-size: 0.68rem; border-radius: 8px; }
+.watch41-reward-card {
+  display: none;
+  margin: 0.75rem 0 0.8rem;
+  padding: 0.78rem 0.85rem;
+  border-radius: 12px;
+  background: linear-gradient(90deg, rgba(27,16,11,0.94), rgba(42,24,16,0.88));
+  color: var(--parchment);
+  border: 1px solid rgba(212,175,55,0.52);
+  box-shadow: 0 8px 26px rgba(42,24,16,0.25), inset 0 0 18px rgba(212,175,55,0.07);
+}
+.watch41-reward-card.show { display: block; }
+.watch41-reward-kicker {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  margin-bottom: 0.35rem;
+  color: var(--gold-bright);
+  margin-bottom: 0.32rem;
 }
-.writ-name {
+.watch41-reward-main {
   font-family: 'Cinzel', serif;
-  font-size: 1.35rem;
+  font-size: 0.76rem;
   letter-spacing: 0.08em;
-  text-align: center;
-  color: var(--parchment);
+  text-transform: uppercase;
+  line-height: 1.42;
 }
-.writ-class {
+.watch41-reward-line {
+  margin-top: 0.25rem;
+  font-family: 'Cormorant Garamond', serif;
+  color: rgba(244,232,208,0.78);
+  font-size: 0.94rem;
+  font-style: italic;
+  line-height: 1.3;
+}
+.watch41-weekly-oaths {
+  background: rgba(244,232,208,0.38);
+  border: 1px solid rgba(139,100,32,0.28);
+  border-radius: 10px;
+  padding: 0.45rem 0.6rem;
+}
+.watch41-weekly-oaths summary {
+  cursor: pointer;
+  list-style: none;
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  color: var(--gold-deep);
+  text-transform: uppercase;
+}
+.watch41-weekly-oaths summary::-webkit-details-marker { display: none; }
+.watch41-weekly-oaths summary::after { content: ' +'; }
+.watch41-weekly-oaths[open] summary::after { content: ' −'; }
+.watch41-personal-card { margin-top: 0; }
+.watch41-oath-group { margin-top: 0.7rem; }
+.watch41-oath-group-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.13em;
+  color: var(--gold-deep);
+  text-transform: uppercase;
+  margin-bottom: 0.34rem;
+}
+.watch41-oath-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.55rem;
+  align-items: center;
+  padding: 0.52rem 0;
+  border-bottom: 1px dashed rgba(107,74,50,0.3);
+}
+.watch41-oath-row:last-child { border-bottom: none; }
+.watch41-oath-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.watch41-oath-lore {
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
-  text-align: center;
-  color: rgba(244,232,208,0.76);
-  margin: 0.1rem 0 0.85rem;
-}
-.writ-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.5rem;
-}
-.writ-grid div {
-  border: 1px solid rgba(212,175,55,0.26);
-  background: rgba(244,232,208,0.07);
-  border-radius: 9px;
-  padding: 0.55rem 0.62rem;
-}
-.writ-grid span {
-  display: block;
-  font-family: 'Cinzel', serif;
-  font-size: 0.55rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgba(244,232,208,0.58);
-  margin-bottom: 0.12rem;
-}
-.writ-grid strong {
-  display: block;
-  font-family: 'Cinzel', serif;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  color: var(--gold-bright);
-  text-transform: uppercase;
-}
-.writ-grid em {
-  display: block;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 0.88rem;
-  color: rgba(244,232,208,0.78);
+  font-size: 0.91rem;
+  color: var(--ink-soft);
   line-height: 1.25;
+  margin-top: 0.08rem;
+}
+.watch41-oath-meta {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.64rem;
+  color: var(--ink-faded);
   margin-top: 0.12rem;
 }
-.writ-stats {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.35rem;
-  margin-top: 0.8rem;
-}
-.writ-stats span {
-  font-family: 'Cinzel', serif;
-  font-size: 0.58rem;
-  letter-spacing: 0.1em;
-  color: rgba(244,232,208,0.72);
-  border: 1px solid rgba(212,175,55,0.32);
+.watch41-archive-btn {
+  border: 1px solid rgba(122,40,40,0.45);
+  background: transparent;
+  color: var(--crimson);
   border-radius: 999px;
-  padding: 0.25rem 0.45rem;
+  padding: 0.32rem 0.48rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.54rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
 }
-.writ-stats strong { color: var(--gold-bright); }
-.writ-note {
+.watch41-world-lead {
+  grid-column: 1 / -1;
+}
+.watch41-world-lead .ui40-world-stat-note { font-size: 0.92rem; }
+.watch41-next-evolution-rows {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.18rem;
+  margin-top: 0.38rem;
+}
+.watch41-evolution-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
   font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
+  font-size: 0.95rem;
   color: rgba(244,232,208,0.78);
-  line-height: 1.35;
-  text-align: center;
-  margin-top: 0.85rem;
+  line-height: 1.25;
 }
-@media (min-width: 480px) {
-  .writ-grid { grid-template-columns: 1fr 1fr; }
+.watch41-evolution-row strong {
+  color: var(--gold-bright);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  text-align: right;
+}
+@media (max-width: 390px) {
+  .watch41-oath-row { grid-template-columns: 1fr; }
+  .watch41-oath-actions { grid-template-columns: 1fr; }
 }
 
 </style>
@@ -4427,10 +4522,7 @@ const DEFAULT_STATE = {
     // Persistent worldbuilding tokens — referenced by templates forever
     origin: null,        // { id, label, token, blurb }
     oath: null,          // { id, label, token, blurb }
-    keepsake: null,      // { id, label, token, blurb }
-    campaignTone: null,  // Prologue 2.0 tone selector
-    firstBond: null,     // Prologue 2.0 seeded NPC/party bond
-    firstWatch: null     // Prologue 2.0 first duty/domain anchor
+    keepsake: null       // { id, label, token, blurb }
   },
   // World fixed points
   world: {
@@ -4521,9 +4613,6 @@ function migrateState(s) {
   if (s.character.origin === undefined) s.character.origin = null;
   if (s.character.oath === undefined) s.character.oath = null;
   if (s.character.keepsake === undefined) s.character.keepsake = null;
-  if (s.character.campaignTone === undefined) s.character.campaignTone = null;
-  if (s.character.firstBond === undefined) s.character.firstBond = null;
-  if (s.character.firstWatch === undefined) s.character.firstWatch = null;
   // World — defaulted in for legacy saves so templates always have tokens
   s.world = Object.assign({
     realm: 'Avenmark',
@@ -4885,64 +4974,37 @@ function awardBoon(level) {
 }
 
 /* ============================================================
-   PROLOGUE 2.0 — THE FIRST WATCH
+   PROLOGUE — choice data + scene script
    ============================================================
-   Character creation is now a playable campaign seed instead of
-   a linear novella. Each choice is visible, consequential, and
-   written into persistent state for the app + Worker context.
+   Each choice writes a persistent token onto state.character that
+   templates can interpolate forever. Mechanical effects are small
+   in Phase 1 (a single +1 stat) — the real value is narrative
+   anchoring for Phase 2's API.
    ============================================================ */
 
 const ORIGINS = [
   {
     id: 'border',
-    label: 'The Border Road',
-    subtitle: 'You learned early that quiet places are rarely safe ones.',
-    blurb: 'You grew up where the map frayed: long roads, thin walls, travelers who arrived with news nobody wanted first. You learned to sleep lightly, mend what you could, and keep walking when the weather turned mean.',
-    token: 'border-raised, from a town in the realm\'s long shadow',
+    label: 'A border town.',
+    blurb: 'You grew up watching banners ride past on missions you weren\'t part of, and decided early that one day you would be.',
+    token: 'a border town in the realm\'s long shadow',
     statBonus: 'CON',
-    domain: 'hearth',
-    npcBias: 'mentor',
-    worldHook: 'Eastern-road rumors unlock earlier.',
-    effect: '+1 CON · Hearth affinity · Greyroad rumor thread',
     flavor: 'border-raised'
   },
   {
-    id: 'city',
-    label: 'The Quiet City',
-    subtitle: 'Comfortable rooms. Expected futures. A life too small by half.',
-    blurb: 'Your family had a respectable house, respectable plans, and a remarkable talent for making tomorrow sound exactly like yesterday. You wrote the Watch once. They took years to answer. You kept the letter anyway.',
-    token: 'city-bred, from a merchant house too quiet for his ambitions',
+    id: 'merchant',
+    label: 'A merchant family in a quiet city.',
+    blurb: 'Comfortable, expected, dull. You wrote the order\'s recruitment hall a letter at fifteen. They took six years to answer.',
+    token: 'a merchant\'s house in a city too quiet for you',
     statBonus: 'INT',
-    domain: 'archive',
-    npcBias: 'scholar',
-    worldHook: 'Archive hooks begin with stronger footing.',
-    effect: '+1 INT · Archive affinity · Scriptorium opening',
     flavor: 'city-bred'
   },
   {
-    id: 'infirmary',
-    label: 'The Ward-House',
-    subtitle: 'You saw how quickly strength becomes paperwork without someone competent nearby.',
-    blurb: 'You spent enough time around the sick, injured, exhausted, and stubborn to learn that heroics are usually quieter than songs claim. Someone notices first. Someone acts first. Someone stays after everyone else leaves.',
-    token: 'ward-house raised, familiar with work that does not wait for applause',
-    statBonus: 'WIS',
-    domain: 'war_room',
-    npcBias: 'healer',
-    worldHook: 'Triage and crisis scenes carry more weight.',
-    effect: '+1 WIS · War Room affinity · Healer bond bias',
-    flavor: 'ward-taught'
-  },
-  {
     id: 'unspoken',
-    label: 'Somewhere Unnamed',
-    subtitle: 'You answer around the question. Thale notices and lets you.',
-    blurb: 'You do not say where. Not because you are ashamed, exactly. Because some places become weaker when spoken aloud too early. Master Thale lets the silence sit between you and does not reach for it.',
-    token: 'from somewhere he has not yet seen fit to name',
-    statBonus: 'DEX',
-    domain: 'quarters',
-    npcBias: 'rival',
-    worldHook: 'A private-past thread remains locked until consistency earns it.',
-    effect: '+1 DEX · Quarters affinity · Rival curiosity',
+    label: '"Around."',
+    blurb: 'You don\'t say where. Thale lets the silence sit a long second, then nods and moves on. He doesn\'t ask again. He doesn\'t forget, either.',
+    token: 'somewhere you have not yet seen fit to name',
+    statBonus: 'WIS',
     flavor: 'a past kept close'
   }
 ];
@@ -4951,368 +5013,194 @@ const OATHS = [
   {
     id: 'best',
     label: 'To be the best.',
-    subtitle: 'Not because it is noble. Because aiming lower feels dishonest.',
-    blurb: 'Thale does not smile when you say it. That is good. A smile would have ruined it. He only asks whether you understand the cost of measuring yourself against people who have already paid theirs.',
+    blurb: 'Because they are. You don\'t see the point of aiming lower.',
     token: 'the simple, brutal ambition to be the best',
-    pressure: 'rival',
-    statBias: 'STR',
-    effect: 'Rival pressure becomes visible earlier · +STR bias',
     flavor: 'driven'
   },
   {
-    id: 'show_up',
-    label: 'To show up when needed.',
-    subtitle: 'The realm is mostly held together by people who arrive anyway.',
-    blurb: 'The answer is plain enough that it almost sounds small. Thale seems to prefer it that way. Grand speeches have never patched a roof, held a vein, or carried a friend home.',
+    id: 'service',
+    label: 'To go where help is needed.',
+    blurb: 'The realm has a lot of places like that. You want to be one of the people who shows up.',
     token: 'the conviction that someone has to show up',
-    pressure: 'greyrot',
-    statBias: 'WIS',
-    effect: 'Greyrot resistance starts steadier · +WIS bias',
     flavor: 'service-bound'
   },
   {
-    id: 'freedom',
-    label: 'To become free enough to choose the road.',
-    subtitle: 'No leash. No script. Just a horizon and the nerve to chase it.',
-    blurb: 'This is the answer that makes Thale look tired, which is not the same as disappointed. The Watch has always attracted people who confuse freedom with motion. Some of them eventually learn the difference.',
-    token: 'a hunger for the open road and a life large enough to choose',
-    pressure: 'chaos',
-    statBias: 'CHA',
-    effect: 'Campaign tone leans adventurous · +CHA bias',
-    flavor: 'restless-hearted'
-  },
-  {
     id: 'story',
-    label: 'Because of a story you once heard.',
-    subtitle: 'You never outgrew it. You only learned to hide it better.',
-    blurb: 'You do not tell him the story. Not yet. Thale studies you as if he can see the outline of it anyway. “Private fires burn cleanest when fed carefully,” he says.',
-    token: 'a private story carried like a coal under the ribs',
-    pressure: 'greyrot',
-    statBias: 'INT',
-    effect: 'Lore unlocks appear sooner · +INT bias',
-    flavor: 'private fire'
+    label: 'A story you heard once.',
+    blurb: 'About a Watcher who did something extraordinary. You\'ve never told anyone, and you don\'t tell Thale either. But it\'s the reason.',
+    token: 'a story you carry that no one else has heard',
+    flavor: 'a private fire'
   }
 ];
 
 const KEEPSAKES = [
   {
     id: 'sword',
-    label: 'A re-wrapped practice sword.',
-    subtitle: 'Older than you. Still serviceable. Mostly.',
-    blurb: 'You set it against the wall. The grip has been repaired twice and badly once. It is not impressive, which may be why you trust it.',
-    token: 'a re-wrapped practice sword that was his father\'s before it was his',
-    statBonus: 'STR',
-    domain: 'training_yard',
-    effect: '+1 STR · Training Yard opens strong'
+    label: 'A practice sword. Your father\'s.',
+    blurb: 'Older than you. The grip has been re-wrapped twice. You set it against the wall by the door.',
+    token: 'a re-wrapped practice sword that was your father\'s before yours',
+    statBonus: 'STR'
   },
   {
     id: 'book',
-    label: 'A dog-eared novel.',
-    subtitle: 'Not scripture. Not a manual. More dangerous than both.',
-    blurb: 'You have read it four times and lied about that number twice. It is the sort of book that makes a person inconvenient to manage afterward.',
-    token: 'a dog-eared novel read too many times to be casual',
-    statBonus: 'CHA',
-    domain: 'long_table',
-    effect: '+1 CHA · Long Table opens strong'
+    label: 'A novel, dog-eared.',
+    blurb: 'Not a manual, not scripture. A novel you\'ve read four times. You don\'t know why you brought it. You couldn\'t leave it.',
+    token: 'a dog-eared novel you have read four times for reasons you do not entirely understand',
+    statBonus: 'CHA'
   },
   {
     id: 'letter',
     label: 'A folded letter, unopened.',
-    subtitle: 'You know who sent it. You are saving it for the right day.',
-    blurb: 'You hang it above the bed. It looks heavier than paper should. The room is too small for many secrets, but it accepts this one.',
-    token: 'a folded letter he has not yet opened',
-    statBonus: 'WIS',
-    domain: 'hearth',
-    effect: '+1 WIS · Hearth scenes carry more weight'
-  },
-  {
-    id: 'coin',
-    label: 'A foreign coin with no obvious value.',
-    subtitle: 'A useless thing, unless a story knows what to do with it.',
-    blurb: 'You turn it once between your fingers before putting it on the sill. The stamped face is worn nearly smooth. Someone carried it a long way before you did.',
-    token: 'a foreign coin worn nearly smooth by another traveler\'s hand',
-    statBonus: 'DEX',
-    domain: 'ledger',
-    effect: '+1 DEX · Ledger/road hooks open strong'
+    blurb: 'You know who it\'s from. You\'re saving it for a day you\'ll know when it comes. You hang it on the hook above the bed.',
+    token: 'a folded letter you have not yet opened, hanging above your bed',
+    statBonus: 'WIS'
   }
 ];
 
-const CAMPAIGN_TONES = [
-  {
-    id: 'shonen_road',
-    label: 'The Earnest Road',
-    subtitle: 'Big dreams, rivals, found family, ridiculous ambition treated seriously.',
-    token: 'earnest, high-spirited, rival-driven, found-family adventure',
-    effect: 'More momentum, more rivalry, more “we are absolutely doing this” energy.'
-  },
-  {
-    id: 'chapterhouse_comedy',
-    label: 'The Chapterhouse Comedy',
-    subtitle: 'Warm chaos, practical fantasy, dry banter, stew of uncertain origin.',
-    token: 'warm, grounded, mildly comedic chapterhouse fantasy',
-    effect: 'More NPC banter, daily-life texture, and useful absurdity.'
-  },
-  {
-    id: 'darkening_realm',
-    label: 'The Darkening Realm',
-    subtitle: 'A slow-burn threat under ordinary days. Less melodrama, more pressure.',
-    token: 'restrained, atmospheric, consequence-forward slow-burn fantasy',
-    effect: 'More visible world pressure, rumors, and ominous continuity.'
-  },
-  {
-    id: 'guild_campaign',
-    label: 'The Guild Campaign',
-    subtitle: 'Quest boards, party roles, visible rewards, practical progression.',
-    token: 'quest-board-forward, tactical, reward-visible guild fantasy',
-    effect: 'More concrete quest framing and progression callouts.'
-  }
-];
-
-const FIRST_BONDS = [
-  {
-    id: 'rival',
-    label: 'The Rival',
-    subtitle: 'Someone ahead of you. Annoyingly competent. Useful problem.',
-    npc: {
-      id: 'npc_aldric_vey',
-      name: 'Aldric Vey',
-      role: 'Senior Aspirant',
-      description: 'Lean, composed, and irritatingly precise; the kind of aspirant who folds his cloak before losing a duel.',
-      attitude: 'polite, competitive, already measuring Jerry by the width of a practice blade',
-      relationship: 'rival',
-      status: 'alive',
-      tags: ['chapterhouse', 'aspirant', 'rival', 'precise']
-    },
-    token: 'Aldric Vey, a senior aspirant and natural rival',
-    effect: 'Rival system starts immediately.'
-  },
-  {
-    id: 'friend',
-    label: 'The Friend',
-    subtitle: 'Warm, chaotic, impossible to keep fully on task.',
-    npc: {
-      id: 'npc_mira_calen',
-      name: 'Mira Calen',
-      role: 'Aspirant of the Long Table',
-      description: 'Bright-eyed, fast-talking, and somehow always holding food she did not technically steal.',
-      attitude: 'friendly, conspiratorial, convinced Jerry needs to loosen up before the building does it for him',
-      relationship: 'peer',
-      status: 'alive',
-      tags: ['chapterhouse', 'aspirant', 'friend', 'warm']
-    },
-    token: 'Mira Calen, a warm and chaotic fellow aspirant',
-    effect: 'Party warmth starts immediately.'
-  },
-  {
-    id: 'healer',
-    label: 'The Healer-Scholar',
-    subtitle: 'Not soft. Observant. The dangerous kind of kind.',
-    npc: {
-      id: 'npc_sera_vale',
-      name: 'Sera Vale',
-      role: 'Healer-Scholar of Calenhal',
-      description: 'Quiet, sharp-eyed, and usually carrying either a ledger of symptoms or tea nobody asked for but needed.',
-      attitude: 'measured, kind, and suspicious of anyone who calls exhaustion discipline',
-      relationship: 'peer',
-      status: 'alive',
-      tags: ['chapterhouse', 'healer', 'scholar', 'recovery']
-    },
-    token: 'Sera Vale, a healer-scholar who notices what others excuse',
-    effect: 'Recovery and wisdom scenes get a persistent voice.'
-  },
-  {
-    id: 'quartermaster',
-    label: 'The Quartermaster',
-    subtitle: 'The person who knows where everything is and why everyone is wrong.',
-    npc: {
-      id: 'npc_bram_kettle',
-      name: 'Bram Kettle',
-      role: 'Quartermaster',
-      description: 'Broad, practical, permanently unimpressed, and capable of turning a missing spoon into a moral inquiry.',
-      attitude: 'dryly fond in advance, though he would deny this under oath',
-      relationship: 'acquaintance',
-      status: 'alive',
-      tags: ['chapterhouse', 'quartermaster', 'chores', 'dry']
-    },
-    token: 'Bram Kettle, the quartermaster with a ledger for every sin',
-    effect: 'Chores, order, and logistics become funnier.'
-  }
-];
-
-const FIRST_WATCHES = [
-  {
-    id: 'training_yard',
-    label: 'The Training Yard',
-    subtitle: 'Sweat, bruises, and the ancient art of not embarrassing yourself twice.',
-    token: 'the Training Yard',
-    category: 'Train',
-    stat: 'STR',
-    domain: 'training_yard',
-    effect: 'First heroic duty favors STR / training tasks.'
-  },
-  {
-    id: 'scriptorium',
-    label: 'The Scriptorium',
-    subtitle: 'Ink, old maps, and the horror of realizing the boring page matters.',
-    token: 'the Scriptorium',
-    category: 'Study',
-    stat: 'INT',
-    domain: 'scriptorium',
-    effect: 'First heroic duty favors INT / study tasks.'
-  },
-  {
-    id: 'infirmary',
-    label: 'The Infirmary',
-    subtitle: 'Bandages, triage, and people insisting they are fine while actively leaking.',
-    token: 'the Infirmary',
-    category: 'Work',
-    stat: 'WIS',
-    domain: 'war_room',
-    effect: 'First heroic duty favors WIS / work tasks.'
-  },
-  {
-    id: 'hearth',
-    label: 'The Hearth',
-    subtitle: 'Food, sleep, recovery, and the scandalous idea that bodies require maintenance.',
-    token: 'the Hearth',
-    category: 'Health',
-    stat: 'CON',
-    domain: 'hearth',
-    effect: 'First heroic duty favors CON / recovery tasks.'
-  },
-  {
-    id: 'quarters',
-    label: 'The Quarters',
-    subtitle: 'A small room, a smaller shelf, and the beginning of order.',
-    token: 'the Quarters',
-    category: 'Chores',
-    stat: 'DEX',
-    domain: 'quarters',
-    effect: 'First heroic duty favors DEX / chores tasks.'
-  },
-  {
-    id: 'long_table',
-    label: 'The Long Table',
-    subtitle: 'The place where a party starts pretending it is not a party yet.',
-    token: 'the Long Table',
-    category: 'Social',
-    stat: 'CHA',
-    domain: 'long_table',
-    effect: 'First heroic duty favors CHA / social tasks.'
-  }
-];
-
+// The prologue is a sequence of "scenes" — some are pure prose,
+// some present a choice. Each scene has a key, a body (string or
+// function returning string after choices are made), and optionally
+// a `choice` field naming which choice this scene presents.
 const PROLOGUE_SCENES = [
   {
     key: 'arrival',
-    title: 'I. Arrival at Calenhal',
-    body: () => `Calenhal appears after the hill, which is rude of it. A proper chapterhouse should announce itself from a heroic distance. Instead, it waits until your legs are tired and then reveals a grey stone building patched in three colors of masonry, standing above the river like an old knight refusing to sit down.
+    title: 'I. Arrival',
+    body: () => `The road into ${state.world.chapterhouse} crests a long hill before it drops to the river crossing, and from that crest you can see the chapterhouse for the first time. A grey stone building on the far rise, walls patched with newer stone that hasn't yet weathered to match. A standard above the gate too far to read but easy to guess: the eight-pointed star with one dark petal, against a deep indigo field.
 
-The banner over the gate is real enough: the eight-pointed star of ${state.world.order}. The courtyard beyond it is quieter than the songs promised. Two horses in stalls built for eight. Practice rings swept clean. One chicken where a war council probably stood once.
+You have been walking for some time. You are ${state.character.name}. Your acceptance letter is folded twice in your coat. The realm is ${state.world.realm}, twelve years past the end of the war, recovering unevenly. The order you have come to join — ${state.world.order} — has stood for three hundred and seven years, on paper.
 
-You are ${state.character.name}, newly accepted aspirant, carrying everything that fit and several expectations that did not. Master Iven Thale is waiting somewhere inside. People keep saying he is difficult. This is usually what people call a man who is right too often.`
+You shoulder what you brought with you, and start down the hill.`
   },
   {
-    key: 'origin',
-    title: 'II. Where the Road Began',
-    intro: () => `Thale reads your letter without sitting down. Then he looks at you as if the letter was only checking whether you could spell your own name.
+    key: 'gate',
+    title: 'II. The Gate',
+    body: () => `The gate-warden is older than you expected — closer to seventy than fifty, with a long grey braid and the careful posture of someone whose back has opinions. He reads your letter without taking it from you. Looks you over.
 
-“Before we give you a bed, a blade, and work you will regret agreeing to, tell me where you came from.”`,
+"They told you which cell?"
+
+"East tower, third floor."
+
+"Mm." He gestures you through with two fingers. "Master Thale's already waiting. Dining hall. He doesn't like to be kept."
+
+You step through into a courtyard that is, you cannot help noticing, mostly empty. A practice yard at the far end, scuffed clean by long use. Two horses in stalls that could hold eight. The chapterhouse of ${state.world.chapterhouse} was built to house twelve banners. You count, walking across the flagstones, and arrive at four. One of which is yours, when you have one. None of which you have yet met.
+
+You hear voices from somewhere above — two of them, young, arguing about something ordinary. You don't see who. You file the sound away.`
+  },
+  {
+    key: 'mentor',
+    title: 'III. Master Thale',
+    body: () => `The dining hall is long and mostly dark. One end is lit. A tall man in a dark coat sits at a long table with a single candle and a cup of something that is not tea, reading a stack of mission reports the way someone reads a bill they already know they cannot pay.
+
+He looks up when you come in. Late fifties. Silver-streaked. Eyes that have done a lot of looking.
+
+"${state.character.name}." Not a question. He has been expecting you. He gestures to the bench across from him. "Sit. Eat, if you're hungry — there's bread on the sideboard, it isn't fresh but it isn't stale either, which is most of what you can ask of bread."
+
+You sit. He goes back to the report for a moment, finishes a paragraph, closes the folder, and sets it aside with the unhurried care of someone who has decided a thing can wait. Then he looks at you properly for the first time.
+
+"I am Iven Thale. I was a Knight-Captain of this Watch. Now I teach. You will train under me until I tell you otherwise, which will not be soon. There are two other aspirants in the house, both ahead of you, both of whom you will meet tomorrow, neither of whom I will describe for you tonight because first impressions are yours to make and I do not propose to spoil them."
+
+He takes a slow drink from his cup.
+
+"First, though. Some questions."`
+  },
+  {
+    key: 'choice-origin',
+    title: 'IV. A Question',
+    intro: () => `He asks it casually, in the way of someone who has asked it a thousand times.
+
+"Where were you, before you were here?"`,
     choice: 'origin'
   },
   {
-    key: 'oath',
-    title: 'III. Why You Came',
-    intro: () => {
+    key: 'after-origin',
+    title: '',
+    body: () => {
       const o = state.character.origin;
-      return `${o?.blurb || ''}
+      return `${o.blurb}
 
-Thale listens. Does not write it down. He has the air of someone who considers memory cheaper than paper.
+He nods. Doesn't write it down. He won't forget it.`;
+    }
+  },
+  {
+    key: 'choice-oath',
+    title: 'V. The Second Question',
+    intro: () => `He pours himself another half-measure of whatever is in the cup. Doesn't offer you any. Waits.
 
-“And why the Watch?” he asks. “There are easier ways to become tired.”`;
-    },
+"And why ${state.world.orderShort}, specifically? There are other orders. Some of them pay better."`,
     choice: 'oath'
   },
   {
-    key: 'tone',
-    title: 'IV. What Kind of Chronicle This Becomes',
-    intro: () => {
+    key: 'after-oath',
+    title: '',
+    body: () => {
       const oath = state.character.oath;
-      return `${oath?.blurb || ''}
+      return `${oath.blurb}
 
-He studies you for another moment. Somewhere above, two aspirants are arguing about whether soup can be breakfast. Someone says yes with alarming confidence.
+Thale watches you for a long moment after you answer. You can't quite read his face. Whatever he was looking for, you think you may have given him — or may not have. He doesn't say which.
 
-The chronicler sharpens his pen. Every campaign has a shape before anyone admits it. Choose the current that should pull hardest beneath this one.`;
-    },
-    choice: 'campaignTone'
+"Good enough," he says finally, which is neither approval nor its opposite. "The work will tell us the rest."
+
+He stands. The candle is burning low. He gestures toward the hall behind you.
+
+"Your cell. East tower, third floor. The window is small but it faces east, which means the sun will get you up whether you want it to or not. Settle in. We begin in earnest tomorrow."`;
+    }
   },
   {
-    key: 'bond',
-    title: 'V. The First Face in the Hall',
-    intro: () => {
-      const tone = state.character.campaignTone;
-      return `The hall outside your assigned cell is narrow, drafty, and already inhabited by other people’s problems. Before the night is over, one face fixes itself in the beginning of your story.
+    key: 'cell',
+    title: 'VI. The Cell',
+    body: () => `The room is the size of a modest closet. A bed, a hook on the wall, a window the size of a book. A single candle in a pewter dish on the sill, already lit — by whom, you don't know. The Watch keeps strange small kindnesses.
 
-Not the mentor. Not the grand villain. Someone closer. The sort of person who changes whether a hard week feels like a trial, a joke, or a duel.
+Outside the door, somewhere down the corridor, you can hear someone snoring already. Someone else is humming, very quietly, a song you don't recognize. The chapterhouse settles around you like an old building deciding to accept a new sound in it.
 
-Your chronicle leans ${tone?.label ? tone.label.toLowerCase() : 'toward the road ahead'}. Who steps into frame first?`;
-    },
-    choice: 'firstBond'
+You sit on the bed. It is exactly as soft as you expected, which is to say, not at all. You take a long breath. You unpack what you brought from before.`
   },
   {
-    key: 'keepsake',
-    title: 'VI. What You Brought',
-    intro: () => {
-      const b = state.character.firstBond;
-      return `${b?.npc?.name || 'Someone'} passes in the corridor before you can decide whether to say anything clever. This is probably mercy.
-
-Your room is the size of a modest closet. A bed, a hook, a shelf, and a window small enough to make optimism seem logistical. You unpack one thing first.`;
-    },
+    key: 'choice-keepsake',
+    title: 'VII. What You Brought',
+    intro: () => `You set down what you brought from before.`,
     choice: 'keepsake'
   },
   {
-    key: 'firstWatch',
-    title: 'VII. The First Watch',
-    intro: () => {
+    key: 'after-keepsake',
+    title: '',
+    body: () => {
       const k = state.character.keepsake;
-      return `${k?.blurb || ''}
+      return `${k.blurb}
 
-Morning arrives through the east window without asking permission. In the courtyard, Thale hands you a smooth dark oath-stone, blank on one face.
+You blow out the candle. The dark is total for a long second before the moon finds the small window and makes a pale rectangle of it on the floor. You lie down. The bed is bad. You are exactly where you wanted to be.
 
-“There used to be more ceremony,” he says. “There used to be more of many things.”
-
-He closes your fingers around the stone.
-
-“Choose where you begin. Not forever. Just today. A life is mostly made that way.”`;
-    },
-    choice: 'firstWatch'
+You sleep.`;
+    }
   },
   {
-    key: 'writ',
-    title: 'VIII. Character Writ',
-    body: () => renderPrologueWritText(),
-    writ: true
+    key: 'oath-stone',
+    title: 'VIII. The Oath',
+    body: () => `You wake before the bell, in the grey hour. Master Thale is already in the courtyard. He has not been waiting; he was simply there first, the way he will be there first for as long as you know him.
+
+He hands you a smooth dark stone the size of a thumb. The eight-pointed star is incised on one face. The other face is blank.
+
+"This is yours now," he says. "It's nothing magical. It's a stone. The order has given new aspirants a stone for two hundred and forty-some years. The blank face is your own to fill. Some Watchers carve a sigil. Some do nothing. Some lose theirs immediately, which is its own answer."
+
+He does not make you say an oath aloud. He does not ask you to swear by anything.
+
+"There is no ceremony. There used to be. The order has trimmed itself, in places. We trust that if you are here, you understand why you are here. If we are wrong about you, we will find out together."
+
+He looks at you. The light is just beginning to come up over the eastern wall.
+
+"Welcome to the Watch, ${state.character.name}."
+
+The chronicle begins.`
   }
 ];
 
 let prologueIndex = 0;
-let prologueAnswers = {};
+let prologueAnswers = {}; // { origin: ORIGINS[i], oath: OATHS[i], keepsake: KEEPSAKES[i] }
 
 function startPrologue() {
   prologueIndex = 0;
   prologueAnswers = {};
   showScreen('prologue');
   renderPrologueScene();
-}
-
-function prologueOptions(kind) {
-  if (kind === 'origin') return ORIGINS;
-  if (kind === 'oath') return OATHS;
-  if (kind === 'campaignTone') return CAMPAIGN_TONES;
-  if (kind === 'firstBond') return FIRST_BONDS;
-  if (kind === 'keepsake') return KEEPSAKES;
-  if (kind === 'firstWatch') return FIRST_WATCHES;
-  return [];
 }
 
 function renderPrologueScene() {
@@ -5325,51 +5213,52 @@ function renderPrologueScene() {
   const continueBtn = document.getElementById('prologue-continue');
   const counterEl = document.getElementById('prologue-counter');
 
+  // Reset
   choiceEl.innerHTML = '';
   choiceEl.style.display = 'none';
   continueBtn.style.display = 'none';
 
   titleEl.textContent = scene.title || '';
   titleEl.style.display = scene.title ? 'block' : 'none';
+
   counterEl.textContent = `${prologueIndex + 1} / ${PROLOGUE_SCENES.length}`;
 
   if (scene.choice) {
+    // Choice scene: render intro + options
     bodyEl.innerHTML = formatProse(scene.intro());
-    for (const opt of prologueOptions(scene.choice)) {
+    const opts = scene.choice === 'origin' ? ORIGINS : scene.choice === 'oath' ? OATHS : KEEPSAKES;
+    for (const opt of opts) {
       const btn = document.createElement('button');
-      btn.className = 'prologue-choice-btn prologue-choice-rich';
-      btn.innerHTML = `
-        <span class="choice-title">${escapeHTML(opt.label)}</span>
-        <span class="choice-subtitle">${escapeHTML(opt.subtitle || opt.blurb || '')}</span>
-        <span class="choice-effect">${escapeHTML(opt.effect || '')}</span>
-      `;
+      btn.className = 'prologue-choice-btn';
+      btn.innerHTML = `<span class="choice-label">${escapeHTML(opt.label)}</span>`;
       btn.addEventListener('click', () => selectChoice(scene.choice, opt));
       choiceEl.appendChild(btn);
     }
     choiceEl.style.display = 'flex';
   } else {
-    bodyEl.innerHTML = scene.writ ? renderPrologueWritHtml() : formatProse(scene.body());
+    // Prose scene: render body + continue
+    bodyEl.innerHTML = formatProse(scene.body());
     continueBtn.style.display = 'block';
-    continueBtn.textContent = prologueIndex === PROLOGUE_SCENES.length - 1 ? '✦ Begin Day One ✦' : 'Continue →';
+    continueBtn.textContent = prologueIndex === PROLOGUE_SCENES.length - 1 ? '✦ Begin the Chronicle ✦' : 'Continue →';
   }
 
+  // Scroll the prologue body to top
   document.getElementById('screen-prologue').scrollTop = 0;
 }
 
 function formatProse(text) {
-  return String(text || '').split(/\n\n+/).map(p => `<p>${escapeHTML(p).replace(/\n/g, '<br>')}</p>`).join('');
+  // Convert double newlines to paragraph breaks
+  return text.split(/\n\n+/).map(p => `<p>${escapeHTML(p).replace(/\n/g, '<br>')}</p>`).join('');
 }
 
 function selectChoice(kind, opt) {
+  // Persist immediately to state
   state.character[kind] = opt;
   prologueAnswers[kind] = opt;
-
-  // Small mechanical nudges, only before the first completed creation.
-  if (!state.created) {
-    if (opt.statBonus) state.character.stats[opt.statBonus] = (state.character.stats[opt.statBonus] || 8) + 1;
-    if (opt.statBias) state.character.statXP[opt.statBias] = (state.character.statXP[opt.statBias] || 0) + 10;
+  // Apply stat bonus if any (only on first selection — guarded by created flag)
+  if (opt.statBonus && !state.created) {
+    state.character.stats[opt.statBonus] = (state.character.stats[opt.statBonus] || 8) + 1;
   }
-
   saveState();
   prologueIndex += 1;
   renderPrologueScene();
@@ -5377,98 +5266,19 @@ function selectChoice(kind, opt) {
 
 function continuePrologue() {
   prologueIndex += 1;
-  if (prologueIndex >= PROLOGUE_SCENES.length) finishPrologue();
-  else renderPrologueScene();
-}
-
-function renderPrologueWritText() {
-  const c = state.character;
-  const lines = [
-    `${c.name || 'Jerry'} — Human Squire of ${state.world.order}`,
-    `Origin: ${c.origin?.label || 'Unchosen'}`,
-    `Oath: ${c.oath?.label || 'Unchosen'}`,
-    `Tone: ${c.campaignTone?.label || 'Unchosen'}`,
-    `First Bond: ${c.firstBond?.npc?.name || c.firstBond?.label || 'Unchosen'}`,
-    `Keepsake: ${c.keepsake?.label || 'Unchosen'}`,
-    `First Watch: ${c.firstWatch?.label || 'Unchosen'}`
-  ];
-  return `Thale does not make you swear before a hall of witnesses. Calenhal cannot spare that many witnesses before breakfast.
-
-Instead, the oath-stone warms slowly in your hand. The first page of the chronicle settles into place:\n\n${lines.join('\n')}
-
-The bell rings once. Somewhere, ${c.firstBond?.npc?.name || 'someone'} is already awake. The day has the nerve to begin.`;
-}
-
-function renderPrologueWritHtml() {
-  const c = state.character;
-  const stats = ['STR','DEX','CON','INT','WIS','CHA'].map(k => `<span>${k} <strong>${state.character.stats[k]}</strong></span>`).join('');
-  return `
-    <div class="prologue-writ-card">
-      <div class="writ-kicker">Filed beneath the first stone</div>
-      <div class="writ-name">${escapeHTML(c.name || 'Jerry')}</div>
-      <div class="writ-class">Human · Squire of ${escapeHTML(state.world.order)}</div>
-      <div class="writ-grid">
-        <div><span>Origin</span><strong>${escapeHTML(c.origin?.label || 'Unchosen')}</strong><em>${escapeHTML(c.origin?.effect || '')}</em></div>
-        <div><span>Oath</span><strong>${escapeHTML(c.oath?.label || 'Unchosen')}</strong><em>${escapeHTML(c.oath?.effect || '')}</em></div>
-        <div><span>Tone</span><strong>${escapeHTML(c.campaignTone?.label || 'Unchosen')}</strong><em>${escapeHTML(c.campaignTone?.effect || '')}</em></div>
-        <div><span>First Bond</span><strong>${escapeHTML(c.firstBond?.npc?.name || c.firstBond?.label || 'Unchosen')}</strong><em>${escapeHTML(c.firstBond?.effect || '')}</em></div>
-        <div><span>Keepsake</span><strong>${escapeHTML(c.keepsake?.label || 'Unchosen')}</strong><em>${escapeHTML(c.keepsake?.effect || '')}</em></div>
-        <div><span>First Watch</span><strong>${escapeHTML(c.firstWatch?.label || 'Unchosen')}</strong><em>${escapeHTML(c.firstWatch?.effect || '')}</em></div>
-      </div>
-      <div class="writ-stats">${stats}</div>
-      <p class="writ-note">The bell rings once. Somewhere, ${escapeHTML(c.firstBond?.npc?.name || 'someone')} is already awake. The day has the nerve to begin.</p>
-    </div>
-  `;
-}
-
-function addNpcIfMissing(npc) {
-  if (!npc) return;
-  if (!Array.isArray(state.npcs)) state.npcs = [];
-  if (state.npcs.some(n => n.id === npc.id || n.name === npc.name)) return;
-  state.npcs.push({
-    ...npc,
-    firstMentionedDate: 'prologue',
-    lastMentionedDate: null
-  });
-}
-
-function applyPrologueWorldSeeds() {
-  const c = state.character;
-  addNpcIfMissing(c.firstBond?.npc);
-
-  if (c.firstBond?.npc?.relationship === 'rival') {
-    state.rival.name = c.firstBond.npc.name;
-    state.rival.progress = Math.max(Number(state.rival.progress || 0), 8);
-  }
-
-  if (typeof ensureStoryEngineState === 'function') ensureStoryEngineState(state);
-  if (c.firstWatch?.domain && typeof addDomainProgress === 'function') {
-    addDomainProgress(c.firstWatch.domain, 18, 'Chosen as the First Watch in the prologue.');
-  }
-  if (c.origin?.domain && typeof addDomainProgress === 'function') {
-    addDomainProgress(c.origin.domain, 8, 'Seeded by origin in the prologue.');
-  }
-  if (c.keepsake?.domain && typeof addDomainProgress === 'function') {
-    addDomainProgress(c.keepsake.domain, 8, 'Seeded by keepsake in the prologue.');
-  }
-  if (c.oath?.pressure && typeof applyPressureDelta === 'function') {
-    const delta = c.oath.pressure === 'rival' ? 4 : c.oath.pressure === 'chaos' ? 3 : -2;
-    applyPressureDelta(c.oath.pressure, delta, 'The opening oath shaped the campaign pressure.');
-  }
-  if (typeof pushWorldEvent === 'function') {
-    pushWorldEvent(`${c.name || 'Jerry'} entered Calenhal, chose ${c.firstWatch?.label || 'a first watch'}, and the first page of the chronicle was filed.`);
+  if (prologueIndex >= PROLOGUE_SCENES.length) {
+    finishPrologue();
+  } else {
+    renderPrologueScene();
   }
 }
 
 function finishPrologue() {
-  applyPrologueWorldSeeds();
   state.created = true;
   saveState();
   showScreen('home');
-  showToast('The First Watch begins');
+  showToast('The Chronicle begins');
 }
-
-
 
 /* ============================================================
    NARRATION GENERATION
@@ -8954,15 +8764,12 @@ function renderSettings() {
   const prologueEl = document.getElementById('settings-prologue');
   const prologueSection = document.getElementById('settings-prologue-section');
   const c = state.character;
-  if (c.origin || c.oath || c.keepsake || c.campaignTone || c.firstBond || c.firstWatch) {
+  if (c.origin || c.oath || c.keepsake) {
     prologueSection.style.display = 'block';
     let html = '';
-    if (c.origin) html += `<div class="prologue-choice-display"><span class="pc-label">Origin:</span> ${escapeHTML(c.origin.token || c.origin.label || '')}</div>`;
-    if (c.oath) html += `<div class="prologue-choice-display"><span class="pc-label">Oath:</span> ${escapeHTML(c.oath.token || c.oath.label || '')}</div>`;
-    if (c.campaignTone) html += `<div class="prologue-choice-display"><span class="pc-label">Campaign Tone:</span> ${escapeHTML(c.campaignTone.token || c.campaignTone.label || '')}</div>`;
-    if (c.firstBond) html += `<div class="prologue-choice-display"><span class="pc-label">First Bond:</span> ${escapeHTML(c.firstBond.token || c.firstBond.npc?.name || c.firstBond.label || '')}</div>`;
-    if (c.keepsake) html += `<div class="prologue-choice-display"><span class="pc-label">Keepsake:</span> ${escapeHTML(c.keepsake.token || c.keepsake.label || '')}</div>`;
-    if (c.firstWatch) html += `<div class="prologue-choice-display"><span class="pc-label">First Watch:</span> ${escapeHTML(c.firstWatch.token || c.firstWatch.label || '')}</div>`;
+    if (c.origin) html += `<div class="prologue-choice-display"><span class="pc-label">Origin:</span> ${escapeHTML(c.origin.token)}</div>`;
+    if (c.oath) html += `<div class="prologue-choice-display"><span class="pc-label">Oath:</span> ${escapeHTML(c.oath.token)}</div>`;
+    if (c.keepsake) html += `<div class="prologue-choice-display"><span class="pc-label">Keepsake:</span> ${escapeHTML(c.keepsake.token)}</div>`;
     prologueEl.innerHTML = html;
   } else {
     prologueSection.style.display = 'none';
@@ -12122,6 +11929,783 @@ init = function ui40Init() {
   if (active === 'character') ui40RenderHeroEvolution();
   if (active === 'world') ui40RenderWorldOverview();
 };
+
+
+
+/* ============================================================
+   WATCH 4.1 — QoL reward loop + Personal Oaths
+   ============================================================ */
+const WATCH_41_VERSION = '4.1';
+const PERSONAL_OATH_CATEGORY_DEFAULTS = {
+  Work:     { stat: 'WIS', domainId: 'infirmary' },
+  Study:    { stat: 'INT', domainId: 'archive' },
+  Research: { stat: 'INT', domainId: 'scriptorium' },
+  Train:    { stat: 'STR', domainId: 'training_yard' },
+  Health:   { stat: 'CON', domainId: 'hearth' },
+  Chores:   { stat: 'DEX', domainId: 'quarters' },
+  Social:   { stat: 'CHA', domainId: 'long_table' }
+};
+const PERSONAL_OATH_STAT_DEFAULT_CATEGORY = {
+  STR: 'Train',
+  DEX: 'Chores',
+  CON: 'Health',
+  INT: 'Study',
+  WIS: 'Work',
+  CHA: 'Social'
+};
+const PERSONAL_OATH_DOMAIN_XP = { small: 6, standard: 10, major: 16 };
+
+function normalizePersonalOathLabel(label) {
+  return String(label || '').trim().replace(/\s+/g, ' ').toLowerCase();
+}
+
+function activeDomainId(id, fallback = 'archive') {
+  if (typeof DOMAINS === 'object' && DOMAINS[id]) return id;
+  if (typeof DOMAINS === 'object') {
+    if (id === 'scriptorium' && DOMAINS.archive) return 'archive';
+    if (id === 'body_forge' && DOMAINS.hearth) return 'hearth';
+    if (DOMAINS[fallback]) return fallback;
+    const first = Object.keys(DOMAINS)[0];
+    if (first) return first;
+  }
+  return fallback;
+}
+
+function defaultPersonalOathForCategory(category) {
+  const cat = CATEGORIES[category] ? category : 'Study';
+  const raw = PERSONAL_OATH_CATEGORY_DEFAULTS[cat] || PERSONAL_OATH_CATEGORY_DEFAULTS.Study;
+  return { category: cat, stat: raw.stat, domainId: activeDomainId(raw.domainId, 'archive') };
+}
+
+function defaultPersonalOathForStat(stat) {
+  return defaultPersonalOathForCategory(PERSONAL_OATH_STAT_DEFAULT_CATEGORY[stat] || 'Study');
+}
+
+function ensurePersonalOaths(target = state) {
+  if (!target) return [];
+  if (!Array.isArray(target.personalOaths)) target.personalOaths = [];
+  target.personalOaths = target.personalOaths
+    .filter(o => o && typeof o === 'object')
+    .map((o, idx) => {
+      const category = CATEGORIES[o.category] ? o.category : (PERSONAL_OATH_STAT_DEFAULT_CATEGORY[o.stat] || 'Study');
+      const defaults = defaultPersonalOathForCategory(category);
+      const difficulty = ['small','standard','major'].includes(o.difficulty) ? o.difficulty : 'standard';
+      const id = String(o.id || ('po_' + Date.now() + '_' + idx + '_' + Math.random().toString(36).slice(2, 7))).replace(/[^a-zA-Z0-9_-]/g, '_');
+      const label = String(o.label || '').trim().replace(/\s+/g, ' ');
+      return {
+        id,
+        label,
+        loreName: String(o.loreName || '').trim().replace(/\s+/g, ' '),
+        category,
+        stat: o.stat && state?.character?.stats?.[o.stat] !== undefined ? o.stat : defaults.stat,
+        domainId: activeDomainId(o.domainId || defaults.domainId, defaults.domainId),
+        difficulty,
+        reusable: true,
+        archived: !!o.archived,
+        createdAt: o.createdAt || new Date().toISOString()
+      };
+    })
+    .filter(o => o.label || o.archived);
+  if (target.lastRewardSummary === undefined || typeof target.lastRewardSummary !== 'object') target.lastRewardSummary = null;
+  return target.personalOaths;
+}
+
+const __watch41MigrateState = migrateState;
+migrateState = function watch41MigrateState(s) {
+  const migrated = __watch41MigrateState(s);
+  ensurePersonalOaths(migrated);
+  if (migrated.lastRewardSummary === undefined || typeof migrated.lastRewardSummary !== 'object') migrated.lastRewardSummary = null;
+  return migrated;
+};
+
+const __watch41EnsureStoryEngineState = ensureStoryEngineState;
+ensureStoryEngineState = function watch41EnsureStoryEngineState(target = state) {
+  __watch41EnsureStoryEngineState(target);
+  if (target) {
+    target.watchVersion = WATCH_41_VERSION;
+    ensurePersonalOaths(target);
+  }
+};
+
+function getPersonalOathById(id) {
+  ensurePersonalOaths();
+  return (state.personalOaths || []).find(o => o.id === id) || null;
+}
+
+function getActivePersonalOaths() {
+  ensurePersonalOaths();
+  return (state.personalOaths || []).filter(o => !o.archived && o.label);
+}
+
+function personalOathToQuest(oath) {
+  if (!oath) return null;
+  const d = getDomain(oath.domainId || 'archive');
+  return {
+    id: oath.id,
+    name: oath.loreName || `An Oath of ${oath.category}`,
+    realLabel: oath.label,
+    taskLabel: oath.label,
+    loreName: oath.loreName || `An Oath of ${oath.category}`,
+    loreDescription: loreDescriptionForDomain(oath.domainId, oath.loreName || oath.label),
+    desc: loreDescriptionForDomain(oath.domainId, oath.loreName || oath.label),
+    category: oath.category,
+    stat: oath.stat || d.stat,
+    domainId: oath.domainId || d.id,
+    cadence: 'personal',
+    target: 1,
+    difficulty: oath.difficulty || 'standard',
+    icon: d.icon || 'book',
+    rewardXp: 0,
+    domainXp: PERSONAL_OATH_DOMAIN_XP[oath.difficulty] || PERSONAL_OATH_DOMAIN_XP.standard,
+    reusable: true,
+    personalOathId: oath.id,
+    proofChips: ['Oath kept']
+  };
+}
+
+function getQuestOrPersonalOath(id) {
+  const q = (state.quests || []).find(x => x.id === id);
+  if (q) return q;
+  const oath = getPersonalOathById(id);
+  return oath ? personalOathToQuest(oath) : null;
+}
+
+const __watch41GetQuestTaskLabel = getQuestTaskLabel;
+getQuestTaskLabel = function watch41GetQuestTaskLabel(q) {
+  if (!q) return 'Task';
+  if (q.personalOathId || getPersonalOathById(q.id)) return q.realLabel || q.label || getPersonalOathById(q.id)?.label || 'Personal Oath';
+  return __watch41GetQuestTaskLabel(q);
+};
+
+const __watch41GetQuestLoreName = getQuestLoreName;
+getQuestLoreName = function watch41GetQuestLoreName(q) {
+  if (!q) return 'Unnamed Oath';
+  if (q.personalOathId || getPersonalOathById(q.id)) return q.loreName || getPersonalOathById(q.id)?.loreName || `An Oath of ${q.category || 'the Watch'}`;
+  return __watch41GetQuestLoreName(q);
+};
+
+const __watch41GetQuestDisplayName = getQuestDisplayName;
+getQuestDisplayName = function watch41GetQuestDisplayName(q) {
+  if (q?.personalOathId || getPersonalOathById(q?.id)) return getQuestLoreName(q);
+  return __watch41GetQuestDisplayName(q);
+};
+
+const __watch41GetQuestDisplayDescription = getQuestDisplayDescription;
+getQuestDisplayDescription = function watch41GetQuestDisplayDescription(q) {
+  if (q?.personalOathId || getPersonalOathById(q?.id)) return q.loreDescription || loreDescriptionForDomain(q.domainId, q.loreName || q.realLabel);
+  return __watch41GetQuestDisplayDescription(q);
+};
+
+const __watch41QuestToCategoryTag = questToCategoryTag;
+questToCategoryTag = function watch41QuestToCategoryTag(quest) {
+  const oath = getPersonalOathById(quest?.id);
+  if (oath && CATEGORIES[oath.category]) return oath.category;
+  if (quest?.personalOathId && CATEGORIES[quest.category]) return quest.category;
+  return __watch41QuestToCategoryTag(quest);
+};
+
+const __watch41GetQuestProofChips = getQuestProofChips;
+getQuestProofChips = function watch41GetQuestProofChips(q) {
+  if (q?.personalOathId || getPersonalOathById(q?.id)) return ['Oath kept'];
+  return __watch41GetQuestProofChips(q);
+};
+
+function getPersonalOathTasksForGroup(group) {
+  const allowedCategories = CATEGORY_ORDER.filter(cat => (CATEGORIES[cat]?.stat === group.stat));
+  return getActivePersonalOaths()
+    .filter(o => (o.stat || CATEGORIES[o.category]?.stat) === group.stat || allowedCategories.includes(o.category))
+    .map(o => ({
+      key: 'po_task_' + o.id,
+      label: o.label,
+      questId: o.id,
+      chip: o.label,
+      personalOathId: o.id,
+      isPersonalOath: true
+    }));
+}
+
+function getAllAttributeTasksForGroup(group) {
+  return [...(group.tasks || []), ...getPersonalOathTasksForGroup(group)];
+}
+
+getAttributeTaskByKey = function watch41GetAttributeTaskByKey(taskKey) {
+  for (const group of ATTRIBUTE_TASK_GROUPS) {
+    for (const task of getAllAttributeTasksForGroup(group)) {
+      if (task.key === taskKey) return { group, task };
+    }
+  }
+  return null;
+};
+
+getAttributeTaskQuest = function watch41GetAttributeTaskQuest(task) {
+  return getQuestOrPersonalOath(task?.questId) || null;
+};
+
+getSelectedAttributeTasks = function watch41GetSelectedAttributeTasks(date = gameDate()) {
+  const draft = ensureTodayWatchDraft(date);
+  const selected = [];
+  for (const group of ATTRIBUTE_TASK_GROUPS) {
+    for (const task of getAllAttributeTasksForGroup(group)) {
+      const qState = draft.quests?.[task.questId];
+      if (qState && Array.isArray(qState.chips) && qState.chips.includes(task.chip)) {
+        const quest = getAttributeTaskQuest(task);
+        if (quest) selected.push({ group, task, quest, qState });
+      }
+    }
+  }
+  return selected;
+};
+
+getSelectedAttributeTasksForGroup = function watch41GetSelectedAttributeTasksForGroup(stat, date = gameDate()) {
+  return getSelectedAttributeTasks(date).filter(x => x.group.stat === stat);
+};
+
+const __watch41ApplyQuestImmediateReward = applyQuestImmediateReward;
+applyQuestImmediateReward = function watch41ApplyQuestImmediateReward(questId) {
+  const oath = getPersonalOathById(questId);
+  if (!oath) return __watch41ApplyQuestImmediateReward(questId);
+  ensureStoryEngineState();
+  const today = gameDate();
+  const draft = ensureTodayWatchDraft(today);
+  if (!draft.quests[questId]) draft.quests[questId] = { state: 'done', chips: [oath.label], note: '' };
+  const qState = draft.quests[questId];
+  if (qState.rewardApplied) return;
+  const quest = personalOathToQuest(oath);
+  const domain = getDomain(quest.domainId);
+  const domainXp = Number(quest.domainXp || 10);
+  addDomainProgress(domain.id, domainXp, quest.loreName || quest.realLabel);
+  const pressureEffects = calculateQuestPressureEffects(quest);
+  const pressureBits = [];
+  for (const [kind, delta] of Object.entries(pressureEffects || {})) {
+    if (!delta) continue;
+    applyPressureDelta(kind, clampNumber(delta, -5, 5), `${quest.loreName || quest.realLabel} changed ${kind}.`);
+    pressureBits.push(`${campaignTitleCase(kind)} ${delta > 0 ? '+' : ''}${delta}`);
+  }
+  qState.rewardApplied = true;
+  qState.rewardSummary = `${domain.name} +${domainXp}${pressureBits.length ? ' · ' + pressureBits.join(' · ') : ''}`;
+  qState.rewardLine = domainRewardLine(domain.id);
+  qState.rewardedAt = new Date().toISOString();
+};
+
+renderActiveAttributeDetail = function watch41RenderActiveAttributeDetail(alreadyLogged) {
+  ensurePersonalOaths();
+  const group = getAttributeGroup(activeAttributeGroup);
+  const draft = ensureTodayWatchDraft(gameDate());
+  const hero = getHeroicQuestForDate(gameDate());
+  const nativeTasks = group.tasks || [];
+  const personalTasks = getPersonalOathTasksForGroup(group);
+  const chipForTask = task => {
+    const on = draft.quests?.[task.questId]?.chips?.includes(task.chip);
+    const cls = task.isPersonalOath ? 'attribute-chip personal-oath-chip' : 'attribute-chip';
+    return `<button class="${cls} ${on ? 'on' : ''}" ${alreadyLogged ? 'disabled' : ''} onclick="event.stopPropagation(); toggleAttributeTask('${task.key}')">${escapeHTML(task.label)}</button>`;
+  };
+  const nativeChips = nativeTasks.map(chipForTask).join('');
+  const personalChips = personalTasks.length ? `
+    <div class="watch41-personal-oath-label">Personal Oaths</div>
+    ${personalTasks.map(chipForTask).join('')}
+  ` : '';
+  const selected = getSelectedAttributeTasksForGroup(group.stat);
+  const selectedHtml = selected.length ? `
+    <div class="attribute-selected-list">
+      ${selected.map(({ task, quest }) => {
+        const heroic = hero && hero.id === quest.id;
+        return `
+          <div class="attribute-selected-item">
+            <div class="attribute-selected-main">
+              <strong>${escapeHTML(task.label)}</strong>
+              <div class="attribute-selected-lore">Becomes: ${escapeHTML(getQuestLoreName(quest))}</div>
+            </div>
+            <button class="attribute-anchor-btn ${heroic ? 'on' : ''}" ${alreadyLogged ? 'disabled' : ''} onclick="event.stopPropagation(); markAttributeQuestHeroic('${quest.id}')">${heroic ? 'Anchor' : 'Make Anchor'}</button>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  ` : '';
+  return `
+    <div class="attribute-detail-panel">
+      <div class="attribute-detail-header">
+        <div>
+          <div class="attribute-detail-title">${escapeHTML(group.stat)} · ${escapeHTML(group.title)}</div>
+          <div class="attribute-detail-lore">Lore path: ${escapeHTML(group.lore)}</div>
+        </div>
+        <button class="watch41-add-oath-btn" ${alreadyLogged ? 'disabled' : ''} onclick="event.stopPropagation(); openPersonalOathModalForStat('${group.stat}')">+ Add Oath</button>
+      </div>
+      <div class="attribute-chip-row">${nativeChips}${personalChips}</div>
+      ${selectedHtml}
+    </div>
+  `;
+};
+
+buildQuestboardPayload = function watch41BuildQuestboardPayload() {
+  ensureStoryEngineState();
+  ensureAttributeFirstQuests();
+  autoSelectHeroicQuest(gameDate());
+  const draft = ensureTodayWatchDraft(gameDate());
+  const selected = getSelectedAttributeTasks(gameDate());
+  const completedIds = Array.from(new Set(selected.map(({ quest }) => quest.id)));
+  const tags = [];
+  const parts = [];
+  const hero = getHeroicQuestForDate(gameDate());
+  if (hero) parts.push(`Today’s scene should center on ${getQuestLoreName(hero)}.`);
+  for (const { group, task, quest } of selected) {
+    const tag = questToCategoryTag(quest);
+    if (tag && !tags.includes(tag)) tags.push(tag);
+    const effort = hero && hero.id === quest.id ? 'Scene anchor' : 'Task marked';
+    parts.push(`${effort}: ${task.label} → ${getQuestLoreName(quest)} [${group.stat}]. ${getQuestDisplayDescription(quest)}`);
+  }
+  if (draft.freeNote && draft.freeNote.trim()) parts.push(`Additional note: ${draft.freeNote.trim()}`);
+  return { completedIds, tags, text: parts.length ? parts.join('\n') : '' };
+};
+
+function ensurePersonalOathModalElement() {
+  let backdrop = document.getElementById('watch41-oath-modal-backdrop');
+  if (backdrop) return backdrop;
+  backdrop = document.createElement('div');
+  backdrop.id = 'watch41-oath-modal-backdrop';
+  backdrop.className = 'watch41-oath-modal-backdrop';
+  backdrop.innerHTML = `
+    <div class="watch41-oath-modal" role="dialog" aria-modal="true">
+      <div class="watch41-oath-title">Add Personal Oath</div>
+      <div class="watch41-oath-context" id="watch41-oath-context"></div>
+      <div class="watch41-oath-field">
+        <label for="watch41-oath-real">Real Task</label>
+        <input id="watch41-oath-real" type="text" maxlength="80" autocomplete="off" placeholder="Read lipid guidelines">
+      </div>
+      <div class="watch41-oath-field">
+        <label for="watch41-oath-lore">Lore Translation</label>
+        <input id="watch41-oath-lore" type="text" maxlength="100" autocomplete="off" placeholder="Study the Codex of Arteries">
+      </div>
+      <div class="watch41-oath-field">
+        <label for="watch41-oath-difficulty">Difficulty</label>
+        <select id="watch41-oath-difficulty">
+          <option value="small">Small</option>
+          <option value="standard" selected>Standard</option>
+          <option value="major">Major</option>
+        </select>
+      </div>
+      <div class="watch41-oath-actions">
+        <button class="btn btn-secondary" type="button" onclick="closePersonalOathModal()">Cancel</button>
+        <button class="btn" type="button" onclick="savePersonalOathFromModal()">Save</button>
+      </div>
+    </div>
+  `;
+  backdrop.addEventListener('click', e => {
+    if (e.target === backdrop) closePersonalOathModal();
+  });
+  document.body.appendChild(backdrop);
+  return backdrop;
+}
+
+function openPersonalOathModalForStat(stat) {
+  const ctx = defaultPersonalOathForStat(stat);
+  ctx.stat = stat;
+  ctx.category = CATEGORIES[ctx.category]?.stat === stat ? ctx.category : (PERSONAL_OATH_STAT_DEFAULT_CATEGORY[stat] || ctx.category);
+  const backdrop = ensurePersonalOathModalElement();
+  window.__watch41OathContext = ctx;
+  const d = getDomain(ctx.domainId);
+  document.getElementById('watch41-oath-context').textContent = `${ctx.category} · ${stat} · ${d.name}`;
+  document.getElementById('watch41-oath-real').value = '';
+  document.getElementById('watch41-oath-lore').value = '';
+  document.getElementById('watch41-oath-difficulty').value = 'standard';
+  backdrop.classList.add('show');
+  setTimeout(() => document.getElementById('watch41-oath-real')?.focus(), 30);
+}
+
+function closePersonalOathModal() {
+  document.getElementById('watch41-oath-modal-backdrop')?.classList.remove('show');
+}
+
+function savePersonalOathFromModal() {
+  ensurePersonalOaths();
+  const ctx = window.__watch41OathContext || defaultPersonalOathForStat(activeAttributeGroup || 'INT');
+  const label = String(document.getElementById('watch41-oath-real')?.value || '').trim().replace(/\s+/g, ' ');
+  let loreName = String(document.getElementById('watch41-oath-lore')?.value || '').trim().replace(/\s+/g, ' ');
+  const difficulty = document.getElementById('watch41-oath-difficulty')?.value || 'standard';
+  if (!label) {
+    showToast('Real task required');
+    return;
+  }
+  const duplicate = getActivePersonalOaths().some(o => o.category === ctx.category && normalizePersonalOathLabel(o.label) === normalizePersonalOathLabel(label));
+  if (duplicate) {
+    showToast('Oath already exists');
+    return;
+  }
+  if (!loreName) loreName = `An Oath of ${ctx.category}`;
+  const oath = {
+    id: 'po_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+    label,
+    loreName,
+    category: ctx.category,
+    stat: ctx.stat || CATEGORIES[ctx.category]?.stat || 'INT',
+    domainId: activeDomainId(ctx.domainId || defaultPersonalOathForCategory(ctx.category).domainId, 'archive'),
+    difficulty: ['small','standard','major'].includes(difficulty) ? difficulty : 'standard',
+    reusable: true,
+    archived: false,
+    createdAt: new Date().toISOString()
+  };
+  state.personalOaths.push(oath);
+  saveState();
+  closePersonalOathModal();
+  showToast('OATH ADDED TO THE WATCH');
+  renderQuestPanel();
+  if (document.getElementById('screen-quests')?.classList.contains('active')) renderQuestsPage();
+}
+
+function archivePersonalOath(id) {
+  const oath = getPersonalOathById(id);
+  if (!oath) return;
+  oath.archived = true;
+  saveState();
+  showToast('OATH ARCHIVED');
+  renderQuestPanel();
+  renderQuestsPage();
+}
+
+function renderPersonalOathsCard() {
+  ensurePersonalOaths();
+  const grid = document.querySelector('#screen-quests .quest-dashboard-grid');
+  if (!grid) return;
+  let card = document.getElementById('watch41-personal-oaths-card');
+  if (!card) {
+    card = document.createElement('div');
+    card.id = 'watch41-personal-oaths-card';
+    card.className = 'game-card watch41-personal-card';
+    grid.insertBefore(card, grid.children[2] || null);
+  }
+  const active = getActivePersonalOaths();
+  const byCat = {};
+  for (const oath of active) {
+    if (!byCat[oath.category]) byCat[oath.category] = [];
+    byCat[oath.category].push(oath);
+  }
+  const body = active.length ? CATEGORY_ORDER.filter(cat => byCat[cat]?.length).map(cat => `
+    <div class="watch41-oath-group">
+      <div class="watch41-oath-group-title">${escapeHTML(cat)}</div>
+      ${byCat[cat].map(o => {
+        const d = getDomain(o.domainId);
+        return `
+          <div class="watch41-oath-row">
+            <div>
+              <div class="watch41-oath-name">${escapeHTML(o.label)}</div>
+              <div class="watch41-oath-lore">Becomes: ${escapeHTML(o.loreName || `An Oath of ${o.category}`)}</div>
+              <div class="watch41-oath-meta">${escapeHTML(o.category)} · ${escapeHTML(o.stat)} · ${escapeHTML(d.name)} · ${escapeHTML(o.difficulty)}</div>
+            </div>
+            <button class="watch41-archive-btn" onclick="archivePersonalOath('${o.id}')">Archive</button>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `).join('') : '<div class="game-card-text">No personal oaths yet. Add one from Today’s Watch under any attribute.</div>';
+  card.innerHTML = `<div class="game-card-title">Personal Oaths</div>${body}`;
+}
+
+const __watch41RenderQuestsPage = renderQuestsPage;
+renderQuestsPage = function watch41RenderQuestsPage() {
+  ensureStoryEngineState();
+  __watch41RenderQuestsPage();
+  renderPersonalOathsCard();
+};
+
+renderQuestPanel = function watch41RenderQuestPanel() {
+  ensureStoryEngineState();
+  ensureAttributeFirstQuests();
+  ensurePersonalOaths();
+  const panel = document.getElementById('quest-panel');
+  if (!panel) return;
+  panel.style.display = 'block';
+  const today = gameDate();
+  const alreadyLogged = state.entries.some(e => e.gameDate === today && e.type !== 'rest');
+  const draft = ensureTodayWatchDraft(today);
+  const selectedTasks = getSelectedAttributeTasks(today);
+  if (!selectedTasks.some(x => x.group.stat === activeAttributeGroup)) {
+    const firstSelected = selectedTasks[0]?.group?.stat;
+    if (firstSelected && ATTRIBUTE_TASK_GROUPS.some(g => g.stat === firstSelected)) activeAttributeGroup = firstSelected;
+  }
+  const selectedQuestIds = Array.from(new Set(selectedTasks.map(x => x.quest.id)));
+  const dayName = new Date(today + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' });
+  const hero = getHeroicQuestForDate(today);
+  document.getElementById('quest-panel-day').textContent = `${dayName} · ${selectedTasks.length} marked`;
+
+  let html = `
+    ${renderCouncilPanel()}
+    <div class="quest-section-label">Today’s Watch</div>
+    <div class="attribute-watch-grid">
+      ${ATTRIBUTE_TASK_GROUPS.map(group => renderAttributeCard(group, alreadyLogged)).join('')}
+    </div>
+    ${renderActiveAttributeDetail(alreadyLogged)}
+  `;
+
+  const weeklyQuests = getWeeklyQuests();
+  if (weeklyQuests.length > 0) {
+    const wk = weekKeyForDate(today);
+    const weekRes = state.questHistory.weekly[wk] || evaluateWeeklyQuestsForWeek(wk);
+    html += `<details class="weekly-oath-panel watch41-weekly-oaths"><summary>Week’s Oaths</summary>`;
+    for (const q of weeklyQuests) {
+      const draftHit = draft.quests[q.id] && (draft.quests[q.id].state === 'done' || draft.quests[q.id].state === 'heroic') && !alreadyLogged ? 1 : 0;
+      const r = weekRes[q.id] || { hits: 0, target: q.target, status: 'open' };
+      const hits = Math.min(q.target, (r.hits || 0) + draftHit);
+      const cells = Array.from({ length: q.target }, (_, i) => `<div class="weekly-oath-pip ${i < hits ? 'filled' : ''}"></div>`).join('');
+      html += `
+        <div class="weekly-oath-row">
+          <div>
+            <div class="weekly-oath-name">${escapeHTML(getQuestTaskLabel(q))}</div>
+            <div class="quest-summary-lore"><strong>Becomes</strong> ${escapeHTML(getQuestLoreName(q))}</div>
+            <div class="weekly-oath-pips">${cells}</div>
+          </div>
+          <div class="weekly-oath-count">${hits}/${q.target}</div>
+        </div>
+      `;
+    }
+    html += `</details>`;
+  }
+
+  const closeDisabled = alreadyLogged || selectedQuestIds.length === 0;
+  const anchorLine = hero
+    ? `Scene anchor: <strong>${escapeHTML(getQuestTaskLabel(hero))}</strong>`
+    : 'Scene anchor: <strong>the strongest marked task</strong>';
+  const summary = selectedTasks.length > 0
+    ? `${selectedTasks.length} task${selectedTasks.length === 1 ? '' : 's'} marked. ${anchorLine}`
+    : 'Tap an attribute, then mark what happened.';
+
+  html += `
+    <textarea class="attribute-watch-note" ${alreadyLogged ? 'disabled' : ''} placeholder="Optional detail. Example: 40 questions, chest day, night shift, paid rent." oninput="updateAttributeWatchNote(this.value)">${escapeHTML(draft.freeNote || '')}</textarea>
+    <div class="today-watch-actions">
+      <button class="btn" id="close-watch-btn" ${closeDisabled ? 'disabled' : ''}>✦ Close the Watch ✦</button>
+      <div class="scene-anchor-line">${alreadyLogged ? 'The Watch is closed for today.' : summary}</div>
+    </div>
+  `;
+  document.getElementById('quest-panel-body').innerHTML = html;
+  const closeBtn = document.getElementById('close-watch-btn');
+  if (closeBtn) closeBtn.addEventListener('click', closeTodayWatch);
+};
+
+function snapshotRewardState() {
+  ensureStoryEngineState();
+  const pressure = {};
+  for (const [k, v] of Object.entries(state.campaignState?.pressure || {})) pressure[k] = Number(v.value || 0);
+  const domains = {};
+  for (const id of DOMAIN_ORDER) domains[id] = Number(state.campaignState?.domainProgress?.[id]?.xp || 0);
+  return {
+    xp: Number(state.character?.xp || 0),
+    stats: Object.assign({}, state.character?.stats || {}),
+    statXP: Object.assign({}, state.character?.statXP || {}),
+    pressure,
+    domains,
+    loreCount: Array.isArray(state.campaignState?.loreUnlocks) ? state.campaignState.loreUnlocks.length : 0
+  };
+}
+
+function buildRewardSummary(before, entry) {
+  ensureStoryEngineState();
+  const today = gameDate();
+  const draft = ensureTodayWatchDraft(today);
+  const xpGained = Math.max(0, Number(state.character?.xp || 0) - Number(before?.xp || 0));
+  const selected = getSelectedAttributeTasks(today);
+  const statsFromTags = {};
+  for (const tag of entry?.tags || []) {
+    const stat = CATEGORIES[tag]?.stat;
+    if (stat) statsFromTags[stat] = (statsFromTags[stat] || 0) + STAT_XP_PER_TAG;
+  }
+  const statBits = Object.entries(statsFromTags).map(([stat, amt]) => {
+    const bumped = (entry?.statBumps || []).some(b => b.stat === stat);
+    return bumped ? `${stat} +1` : `${stat} +${amt}`;
+  });
+  for (const b of entry?.statBumps || []) {
+    if (!statBits.some(x => x.startsWith(b.stat + ' '))) statBits.push(`${b.stat} +1`);
+  }
+  const domainBits = [];
+  for (const { quest, qState } of selected) {
+    const q = quest || getQuestOrPersonalOath(quest?.id);
+    if (!q?.domainId) continue;
+    const d = getDomain(q.domainId);
+    const gained = Math.max(0, Number(state.campaignState?.domainProgress?.[d.id]?.xp || 0) - Number(before?.domains?.[d.id] || 0));
+    if (gained > 0) domainBits.push(`${d.name.replace(/^The\s+/,'')} +${gained}`);
+    else if (qState?.rewardSummary) domainBits.push(qState.rewardSummary);
+  }
+  const compactDomains = Array.from(new Set(domainBits)).slice(0, 3);
+  const pressureBits = [];
+  for (const [kind, afterObj] of Object.entries(state.campaignState?.pressure || {})) {
+    const beforeVal = Number(before?.pressure?.[kind] || 0);
+    const afterVal = Number(afterObj.value || 0);
+    const delta = afterVal - beforeVal;
+    if (delta) pressureBits.push(`${campaignTitleCase(kind)} pressure ${delta > 0 ? '+' : ''}${delta}`);
+  }
+  const hero = getHeroicQuestForDate(today);
+  const worldChange = (entry?.campaignChanges || [])[0] || state.campaignState?.lastWorldChange || null;
+  const loreUnlocks = Array.isArray(state.campaignState?.loreUnlocks) ? state.campaignState.loreUnlocks : [];
+  const newLore = loreUnlocks.slice(Number(before?.loreCount || 0)).map(u => u.title || 'Lore unlocked');
+  const mainBits = [];
+  mainBits.push(`+${xpGained} XP`);
+  mainBits.push(...statBits.slice(0, 3));
+  mainBits.push(...compactDomains.slice(0, 2));
+  const lines = [];
+  if (hero) lines.push(`Heroic: ${getQuestTaskLabel(hero)}`);
+  if (pressureBits.length) lines.push(`The world shifted: ${pressureBits.join(' · ')}`);
+  if (worldChange?.title || worldChange?.text) lines.push(`${worldChange.title || 'Latest consequence'}: ${worldChange.text || ''}`.slice(0, 180));
+  if (newLore.length) lines.push(`Lore unlocked: ${newLore.slice(0, 2).join(' · ')}`);
+  return { date: today, xpGained, main: mainBits.filter(Boolean).join(' · '), lines, heroicQuestId: hero?.id || null, entryId: entry?.id || null, createdAt: new Date().toISOString() };
+}
+
+function renderRewardSummaryCard(entry = null) {
+  const narrationCard = document.getElementById('todays-narration-card');
+  if (!narrationCard) return;
+  let card = document.getElementById('watch41-reward-card');
+  if (!card) {
+    card = document.createElement('div');
+    card.id = 'watch41-reward-card';
+    card.className = 'watch41-reward-card';
+    narrationCard.insertAdjacentElement('beforebegin', card);
+  }
+  const summary = state?.lastRewardSummary;
+  const today = gameDate();
+  const todayEntry = entry || (state.entries || []).slice().reverse().find(e => e.gameDate === today && e.type !== 'rest');
+  if (!summary || summary.date !== today || !todayEntry) {
+    card.classList.remove('show');
+    card.innerHTML = '';
+    return;
+  }
+  card.innerHTML = `
+    <div class="watch41-reward-kicker">Watch Closed</div>
+    <div class="watch41-reward-main">${escapeHTML(summary.main || '+0 XP')}</div>
+    ${(summary.lines || []).slice(0, 3).map(line => `<div class="watch41-reward-line">${escapeHTML(line)}</div>`).join('')}
+  `;
+  card.classList.add('show');
+}
+
+const __watch41ShowTodayCardIfLogged = showTodayCardIfLogged;
+showTodayCardIfLogged = function watch41ShowTodayCardIfLogged() {
+  __watch41ShowTodayCardIfLogged();
+  renderRewardSummaryCard();
+};
+
+const __watch41CloseTodayWatch = closeTodayWatch;
+closeTodayWatch = async function watch41CloseTodayWatch() {
+  const today = gameDate();
+  const alreadyLoggedBefore = state.entries.some(e => e.gameDate === today && e.type !== 'rest');
+  const before = snapshotRewardState();
+  await __watch41CloseTodayWatch();
+  const entry = (state.entries || []).slice().reverse().find(e => e.gameDate === today && e.type !== 'rest');
+  if (!alreadyLoggedBefore && entry) {
+    state.lastRewardSummary = buildRewardSummary(before, entry);
+    entry.rewardSummary = state.lastRewardSummary;
+    saveState();
+    renderRewardSummaryCard(entry);
+    ui40RenderCommandHeader();
+  }
+};
+
+function renderWatch41WorldLead() {
+  const grid = document.querySelector('#screen-world .world-grid');
+  if (!grid) return;
+  let panel = document.getElementById('ui40-world-overview');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'ui40-world-overview';
+    panel.className = 'ui40-world-overview';
+    grid.insertAdjacentElement('beforebegin', panel);
+  }
+  panel.className = 'ui40-world-overview';
+  const recent = state.campaignState?.lastWorldChange || (state.entries || []).slice().reverse().find(e => Array.isArray(e.campaignChanges) && e.campaignChanges.length)?.campaignChanges?.[0] || null;
+  const title = recent?.title || 'No visible consequence yet';
+  const text = recent?.text || 'The first few kept days are still laying stone. Close the Watch to move the world.';
+  const date = recent?.date || '';
+  panel.innerHTML = `
+    <div class="ui40-world-stat watch41-world-lead">
+      <div class="ui40-world-stat-label">Latest World Change</div>
+      <div class="ui40-world-stat-value">${escapeHTML(title)}</div>
+      <div class="ui40-world-stat-note">${escapeHTML(text)}${date ? ' · ' + escapeHTML(date) : ''}</div>
+    </div>
+  `;
+}
+
+function reorderWorldCardsForWatch41() {
+  const grid = document.querySelector('#screen-world .world-grid');
+  if (!grid) return;
+  const cards = Array.from(grid.children).filter(el => el.classList?.contains('game-card'));
+  const byTitle = needle => cards.find(card => (card.querySelector('.game-card-title')?.textContent || '').toLowerCase().includes(needle));
+  const pressure = byTitle('pressure') || byTitle('nemesis');
+  const campaign = byTitle('campaign state');
+  const map = byTitle('chapterhouse');
+  const cast = byTitle('cast');
+  const recent = byTitle('recent world') || byTitle('latest world');
+  if (pressure) pressure.querySelector('.game-card-title').textContent = 'World Pressure';
+  if (campaign) campaign.querySelector('.game-card-title').textContent = 'Active Campaign State';
+  if (recent) recent.querySelector('.game-card-title').textContent = 'Latest Consequences';
+  [pressure, campaign, map, cast, recent].filter(Boolean).forEach(card => grid.appendChild(card));
+}
+
+ui40RenderWorldOverview = function watch41RenderWorldOverview() {
+  renderWatch41WorldLead();
+};
+
+const __watch41RenderWorldPage = renderWorldPage;
+renderWorldPage = function watch41RenderWorldPage() {
+  __watch41RenderWorldPage();
+  renderWatch41WorldLead();
+  reorderWorldCardsForWatch41();
+};
+
+function watch41NextClassGateInfo(nextClass) {
+  const reqMap = {
+    5:  { minWeeks: 4,  dailyPct: 0.80, perfectWeeks: 1, label: '4 weeks tracked · 80% daily · 1 perfect week' },
+    10: { minWeeks: 8,  dailyPct: 0.85, perfectWeeks: 4, label: '8 weeks tracked · 85% daily · 4 perfect weeks' },
+    15: { minWeeks: 16, dailyPct: 0.85, perfectWeeks: 8, label: '16 weeks tracked · 85% daily · 8 perfect weeks' },
+    20: { minWeeks: 30, dailyPct: 0.90, perfectWeeks: 16, label: '30 weeks tracked · 90% daily · 16 perfect weeks' }
+  };
+  const req = reqMap[nextClass?.level];
+  if (!req) return { label: 'No formal class gate yet.', action: 'Gain XP and keep the Watch.' };
+  const stats = computeQuestStats();
+  const missingWeeks = Math.max(0, req.minWeeks - stats.weeksTracked);
+  const missingPerfect = Math.max(0, req.perfectWeeks - stats.perfectWeeklyWeeks);
+  const missingDailyPct = Math.max(0, Math.ceil((req.dailyPct - stats.dailyCompletionRate) * 100));
+  let action = 'Gate is open.';
+  if (missingWeeks > 0) action = `${missingWeeks} more tracked week${missingWeeks === 1 ? '' : 's'}`;
+  else if (missingPerfect > 0) action = `${missingPerfect} more perfect week${missingPerfect === 1 ? '' : 's'}`;
+  else if (missingDailyPct > 0) action = `Raise daily completion by about ${missingDailyPct}%`;
+  return { label: req.label, action };
+}
+
+ui40RenderHeroEvolution = function watch41RenderHeroEvolution() {
+  const screen = document.getElementById('screen-character');
+  const portrait = document.getElementById('portrait-card');
+  if (!screen || !portrait) return;
+  let panel = document.getElementById('ui40-next-evolution');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'ui40-next-evolution';
+    panel.className = 'ui40-next-evolution';
+    portrait.insertAdjacentElement('afterend', panel);
+  }
+  const level = state.character.level || 1;
+  const current = classForLevel(level).name;
+  const nextClass = CLASSES.find(c => c.level > level);
+  const xpNow = Number(state.character.xp || 0);
+  const xpNextLevel = xpForLevel(level + 1);
+  const xpRemaining = Math.max(0, xpNextLevel - xpNow);
+  const gate = watch41NextClassGateInfo(nextClass);
+  const nextText = nextClass ? `${current} → ${nextClass.name}` : `${current} → Endgame`;
+  panel.innerHTML = `
+    <div class="ui40-next-evolution-title">Next Evolution</div>
+    <div class="ui40-next-evolution-main">${escapeHTML(nextText)}</div>
+    <div class="watch41-next-evolution-rows">
+      <div class="watch41-evolution-row"><span>XP to next level</span><strong>${xpRemaining}</strong></div>
+      <div class="watch41-evolution-row"><span>Class gate</span><strong>${escapeHTML(gate.label)}</strong></div>
+      <div class="watch41-evolution-row"><span>Closest action</span><strong>${escapeHTML(gate.action)}</strong></div>
+    </div>
+  `;
+};
+
+const __watch41Init = init;
+init = function watch41Init() {
+  __watch41Init();
+  ensureStoryEngineState();
+  ensurePersonalOaths();
+  if (!state.lastRewardSummary || typeof state.lastRewardSummary !== 'object') state.lastRewardSummary = null;
+  saveState();
+  renderRewardSummaryCard();
+  if (document.getElementById('screen-quests')?.classList.contains('active')) renderPersonalOathsCard();
+};
+
 
 document.addEventListener('DOMContentLoaded', init);
 </script>
