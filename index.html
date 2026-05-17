@@ -3758,6 +3758,152 @@ body::before {
   .ui40-world-overview { grid-template-columns: 1fr; }
 }
 
+/* ============================================================
+   PROLOGUE 2.0 — THE FIRST WATCH POLISH
+   ============================================================ */
+.prologue-choice-rich {
+  padding: 0.95rem 1rem 0.88rem;
+  border-radius: 9px;
+  background:
+    radial-gradient(ellipse 80% 70% at 50% 0%, rgba(212,175,55,0.10), transparent 70%),
+    rgba(244,232,208,0.72);
+  border-color: rgba(139,100,32,0.52);
+  border-left-width: 4px;
+  box-shadow: 0 2px 10px rgba(42,24,16,0.10);
+}
+.prologue-choice-rich:hover {
+  background:
+    radial-gradient(ellipse 80% 70% at 50% 0%, rgba(212,175,55,0.18), transparent 70%),
+    var(--parchment-dark);
+  box-shadow: 0 0 0 1px rgba(212,175,55,0.22), 0 5px 18px rgba(42,24,16,0.15);
+}
+.prologue-choice-rich .choice-title {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: 0.25rem;
+}
+.prologue-choice-rich .choice-subtitle {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  line-height: 1.32;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+.prologue-choice-rich .choice-effect {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.66rem;
+  line-height: 1.25;
+  color: var(--gold-deep);
+  border: 1px solid rgba(139,100,32,0.35);
+  border-radius: 999px;
+  padding: 0.24rem 0.48rem;
+  background: rgba(244,232,208,0.55);
+}
+.prologue-writ-card {
+  background:
+    radial-gradient(ellipse 90% 50% at 50% 0%, rgba(212,175,55,0.18), transparent 72%),
+    rgba(27,16,11,0.92);
+  color: var(--parchment);
+  border: 1px solid rgba(212,175,55,0.58);
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 10px 30px rgba(42,24,16,0.30), inset 0 0 18px rgba(212,175,55,0.06);
+}
+.writ-kicker {
+  font-family: 'Cinzel', serif;
+  color: var(--gold-bright);
+  text-align: center;
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+.writ-name {
+  font-family: 'Cinzel', serif;
+  font-size: 1.35rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+  color: var(--parchment);
+}
+.writ-class {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  text-align: center;
+  color: rgba(244,232,208,0.76);
+  margin: 0.1rem 0 0.85rem;
+}
+.writ-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+.writ-grid div {
+  border: 1px solid rgba(212,175,55,0.26);
+  background: rgba(244,232,208,0.07);
+  border-radius: 9px;
+  padding: 0.55rem 0.62rem;
+}
+.writ-grid span {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(244,232,208,0.58);
+  margin-bottom: 0.12rem;
+}
+.writ-grid strong {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--gold-bright);
+  text-transform: uppercase;
+}
+.writ-grid em {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.88rem;
+  color: rgba(244,232,208,0.78);
+  line-height: 1.25;
+  margin-top: 0.12rem;
+}
+.writ-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 0.8rem;
+}
+.writ-stats span {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  color: rgba(244,232,208,0.72);
+  border: 1px solid rgba(212,175,55,0.32);
+  border-radius: 999px;
+  padding: 0.25rem 0.45rem;
+}
+.writ-stats strong { color: var(--gold-bright); }
+.writ-note {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: rgba(244,232,208,0.78);
+  line-height: 1.35;
+  text-align: center;
+  margin-top: 0.85rem;
+}
+@media (min-width: 480px) {
+  .writ-grid { grid-template-columns: 1fr 1fr; }
+}
+
 </style>
 </head>
 <body>
@@ -4281,7 +4427,10 @@ const DEFAULT_STATE = {
     // Persistent worldbuilding tokens — referenced by templates forever
     origin: null,        // { id, label, token, blurb }
     oath: null,          // { id, label, token, blurb }
-    keepsake: null       // { id, label, token, blurb }
+    keepsake: null,      // { id, label, token, blurb }
+    campaignTone: null,  // Prologue 2.0 tone selector
+    firstBond: null,     // Prologue 2.0 seeded NPC/party bond
+    firstWatch: null     // Prologue 2.0 first duty/domain anchor
   },
   // World fixed points
   world: {
@@ -4372,6 +4521,9 @@ function migrateState(s) {
   if (s.character.origin === undefined) s.character.origin = null;
   if (s.character.oath === undefined) s.character.oath = null;
   if (s.character.keepsake === undefined) s.character.keepsake = null;
+  if (s.character.campaignTone === undefined) s.character.campaignTone = null;
+  if (s.character.firstBond === undefined) s.character.firstBond = null;
+  if (s.character.firstWatch === undefined) s.character.firstWatch = null;
   // World — defaulted in for legacy saves so templates always have tokens
   s.world = Object.assign({
     realm: 'Avenmark',
@@ -4733,37 +4885,64 @@ function awardBoon(level) {
 }
 
 /* ============================================================
-   PROLOGUE — choice data + scene script
+   PROLOGUE 2.0 — THE FIRST WATCH
    ============================================================
-   Each choice writes a persistent token onto state.character that
-   templates can interpolate forever. Mechanical effects are small
-   in Phase 1 (a single +1 stat) — the real value is narrative
-   anchoring for Phase 2's API.
+   Character creation is now a playable campaign seed instead of
+   a linear novella. Each choice is visible, consequential, and
+   written into persistent state for the app + Worker context.
    ============================================================ */
 
 const ORIGINS = [
   {
     id: 'border',
-    label: 'A border town.',
-    blurb: 'You grew up watching banners ride past on missions you weren\'t part of, and decided early that one day you would be.',
-    token: 'a border town in the realm\'s long shadow',
+    label: 'The Border Road',
+    subtitle: 'You learned early that quiet places are rarely safe ones.',
+    blurb: 'You grew up where the map frayed: long roads, thin walls, travelers who arrived with news nobody wanted first. You learned to sleep lightly, mend what you could, and keep walking when the weather turned mean.',
+    token: 'border-raised, from a town in the realm\'s long shadow',
     statBonus: 'CON',
+    domain: 'hearth',
+    npcBias: 'mentor',
+    worldHook: 'Eastern-road rumors unlock earlier.',
+    effect: '+1 CON · Hearth affinity · Greyroad rumor thread',
     flavor: 'border-raised'
   },
   {
-    id: 'merchant',
-    label: 'A merchant family in a quiet city.',
-    blurb: 'Comfortable, expected, dull. You wrote the order\'s recruitment hall a letter at fifteen. They took six years to answer.',
-    token: 'a merchant\'s house in a city too quiet for you',
+    id: 'city',
+    label: 'The Quiet City',
+    subtitle: 'Comfortable rooms. Expected futures. A life too small by half.',
+    blurb: 'Your family had a respectable house, respectable plans, and a remarkable talent for making tomorrow sound exactly like yesterday. You wrote the Watch once. They took years to answer. You kept the letter anyway.',
+    token: 'city-bred, from a merchant house too quiet for his ambitions',
     statBonus: 'INT',
+    domain: 'archive',
+    npcBias: 'scholar',
+    worldHook: 'Archive hooks begin with stronger footing.',
+    effect: '+1 INT · Archive affinity · Scriptorium opening',
     flavor: 'city-bred'
   },
   {
-    id: 'unspoken',
-    label: '"Around."',
-    blurb: 'You don\'t say where. Thale lets the silence sit a long second, then nods and moves on. He doesn\'t ask again. He doesn\'t forget, either.',
-    token: 'somewhere you have not yet seen fit to name',
+    id: 'infirmary',
+    label: 'The Ward-House',
+    subtitle: 'You saw how quickly strength becomes paperwork without someone competent nearby.',
+    blurb: 'You spent enough time around the sick, injured, exhausted, and stubborn to learn that heroics are usually quieter than songs claim. Someone notices first. Someone acts first. Someone stays after everyone else leaves.',
+    token: 'ward-house raised, familiar with work that does not wait for applause',
     statBonus: 'WIS',
+    domain: 'war_room',
+    npcBias: 'healer',
+    worldHook: 'Triage and crisis scenes carry more weight.',
+    effect: '+1 WIS · War Room affinity · Healer bond bias',
+    flavor: 'ward-taught'
+  },
+  {
+    id: 'unspoken',
+    label: 'Somewhere Unnamed',
+    subtitle: 'You answer around the question. Thale notices and lets you.',
+    blurb: 'You do not say where. Not because you are ashamed, exactly. Because some places become weaker when spoken aloud too early. Master Thale lets the silence sit between you and does not reach for it.',
+    token: 'from somewhere he has not yet seen fit to name',
+    statBonus: 'DEX',
+    domain: 'quarters',
+    npcBias: 'rival',
+    worldHook: 'A private-past thread remains locked until consistency earns it.',
+    effect: '+1 DEX · Quarters affinity · Rival curiosity',
     flavor: 'a past kept close'
   }
 ];
@@ -4772,194 +4951,368 @@ const OATHS = [
   {
     id: 'best',
     label: 'To be the best.',
-    blurb: 'Because they are. You don\'t see the point of aiming lower.',
+    subtitle: 'Not because it is noble. Because aiming lower feels dishonest.',
+    blurb: 'Thale does not smile when you say it. That is good. A smile would have ruined it. He only asks whether you understand the cost of measuring yourself against people who have already paid theirs.',
     token: 'the simple, brutal ambition to be the best',
+    pressure: 'rival',
+    statBias: 'STR',
+    effect: 'Rival pressure becomes visible earlier · +STR bias',
     flavor: 'driven'
   },
   {
-    id: 'service',
-    label: 'To go where help is needed.',
-    blurb: 'The realm has a lot of places like that. You want to be one of the people who shows up.',
+    id: 'show_up',
+    label: 'To show up when needed.',
+    subtitle: 'The realm is mostly held together by people who arrive anyway.',
+    blurb: 'The answer is plain enough that it almost sounds small. Thale seems to prefer it that way. Grand speeches have never patched a roof, held a vein, or carried a friend home.',
     token: 'the conviction that someone has to show up',
+    pressure: 'greyrot',
+    statBias: 'WIS',
+    effect: 'Greyrot resistance starts steadier · +WIS bias',
     flavor: 'service-bound'
   },
   {
+    id: 'freedom',
+    label: 'To become free enough to choose the road.',
+    subtitle: 'No leash. No script. Just a horizon and the nerve to chase it.',
+    blurb: 'This is the answer that makes Thale look tired, which is not the same as disappointed. The Watch has always attracted people who confuse freedom with motion. Some of them eventually learn the difference.',
+    token: 'a hunger for the open road and a life large enough to choose',
+    pressure: 'chaos',
+    statBias: 'CHA',
+    effect: 'Campaign tone leans adventurous · +CHA bias',
+    flavor: 'restless-hearted'
+  },
+  {
     id: 'story',
-    label: 'A story you heard once.',
-    blurb: 'About a Watcher who did something extraordinary. You\'ve never told anyone, and you don\'t tell Thale either. But it\'s the reason.',
-    token: 'a story you carry that no one else has heard',
-    flavor: 'a private fire'
+    label: 'Because of a story you once heard.',
+    subtitle: 'You never outgrew it. You only learned to hide it better.',
+    blurb: 'You do not tell him the story. Not yet. Thale studies you as if he can see the outline of it anyway. “Private fires burn cleanest when fed carefully,” he says.',
+    token: 'a private story carried like a coal under the ribs',
+    pressure: 'greyrot',
+    statBias: 'INT',
+    effect: 'Lore unlocks appear sooner · +INT bias',
+    flavor: 'private fire'
   }
 ];
 
 const KEEPSAKES = [
   {
     id: 'sword',
-    label: 'A practice sword. Your father\'s.',
-    blurb: 'Older than you. The grip has been re-wrapped twice. You set it against the wall by the door.',
-    token: 'a re-wrapped practice sword that was your father\'s before yours',
-    statBonus: 'STR'
+    label: 'A re-wrapped practice sword.',
+    subtitle: 'Older than you. Still serviceable. Mostly.',
+    blurb: 'You set it against the wall. The grip has been repaired twice and badly once. It is not impressive, which may be why you trust it.',
+    token: 'a re-wrapped practice sword that was his father\'s before it was his',
+    statBonus: 'STR',
+    domain: 'training_yard',
+    effect: '+1 STR · Training Yard opens strong'
   },
   {
     id: 'book',
-    label: 'A novel, dog-eared.',
-    blurb: 'Not a manual, not scripture. A novel you\'ve read four times. You don\'t know why you brought it. You couldn\'t leave it.',
-    token: 'a dog-eared novel you have read four times for reasons you do not entirely understand',
-    statBonus: 'CHA'
+    label: 'A dog-eared novel.',
+    subtitle: 'Not scripture. Not a manual. More dangerous than both.',
+    blurb: 'You have read it four times and lied about that number twice. It is the sort of book that makes a person inconvenient to manage afterward.',
+    token: 'a dog-eared novel read too many times to be casual',
+    statBonus: 'CHA',
+    domain: 'long_table',
+    effect: '+1 CHA · Long Table opens strong'
   },
   {
     id: 'letter',
     label: 'A folded letter, unopened.',
-    blurb: 'You know who it\'s from. You\'re saving it for a day you\'ll know when it comes. You hang it on the hook above the bed.',
-    token: 'a folded letter you have not yet opened, hanging above your bed',
-    statBonus: 'WIS'
+    subtitle: 'You know who sent it. You are saving it for the right day.',
+    blurb: 'You hang it above the bed. It looks heavier than paper should. The room is too small for many secrets, but it accepts this one.',
+    token: 'a folded letter he has not yet opened',
+    statBonus: 'WIS',
+    domain: 'hearth',
+    effect: '+1 WIS · Hearth scenes carry more weight'
+  },
+  {
+    id: 'coin',
+    label: 'A foreign coin with no obvious value.',
+    subtitle: 'A useless thing, unless a story knows what to do with it.',
+    blurb: 'You turn it once between your fingers before putting it on the sill. The stamped face is worn nearly smooth. Someone carried it a long way before you did.',
+    token: 'a foreign coin worn nearly smooth by another traveler\'s hand',
+    statBonus: 'DEX',
+    domain: 'ledger',
+    effect: '+1 DEX · Ledger/road hooks open strong'
   }
 ];
 
-// The prologue is a sequence of "scenes" — some are pure prose,
-// some present a choice. Each scene has a key, a body (string or
-// function returning string after choices are made), and optionally
-// a `choice` field naming which choice this scene presents.
+const CAMPAIGN_TONES = [
+  {
+    id: 'shonen_road',
+    label: 'The Earnest Road',
+    subtitle: 'Big dreams, rivals, found family, ridiculous ambition treated seriously.',
+    token: 'earnest, high-spirited, rival-driven, found-family adventure',
+    effect: 'More momentum, more rivalry, more “we are absolutely doing this” energy.'
+  },
+  {
+    id: 'chapterhouse_comedy',
+    label: 'The Chapterhouse Comedy',
+    subtitle: 'Warm chaos, practical fantasy, dry banter, stew of uncertain origin.',
+    token: 'warm, grounded, mildly comedic chapterhouse fantasy',
+    effect: 'More NPC banter, daily-life texture, and useful absurdity.'
+  },
+  {
+    id: 'darkening_realm',
+    label: 'The Darkening Realm',
+    subtitle: 'A slow-burn threat under ordinary days. Less melodrama, more pressure.',
+    token: 'restrained, atmospheric, consequence-forward slow-burn fantasy',
+    effect: 'More visible world pressure, rumors, and ominous continuity.'
+  },
+  {
+    id: 'guild_campaign',
+    label: 'The Guild Campaign',
+    subtitle: 'Quest boards, party roles, visible rewards, practical progression.',
+    token: 'quest-board-forward, tactical, reward-visible guild fantasy',
+    effect: 'More concrete quest framing and progression callouts.'
+  }
+];
+
+const FIRST_BONDS = [
+  {
+    id: 'rival',
+    label: 'The Rival',
+    subtitle: 'Someone ahead of you. Annoyingly competent. Useful problem.',
+    npc: {
+      id: 'npc_aldric_vey',
+      name: 'Aldric Vey',
+      role: 'Senior Aspirant',
+      description: 'Lean, composed, and irritatingly precise; the kind of aspirant who folds his cloak before losing a duel.',
+      attitude: 'polite, competitive, already measuring Jerry by the width of a practice blade',
+      relationship: 'rival',
+      status: 'alive',
+      tags: ['chapterhouse', 'aspirant', 'rival', 'precise']
+    },
+    token: 'Aldric Vey, a senior aspirant and natural rival',
+    effect: 'Rival system starts immediately.'
+  },
+  {
+    id: 'friend',
+    label: 'The Friend',
+    subtitle: 'Warm, chaotic, impossible to keep fully on task.',
+    npc: {
+      id: 'npc_mira_calen',
+      name: 'Mira Calen',
+      role: 'Aspirant of the Long Table',
+      description: 'Bright-eyed, fast-talking, and somehow always holding food she did not technically steal.',
+      attitude: 'friendly, conspiratorial, convinced Jerry needs to loosen up before the building does it for him',
+      relationship: 'peer',
+      status: 'alive',
+      tags: ['chapterhouse', 'aspirant', 'friend', 'warm']
+    },
+    token: 'Mira Calen, a warm and chaotic fellow aspirant',
+    effect: 'Party warmth starts immediately.'
+  },
+  {
+    id: 'healer',
+    label: 'The Healer-Scholar',
+    subtitle: 'Not soft. Observant. The dangerous kind of kind.',
+    npc: {
+      id: 'npc_sera_vale',
+      name: 'Sera Vale',
+      role: 'Healer-Scholar of Calenhal',
+      description: 'Quiet, sharp-eyed, and usually carrying either a ledger of symptoms or tea nobody asked for but needed.',
+      attitude: 'measured, kind, and suspicious of anyone who calls exhaustion discipline',
+      relationship: 'peer',
+      status: 'alive',
+      tags: ['chapterhouse', 'healer', 'scholar', 'recovery']
+    },
+    token: 'Sera Vale, a healer-scholar who notices what others excuse',
+    effect: 'Recovery and wisdom scenes get a persistent voice.'
+  },
+  {
+    id: 'quartermaster',
+    label: 'The Quartermaster',
+    subtitle: 'The person who knows where everything is and why everyone is wrong.',
+    npc: {
+      id: 'npc_bram_kettle',
+      name: 'Bram Kettle',
+      role: 'Quartermaster',
+      description: 'Broad, practical, permanently unimpressed, and capable of turning a missing spoon into a moral inquiry.',
+      attitude: 'dryly fond in advance, though he would deny this under oath',
+      relationship: 'acquaintance',
+      status: 'alive',
+      tags: ['chapterhouse', 'quartermaster', 'chores', 'dry']
+    },
+    token: 'Bram Kettle, the quartermaster with a ledger for every sin',
+    effect: 'Chores, order, and logistics become funnier.'
+  }
+];
+
+const FIRST_WATCHES = [
+  {
+    id: 'training_yard',
+    label: 'The Training Yard',
+    subtitle: 'Sweat, bruises, and the ancient art of not embarrassing yourself twice.',
+    token: 'the Training Yard',
+    category: 'Train',
+    stat: 'STR',
+    domain: 'training_yard',
+    effect: 'First heroic duty favors STR / training tasks.'
+  },
+  {
+    id: 'scriptorium',
+    label: 'The Scriptorium',
+    subtitle: 'Ink, old maps, and the horror of realizing the boring page matters.',
+    token: 'the Scriptorium',
+    category: 'Study',
+    stat: 'INT',
+    domain: 'scriptorium',
+    effect: 'First heroic duty favors INT / study tasks.'
+  },
+  {
+    id: 'infirmary',
+    label: 'The Infirmary',
+    subtitle: 'Bandages, triage, and people insisting they are fine while actively leaking.',
+    token: 'the Infirmary',
+    category: 'Work',
+    stat: 'WIS',
+    domain: 'war_room',
+    effect: 'First heroic duty favors WIS / work tasks.'
+  },
+  {
+    id: 'hearth',
+    label: 'The Hearth',
+    subtitle: 'Food, sleep, recovery, and the scandalous idea that bodies require maintenance.',
+    token: 'the Hearth',
+    category: 'Health',
+    stat: 'CON',
+    domain: 'hearth',
+    effect: 'First heroic duty favors CON / recovery tasks.'
+  },
+  {
+    id: 'quarters',
+    label: 'The Quarters',
+    subtitle: 'A small room, a smaller shelf, and the beginning of order.',
+    token: 'the Quarters',
+    category: 'Chores',
+    stat: 'DEX',
+    domain: 'quarters',
+    effect: 'First heroic duty favors DEX / chores tasks.'
+  },
+  {
+    id: 'long_table',
+    label: 'The Long Table',
+    subtitle: 'The place where a party starts pretending it is not a party yet.',
+    token: 'the Long Table',
+    category: 'Social',
+    stat: 'CHA',
+    domain: 'long_table',
+    effect: 'First heroic duty favors CHA / social tasks.'
+  }
+];
+
 const PROLOGUE_SCENES = [
   {
     key: 'arrival',
-    title: 'I. Arrival',
-    body: () => `The road into ${state.world.chapterhouse} crests a long hill before it drops to the river crossing, and from that crest you can see the chapterhouse for the first time. A grey stone building on the far rise, walls patched with newer stone that hasn't yet weathered to match. A standard above the gate too far to read but easy to guess: the eight-pointed star with one dark petal, against a deep indigo field.
+    title: 'I. Arrival at Calenhal',
+    body: () => `Calenhal appears after the hill, which is rude of it. A proper chapterhouse should announce itself from a heroic distance. Instead, it waits until your legs are tired and then reveals a grey stone building patched in three colors of masonry, standing above the river like an old knight refusing to sit down.
 
-You have been walking for some time. You are ${state.character.name}. Your acceptance letter is folded twice in your coat. The realm is ${state.world.realm}, twelve years past the end of the war, recovering unevenly. The order you have come to join — ${state.world.order} — has stood for three hundred and seven years, on paper.
+The banner over the gate is real enough: the eight-pointed star of ${state.world.order}. The courtyard beyond it is quieter than the songs promised. Two horses in stalls built for eight. Practice rings swept clean. One chicken where a war council probably stood once.
 
-You shoulder what you brought with you, and start down the hill.`
+You are ${state.character.name}, newly accepted aspirant, carrying everything that fit and several expectations that did not. Master Iven Thale is waiting somewhere inside. People keep saying he is difficult. This is usually what people call a man who is right too often.`
   },
   {
-    key: 'gate',
-    title: 'II. The Gate',
-    body: () => `The gate-warden is older than you expected — closer to seventy than fifty, with a long grey braid and the careful posture of someone whose back has opinions. He reads your letter without taking it from you. Looks you over.
+    key: 'origin',
+    title: 'II. Where the Road Began',
+    intro: () => `Thale reads your letter without sitting down. Then he looks at you as if the letter was only checking whether you could spell your own name.
 
-"They told you which cell?"
-
-"East tower, third floor."
-
-"Mm." He gestures you through with two fingers. "Master Thale's already waiting. Dining hall. He doesn't like to be kept."
-
-You step through into a courtyard that is, you cannot help noticing, mostly empty. A practice yard at the far end, scuffed clean by long use. Two horses in stalls that could hold eight. The chapterhouse of ${state.world.chapterhouse} was built to house twelve banners. You count, walking across the flagstones, and arrive at four. One of which is yours, when you have one. None of which you have yet met.
-
-You hear voices from somewhere above — two of them, young, arguing about something ordinary. You don't see who. You file the sound away.`
-  },
-  {
-    key: 'mentor',
-    title: 'III. Master Thale',
-    body: () => `The dining hall is long and mostly dark. One end is lit. A tall man in a dark coat sits at a long table with a single candle and a cup of something that is not tea, reading a stack of mission reports the way someone reads a bill they already know they cannot pay.
-
-He looks up when you come in. Late fifties. Silver-streaked. Eyes that have done a lot of looking.
-
-"${state.character.name}." Not a question. He has been expecting you. He gestures to the bench across from him. "Sit. Eat, if you're hungry — there's bread on the sideboard, it isn't fresh but it isn't stale either, which is most of what you can ask of bread."
-
-You sit. He goes back to the report for a moment, finishes a paragraph, closes the folder, and sets it aside with the unhurried care of someone who has decided a thing can wait. Then he looks at you properly for the first time.
-
-"I am Iven Thale. I was a Knight-Captain of this Watch. Now I teach. You will train under me until I tell you otherwise, which will not be soon. There are two other aspirants in the house, both ahead of you, both of whom you will meet tomorrow, neither of whom I will describe for you tonight because first impressions are yours to make and I do not propose to spoil them."
-
-He takes a slow drink from his cup.
-
-"First, though. Some questions."`
-  },
-  {
-    key: 'choice-origin',
-    title: 'IV. A Question',
-    intro: () => `He asks it casually, in the way of someone who has asked it a thousand times.
-
-"Where were you, before you were here?"`,
+“Before we give you a bed, a blade, and work you will regret agreeing to, tell me where you came from.”`,
     choice: 'origin'
   },
   {
-    key: 'after-origin',
-    title: '',
-    body: () => {
+    key: 'oath',
+    title: 'III. Why You Came',
+    intro: () => {
       const o = state.character.origin;
-      return `${o.blurb}
+      return `${o?.blurb || ''}
 
-He nods. Doesn't write it down. He won't forget it.`;
-    }
-  },
-  {
-    key: 'choice-oath',
-    title: 'V. The Second Question',
-    intro: () => `He pours himself another half-measure of whatever is in the cup. Doesn't offer you any. Waits.
+Thale listens. Does not write it down. He has the air of someone who considers memory cheaper than paper.
 
-"And why ${state.world.orderShort}, specifically? There are other orders. Some of them pay better."`,
+“And why the Watch?” he asks. “There are easier ways to become tired.”`;
+    },
     choice: 'oath'
   },
   {
-    key: 'after-oath',
-    title: '',
-    body: () => {
+    key: 'tone',
+    title: 'IV. What Kind of Chronicle This Becomes',
+    intro: () => {
       const oath = state.character.oath;
-      return `${oath.blurb}
+      return `${oath?.blurb || ''}
 
-Thale watches you for a long moment after you answer. You can't quite read his face. Whatever he was looking for, you think you may have given him — or may not have. He doesn't say which.
+He studies you for another moment. Somewhere above, two aspirants are arguing about whether soup can be breakfast. Someone says yes with alarming confidence.
 
-"Good enough," he says finally, which is neither approval nor its opposite. "The work will tell us the rest."
-
-He stands. The candle is burning low. He gestures toward the hall behind you.
-
-"Your cell. East tower, third floor. The window is small but it faces east, which means the sun will get you up whether you want it to or not. Settle in. We begin in earnest tomorrow."`;
-    }
+The chronicler sharpens his pen. Every campaign has a shape before anyone admits it. Choose the current that should pull hardest beneath this one.`;
+    },
+    choice: 'campaignTone'
   },
   {
-    key: 'cell',
-    title: 'VI. The Cell',
-    body: () => `The room is the size of a modest closet. A bed, a hook on the wall, a window the size of a book. A single candle in a pewter dish on the sill, already lit — by whom, you don't know. The Watch keeps strange small kindnesses.
+    key: 'bond',
+    title: 'V. The First Face in the Hall',
+    intro: () => {
+      const tone = state.character.campaignTone;
+      return `The hall outside your assigned cell is narrow, drafty, and already inhabited by other people’s problems. Before the night is over, one face fixes itself in the beginning of your story.
 
-Outside the door, somewhere down the corridor, you can hear someone snoring already. Someone else is humming, very quietly, a song you don't recognize. The chapterhouse settles around you like an old building deciding to accept a new sound in it.
+Not the mentor. Not the grand villain. Someone closer. The sort of person who changes whether a hard week feels like a trial, a joke, or a duel.
 
-You sit on the bed. It is exactly as soft as you expected, which is to say, not at all. You take a long breath. You unpack what you brought from before.`
+Your chronicle leans ${tone?.label ? tone.label.toLowerCase() : 'toward the road ahead'}. Who steps into frame first?`;
+    },
+    choice: 'firstBond'
   },
   {
-    key: 'choice-keepsake',
-    title: 'VII. What You Brought',
-    intro: () => `You set down what you brought from before.`,
+    key: 'keepsake',
+    title: 'VI. What You Brought',
+    intro: () => {
+      const b = state.character.firstBond;
+      return `${b?.npc?.name || 'Someone'} passes in the corridor before you can decide whether to say anything clever. This is probably mercy.
+
+Your room is the size of a modest closet. A bed, a hook, a shelf, and a window small enough to make optimism seem logistical. You unpack one thing first.`;
+    },
     choice: 'keepsake'
   },
   {
-    key: 'after-keepsake',
-    title: '',
-    body: () => {
+    key: 'firstWatch',
+    title: 'VII. The First Watch',
+    intro: () => {
       const k = state.character.keepsake;
-      return `${k.blurb}
+      return `${k?.blurb || ''}
 
-You blow out the candle. The dark is total for a long second before the moon finds the small window and makes a pale rectangle of it on the floor. You lie down. The bed is bad. You are exactly where you wanted to be.
+Morning arrives through the east window without asking permission. In the courtyard, Thale hands you a smooth dark oath-stone, blank on one face.
 
-You sleep.`;
-    }
+“There used to be more ceremony,” he says. “There used to be more of many things.”
+
+He closes your fingers around the stone.
+
+“Choose where you begin. Not forever. Just today. A life is mostly made that way.”`;
+    },
+    choice: 'firstWatch'
   },
   {
-    key: 'oath-stone',
-    title: 'VIII. The Oath',
-    body: () => `You wake before the bell, in the grey hour. Master Thale is already in the courtyard. He has not been waiting; he was simply there first, the way he will be there first for as long as you know him.
-
-He hands you a smooth dark stone the size of a thumb. The eight-pointed star is incised on one face. The other face is blank.
-
-"This is yours now," he says. "It's nothing magical. It's a stone. The order has given new aspirants a stone for two hundred and forty-some years. The blank face is your own to fill. Some Watchers carve a sigil. Some do nothing. Some lose theirs immediately, which is its own answer."
-
-He does not make you say an oath aloud. He does not ask you to swear by anything.
-
-"There is no ceremony. There used to be. The order has trimmed itself, in places. We trust that if you are here, you understand why you are here. If we are wrong about you, we will find out together."
-
-He looks at you. The light is just beginning to come up over the eastern wall.
-
-"Welcome to the Watch, ${state.character.name}."
-
-The chronicle begins.`
+    key: 'writ',
+    title: 'VIII. Character Writ',
+    body: () => renderPrologueWritText(),
+    writ: true
   }
 ];
 
 let prologueIndex = 0;
-let prologueAnswers = {}; // { origin: ORIGINS[i], oath: OATHS[i], keepsake: KEEPSAKES[i] }
+let prologueAnswers = {};
 
 function startPrologue() {
   prologueIndex = 0;
   prologueAnswers = {};
   showScreen('prologue');
   renderPrologueScene();
+}
+
+function prologueOptions(kind) {
+  if (kind === 'origin') return ORIGINS;
+  if (kind === 'oath') return OATHS;
+  if (kind === 'campaignTone') return CAMPAIGN_TONES;
+  if (kind === 'firstBond') return FIRST_BONDS;
+  if (kind === 'keepsake') return KEEPSAKES;
+  if (kind === 'firstWatch') return FIRST_WATCHES;
+  return [];
 }
 
 function renderPrologueScene() {
@@ -4972,52 +5325,51 @@ function renderPrologueScene() {
   const continueBtn = document.getElementById('prologue-continue');
   const counterEl = document.getElementById('prologue-counter');
 
-  // Reset
   choiceEl.innerHTML = '';
   choiceEl.style.display = 'none';
   continueBtn.style.display = 'none';
 
   titleEl.textContent = scene.title || '';
   titleEl.style.display = scene.title ? 'block' : 'none';
-
   counterEl.textContent = `${prologueIndex + 1} / ${PROLOGUE_SCENES.length}`;
 
   if (scene.choice) {
-    // Choice scene: render intro + options
     bodyEl.innerHTML = formatProse(scene.intro());
-    const opts = scene.choice === 'origin' ? ORIGINS : scene.choice === 'oath' ? OATHS : KEEPSAKES;
-    for (const opt of opts) {
+    for (const opt of prologueOptions(scene.choice)) {
       const btn = document.createElement('button');
-      btn.className = 'prologue-choice-btn';
-      btn.innerHTML = `<span class="choice-label">${escapeHTML(opt.label)}</span>`;
+      btn.className = 'prologue-choice-btn prologue-choice-rich';
+      btn.innerHTML = `
+        <span class="choice-title">${escapeHTML(opt.label)}</span>
+        <span class="choice-subtitle">${escapeHTML(opt.subtitle || opt.blurb || '')}</span>
+        <span class="choice-effect">${escapeHTML(opt.effect || '')}</span>
+      `;
       btn.addEventListener('click', () => selectChoice(scene.choice, opt));
       choiceEl.appendChild(btn);
     }
     choiceEl.style.display = 'flex';
   } else {
-    // Prose scene: render body + continue
-    bodyEl.innerHTML = formatProse(scene.body());
+    bodyEl.innerHTML = scene.writ ? renderPrologueWritHtml() : formatProse(scene.body());
     continueBtn.style.display = 'block';
-    continueBtn.textContent = prologueIndex === PROLOGUE_SCENES.length - 1 ? '✦ Begin the Chronicle ✦' : 'Continue →';
+    continueBtn.textContent = prologueIndex === PROLOGUE_SCENES.length - 1 ? '✦ Begin Day One ✦' : 'Continue →';
   }
 
-  // Scroll the prologue body to top
   document.getElementById('screen-prologue').scrollTop = 0;
 }
 
 function formatProse(text) {
-  // Convert double newlines to paragraph breaks
-  return text.split(/\n\n+/).map(p => `<p>${escapeHTML(p).replace(/\n/g, '<br>')}</p>`).join('');
+  return String(text || '').split(/\n\n+/).map(p => `<p>${escapeHTML(p).replace(/\n/g, '<br>')}</p>`).join('');
 }
 
 function selectChoice(kind, opt) {
-  // Persist immediately to state
   state.character[kind] = opt;
   prologueAnswers[kind] = opt;
-  // Apply stat bonus if any (only on first selection — guarded by created flag)
-  if (opt.statBonus && !state.created) {
-    state.character.stats[opt.statBonus] = (state.character.stats[opt.statBonus] || 8) + 1;
+
+  // Small mechanical nudges, only before the first completed creation.
+  if (!state.created) {
+    if (opt.statBonus) state.character.stats[opt.statBonus] = (state.character.stats[opt.statBonus] || 8) + 1;
+    if (opt.statBias) state.character.statXP[opt.statBias] = (state.character.statXP[opt.statBias] || 0) + 10;
   }
+
   saveState();
   prologueIndex += 1;
   renderPrologueScene();
@@ -5025,19 +5377,98 @@ function selectChoice(kind, opt) {
 
 function continuePrologue() {
   prologueIndex += 1;
-  if (prologueIndex >= PROLOGUE_SCENES.length) {
-    finishPrologue();
-  } else {
-    renderPrologueScene();
+  if (prologueIndex >= PROLOGUE_SCENES.length) finishPrologue();
+  else renderPrologueScene();
+}
+
+function renderPrologueWritText() {
+  const c = state.character;
+  const lines = [
+    `${c.name || 'Jerry'} — Human Squire of ${state.world.order}`,
+    `Origin: ${c.origin?.label || 'Unchosen'}`,
+    `Oath: ${c.oath?.label || 'Unchosen'}`,
+    `Tone: ${c.campaignTone?.label || 'Unchosen'}`,
+    `First Bond: ${c.firstBond?.npc?.name || c.firstBond?.label || 'Unchosen'}`,
+    `Keepsake: ${c.keepsake?.label || 'Unchosen'}`,
+    `First Watch: ${c.firstWatch?.label || 'Unchosen'}`
+  ];
+  return `Thale does not make you swear before a hall of witnesses. Calenhal cannot spare that many witnesses before breakfast.
+
+Instead, the oath-stone warms slowly in your hand. The first page of the chronicle settles into place:\n\n${lines.join('\n')}
+
+The bell rings once. Somewhere, ${c.firstBond?.npc?.name || 'someone'} is already awake. The day has the nerve to begin.`;
+}
+
+function renderPrologueWritHtml() {
+  const c = state.character;
+  const stats = ['STR','DEX','CON','INT','WIS','CHA'].map(k => `<span>${k} <strong>${state.character.stats[k]}</strong></span>`).join('');
+  return `
+    <div class="prologue-writ-card">
+      <div class="writ-kicker">Filed beneath the first stone</div>
+      <div class="writ-name">${escapeHTML(c.name || 'Jerry')}</div>
+      <div class="writ-class">Human · Squire of ${escapeHTML(state.world.order)}</div>
+      <div class="writ-grid">
+        <div><span>Origin</span><strong>${escapeHTML(c.origin?.label || 'Unchosen')}</strong><em>${escapeHTML(c.origin?.effect || '')}</em></div>
+        <div><span>Oath</span><strong>${escapeHTML(c.oath?.label || 'Unchosen')}</strong><em>${escapeHTML(c.oath?.effect || '')}</em></div>
+        <div><span>Tone</span><strong>${escapeHTML(c.campaignTone?.label || 'Unchosen')}</strong><em>${escapeHTML(c.campaignTone?.effect || '')}</em></div>
+        <div><span>First Bond</span><strong>${escapeHTML(c.firstBond?.npc?.name || c.firstBond?.label || 'Unchosen')}</strong><em>${escapeHTML(c.firstBond?.effect || '')}</em></div>
+        <div><span>Keepsake</span><strong>${escapeHTML(c.keepsake?.label || 'Unchosen')}</strong><em>${escapeHTML(c.keepsake?.effect || '')}</em></div>
+        <div><span>First Watch</span><strong>${escapeHTML(c.firstWatch?.label || 'Unchosen')}</strong><em>${escapeHTML(c.firstWatch?.effect || '')}</em></div>
+      </div>
+      <div class="writ-stats">${stats}</div>
+      <p class="writ-note">The bell rings once. Somewhere, ${escapeHTML(c.firstBond?.npc?.name || 'someone')} is already awake. The day has the nerve to begin.</p>
+    </div>
+  `;
+}
+
+function addNpcIfMissing(npc) {
+  if (!npc) return;
+  if (!Array.isArray(state.npcs)) state.npcs = [];
+  if (state.npcs.some(n => n.id === npc.id || n.name === npc.name)) return;
+  state.npcs.push({
+    ...npc,
+    firstMentionedDate: 'prologue',
+    lastMentionedDate: null
+  });
+}
+
+function applyPrologueWorldSeeds() {
+  const c = state.character;
+  addNpcIfMissing(c.firstBond?.npc);
+
+  if (c.firstBond?.npc?.relationship === 'rival') {
+    state.rival.name = c.firstBond.npc.name;
+    state.rival.progress = Math.max(Number(state.rival.progress || 0), 8);
+  }
+
+  if (typeof ensureStoryEngineState === 'function') ensureStoryEngineState(state);
+  if (c.firstWatch?.domain && typeof addDomainProgress === 'function') {
+    addDomainProgress(c.firstWatch.domain, 18, 'Chosen as the First Watch in the prologue.');
+  }
+  if (c.origin?.domain && typeof addDomainProgress === 'function') {
+    addDomainProgress(c.origin.domain, 8, 'Seeded by origin in the prologue.');
+  }
+  if (c.keepsake?.domain && typeof addDomainProgress === 'function') {
+    addDomainProgress(c.keepsake.domain, 8, 'Seeded by keepsake in the prologue.');
+  }
+  if (c.oath?.pressure && typeof applyPressureDelta === 'function') {
+    const delta = c.oath.pressure === 'rival' ? 4 : c.oath.pressure === 'chaos' ? 3 : -2;
+    applyPressureDelta(c.oath.pressure, delta, 'The opening oath shaped the campaign pressure.');
+  }
+  if (typeof pushWorldEvent === 'function') {
+    pushWorldEvent(`${c.name || 'Jerry'} entered Calenhal, chose ${c.firstWatch?.label || 'a first watch'}, and the first page of the chronicle was filed.`);
   }
 }
 
 function finishPrologue() {
+  applyPrologueWorldSeeds();
   state.created = true;
   saveState();
   showScreen('home');
-  showToast('The Chronicle begins');
+  showToast('The First Watch begins');
 }
+
+
 
 /* ============================================================
    NARRATION GENERATION
@@ -8523,12 +8954,15 @@ function renderSettings() {
   const prologueEl = document.getElementById('settings-prologue');
   const prologueSection = document.getElementById('settings-prologue-section');
   const c = state.character;
-  if (c.origin || c.oath || c.keepsake) {
+  if (c.origin || c.oath || c.keepsake || c.campaignTone || c.firstBond || c.firstWatch) {
     prologueSection.style.display = 'block';
     let html = '';
-    if (c.origin) html += `<div class="prologue-choice-display"><span class="pc-label">Origin:</span> ${escapeHTML(c.origin.token)}</div>`;
-    if (c.oath) html += `<div class="prologue-choice-display"><span class="pc-label">Oath:</span> ${escapeHTML(c.oath.token)}</div>`;
-    if (c.keepsake) html += `<div class="prologue-choice-display"><span class="pc-label">Keepsake:</span> ${escapeHTML(c.keepsake.token)}</div>`;
+    if (c.origin) html += `<div class="prologue-choice-display"><span class="pc-label">Origin:</span> ${escapeHTML(c.origin.token || c.origin.label || '')}</div>`;
+    if (c.oath) html += `<div class="prologue-choice-display"><span class="pc-label">Oath:</span> ${escapeHTML(c.oath.token || c.oath.label || '')}</div>`;
+    if (c.campaignTone) html += `<div class="prologue-choice-display"><span class="pc-label">Campaign Tone:</span> ${escapeHTML(c.campaignTone.token || c.campaignTone.label || '')}</div>`;
+    if (c.firstBond) html += `<div class="prologue-choice-display"><span class="pc-label">First Bond:</span> ${escapeHTML(c.firstBond.token || c.firstBond.npc?.name || c.firstBond.label || '')}</div>`;
+    if (c.keepsake) html += `<div class="prologue-choice-display"><span class="pc-label">Keepsake:</span> ${escapeHTML(c.keepsake.token || c.keepsake.label || '')}</div>`;
+    if (c.firstWatch) html += `<div class="prologue-choice-display"><span class="pc-label">First Watch:</span> ${escapeHTML(c.firstWatch.token || c.firstWatch.label || '')}</div>`;
     prologueEl.innerHTML = html;
   } else {
     prologueSection.style.display = 'none';
